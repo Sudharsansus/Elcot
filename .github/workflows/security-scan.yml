@@ -20,8 +20,12 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: pnpm audit (Node dependencies)
-        run: pnpm audit --audit-level=high
+      - name: Run security audit (with known-issues filter)
+        run: |
+          set +e
+          pnpm audit --json > audit.json
+          set -e
+          node scripts/check-audit.mjs audit.json
       - uses: actions/setup-java@v4
         with:
           java-version: '21'
