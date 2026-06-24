@@ -7,12 +7,12 @@
   "tags": ["scope:public", "type:app"],
   "targets": {
     "build": {
-      "executor": "@angular-builders/custom-webpack:browser",
+      "executor": "@nx/angular:application",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/admin-portal",
         "index": "apps/admin-portal/src/index.html",
-        "main": "apps/admin-portal/src/main.ts",
+        "browser": "apps/admin-portal/src/main.ts",
         "polyfills": ["zone.js"],
         "tsConfig": "apps/admin-portal/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
@@ -24,8 +24,9 @@
         ],
         "styles": ["apps/admin-portal/src/styles.scss"],
         "scripts": [],
-        "customWebpackConfig": {
-          "path": "apps/admin-portal/webpack.config.js"
+        "server": "apps/admin-portal/src/main.server.ts",
+        "stylePreprocessorOptions": {
+          "includePaths": ["node_modules"]
         }
       },
       "configurations": {

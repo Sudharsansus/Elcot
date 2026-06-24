@@ -11,9 +11,6 @@ importers:
 
   .:
     devDependencies:
-      '@angular-builders/custom-webpack':
-        specifier: 17.0.2
-        version: 17.0.2(6jppia5cgf5jw2i4ipqwfjnyly)
       '@angular-devkit/build-angular':
         specifier: 17.3.12
         version: 17.3.12(6jppia5cgf5jw2i4ipqwfjnyly)
@@ -515,16 +512,6 @@ packages:
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
-
-  '@angular-builders/common@1.0.2':
-    resolution: {integrity: sha512-lUusRq6jN1It5LcUTLS6Q+AYAYGTo/EEN8hV0M6Ek9qXzweAouJaSEnwv7p04/pD7yJTl0YOCbN79u+wGm3x4g==}
-    engines: {node: ^14.20.0 || ^16.13.0 || >=18.10.0}
-
-  '@angular-builders/custom-webpack@17.0.2':
-    resolution: {integrity: sha512-K0jqdW5UdVIeKiZXO4nLiiiVt0g6PKJELdxgjsBGMtyRk+RLEY+pIp1061oy/Yf09nGYseZ7Mdx3XASYHQjNwA==}
-    engines: {node: ^14.20.0 || ^16.13.0 || >=18.10.0}
-    peerDependencies:
-      '@angular/compiler-cli': ^17.0.0
 
   '@angular-devkit/architect@0.1703.12':
     resolution: {integrity: sha512-om4N+fhcVc9bUgeT7vVdyXMNvnLdMzfq+g36viHxwUdXlfah31xqEj/iR1mGRztBJcJTw8XeOnkTNQdgDf0qhQ==}
@@ -11431,66 +11418,6 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
 
-  '@angular-builders/common@1.0.2(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@26.0.0)(chokidar@3.6.0)(typescript@5.4.5)':
-    dependencies:
-      '@angular-devkit/core': 17.3.12(chokidar@3.6.0)
-      ts-node: 10.9.1(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@26.0.0)(typescript@5.4.5)
-      tsconfig-paths: 4.2.0
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - chokidar
-      - typescript
-
-  '@angular-builders/custom-webpack@17.0.2(6jppia5cgf5jw2i4ipqwfjnyly)':
-    dependencies:
-      '@angular-builders/common': 1.0.2(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@26.0.0)(chokidar@3.6.0)(typescript@5.4.5)
-      '@angular-devkit/architect': 0.1703.12(chokidar@3.6.0)
-      '@angular-devkit/build-angular': 17.3.12(6jppia5cgf5jw2i4ipqwfjnyly)
-      '@angular-devkit/core': 17.3.12(chokidar@3.6.0)
-      '@angular/compiler-cli': 17.3.12(@angular/compiler@17.3.12(@angular/core@17.3.12(rxjs@7.8.2)(zone.js@0.14.10)))(typescript@5.4.5)
-      lodash: 4.18.1
-      webpack-merge: 5.10.0
-    transitivePeerDependencies:
-      - '@angular/localize'
-      - '@angular/platform-server'
-      - '@angular/service-worker'
-      - '@minify-html/node'
-      - '@rspack/core'
-      - '@swc/core'
-      - '@swc/css'
-      - '@swc/html'
-      - '@swc/wasm'
-      - '@types/express'
-      - '@types/node'
-      - '@web/test-runner'
-      - browser-sync
-      - bufferutil
-      - chokidar
-      - clean-css
-      - cssnano
-      - csso
-      - debug
-      - html-minifier-terser
-      - html-webpack-plugin
-      - jest
-      - jest-environment-jsdom
-      - karma
-      - lightningcss
-      - ng-packagr
-      - node-sass
-      - protractor
-      - sass-embedded
-      - stylus
-      - sugarss
-      - supports-color
-      - tailwindcss
-      - typescript
-      - uglify-js
-      - utf-8-validate
-      - webpack-cli
-
   '@angular-devkit/architect@0.1703.12(chokidar@3.6.0)':
     dependencies:
       '@angular-devkit/core': 17.3.12(chokidar@3.6.0)
@@ -15269,21 +15196,6 @@ snapshots:
       - typescript
       - verdaccio
 
-  '@nrwl/js@17.3.2(@babel/traverse@7.29.7)(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@26.0.0)(nx@17.3.2(@swc/core@1.15.43(@swc/helpers@0.5.23)))(typescript@5.3.3)':
-    dependencies:
-      '@nx/js': 17.3.2(@babel/traverse@7.29.7)(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@26.0.0)(nx@17.3.2(@swc/core@1.15.43(@swc/helpers@0.5.23)))(typescript@5.3.3)
-    transitivePeerDependencies:
-      - '@babel/traverse'
-      - '@swc-node/register'
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - debug
-      - nx
-      - supports-color
-      - typescript
-      - verdaccio
-
   '@nrwl/js@17.3.2(@babel/traverse@7.29.7)(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@26.0.0)(nx@17.3.2(@swc/core@1.15.43(@swc/helpers@0.5.23)))(typescript@5.4.5)':
     dependencies:
       '@nx/js': 17.3.2(@babel/traverse@7.29.7)(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@26.0.0)(nx@17.3.2(@swc/core@1.15.43(@swc/helpers@0.5.23)))(typescript@5.4.5)
@@ -15558,7 +15470,7 @@ snapshots:
       '@babel/preset-env': 7.29.7(@babel/core@7.29.7)
       '@babel/preset-typescript': 7.29.7(@babel/core@7.29.7)
       '@babel/runtime': 7.29.7
-      '@nrwl/js': 17.3.2(@babel/traverse@7.29.7)(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@26.0.0)(nx@17.3.2(@swc/core@1.15.43(@swc/helpers@0.5.23)))(typescript@5.3.3)
+      '@nrwl/js': 17.3.2(@babel/traverse@7.29.7)(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@26.0.0)(nx@17.3.2(@swc/core@1.15.43(@swc/helpers@0.5.23)))(typescript@5.4.5)
       '@nx/devkit': 17.3.2(nx@17.3.2(@swc/core@1.15.43(@swc/helpers@0.5.23)))
       '@nx/workspace': 17.3.2(@swc/core@1.15.43(@swc/helpers@0.5.23))
       '@phenomnomnominal/tsquery': 5.0.1(typescript@5.3.3)

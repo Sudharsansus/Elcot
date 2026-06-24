@@ -1,4 +1,4 @@
-@use '@angular/material' as mat;
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
 
 // ============================================
 // Tamil Nadu AVGC-XR Portal — Global Styles
@@ -309,40 +309,6 @@ ul, ol { list-style: none; }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-secondary);
-}
-
-// ---------- Angular Material Overrides ----------
-
-@include mat.core();
-
-$tn-primary: mat.define-palette(mat.$indigo-palette, 900, 800, 900, A100);
-$tn-accent: mat.define-palette(mat.$amber-palette, A700, A400, A700);
-$tn-warn: mat.define-palette(mat.$red-palette, 800, 700, 900);
-
-$tn-light-theme: mat.define-light-theme((
-  color: (
-    primary: $tn-primary,
-    accent: $tn-accent,
-    warn: $tn-warn
-  ),
-  typography: mat.define-typography-config(
-    $font-family: 'Inter, sans-serif',
-  ),
-  density: 0,
-));
-
-$tn-dark-theme: mat.define-dark-theme((
-  color: (
-    primary: $tn-primary,
-    accent: $tn-accent,
-    warn: $tn-warn
-  ),
-));
-
-@include mat.all-component-themes($tn-light-theme);
-
-[data-theme="dark"] {
-  @include mat.all-component-colors($tn-dark-theme);
 }
 
 .mat-mdc-card {
