@@ -1,0 +1,1 @@
+module.exports = ({ host: process.env.HOST || '0.0.0.0', port: process.env.PORT || 1337, app: { keys: Array.from({ length: 4 }, () => process.env.APP_KEYS || 'avgc-xr-cms-secret-key-change-in-prod').join(',') } });

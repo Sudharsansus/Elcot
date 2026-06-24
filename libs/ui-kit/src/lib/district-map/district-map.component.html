@@ -1,0 +1,18 @@
+<div class="avgc-district-map" [style.height]="height()" role="img" aria-label="Tamil Nadu district map">
+  <svg viewBox="0 0 500 600" class="avgc-district-map__svg" xmlns="http://www.w3.org/2000/svg">
+    @for (d of districts(); track d.code) {
+      <g class="avgc-district-map__district" (click)="selectDistrict(d)" [attr.data-code]="d.code" role="button" [attr.aria-label]="d.name">
+        <title>{{ d.name }} — {{ d.nameTamil }}</title>
+        <rect x="10" y="10" width="40" height="40" rx="4"
+              [attr.fill]="getColorForValue(d.value, 1000)"
+              stroke="#FFFFFF" stroke-width="1.5" class="avgc-district-map__shape" />
+        <text x="30" y="34" text-anchor="middle" fill="#FFFFFF" font-size="8" font-weight="600">{{ d.name.slice(0,3) }}</text>
+      </g>
+    }
+  </svg>
+  <div class="avgc-district-map__legend">
+    <span class="avgc-district-map__legend-label">Less</span>
+    <div class="avgc-district-map__legend-gradient"></div>
+    <span class="avgc-district-map__legend-label">More</span>
+  </div>
+</div>

@@ -1,0 +1,28 @@
+{
+  "root": true,
+  "ignorePatterns": ["!**/*"],
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "extends": ["plugin:@nx/angular", "plugin:@angular-eslint/recommended"],
+      "parserOptions": { "project": ["tsconfig.*.json"] },
+      "rules": {
+        "@angular-eslint/directive-selector": ["error", { "type": "attribute", "prefix": "app", "style": "camelCase" }],
+        "@angular-eslint/component-selector": ["error", { "type": "element", "prefix": "app", "style": "kebab-case" }],
+        "@angular-eslint/no-host-metadata-property": "off",
+        "@typescript-eslint/no-explicit-any": "error",
+        "@typescript-eslint/explicit-function-return-type": "warn",
+        "@typescript-eslint/consistent-type-imports": "error"
+      }
+    },
+    {
+      "files": ["*.html"],
+      "extends": ["plugin:@nx/angular-template"],
+      "rules": {
+        "@angular-eslint/template/alt-text": "warn",
+        "@angular-eslint/template/interactive-supports-focus": "warn",
+        "@angular-eslint/template/label-has-associated-control": "warn"
+      }
+    }
+  ]
+}

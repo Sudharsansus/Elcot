@@ -1,0 +1,2 @@
+# .gitkeep - placeholder for uploads directory
+# Strapi CMS media uploads are stored in MinIO, not this directory.

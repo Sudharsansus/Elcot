@@ -1,0 +1,10 @@
+availability_zones   = ["ap-south-1a", "ap-south-1b"]
+vpc_cidr             = "10.20.0.0/16"
+db_instance_class    = "db.r6g.large"
+db_allocated_storage = 100
+db_password          = "CHANGE_ME_STAGING_DB_PASSWORD"
+redis_node_type      = "cache.r6g.large"
+es_instance_type     = "r6g.large.search"
+es_volume_size       = 100
+rmq_instance_type    = "mq.r6g.large"
+rmq_admin_password   = "CHANGE_ME_STAGING_RMQ_PASSWORD"

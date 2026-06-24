@@ -1,0 +1,375 @@
+groups:
+  # ═══════════════════════════════════════════════
+  # API — Application-Layer Alerts
+  # ═══════════════════════════════════════════════
+  - name: api_alerts
+    rules:
+      - alert: HighErrorRate
+        expr: |
+          (
+            sum(rate(http_server_requests_seconds_count{status=~"5..", job="api"}[5m]))
+            /
+            sum(rate(http_server_requests_seconds_count{job="api"}[5m]))
+          ) * 100 > 5
+        for: 2m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "API error rate exceeds 5%"
+          description: >
+            The API 5xx error rate is currently {{ printf "%.2f" $value }}% (threshold: 5%)
+            over the last 2 minutes. This may indicate a backend failure, misconfiguration,
+            or upstream dependency issue.
+
+      - alert: HighLatencyP99
+        expr: |
+          histogram_quantile(0.99,
+            sum(rate(http_server_requests_seconds_bucket{job="api"}[5m])) by (le)
+          ) > 2
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "API P99 latency exceeds 2 seconds"
+          description: >
+            The 99th percentile response time is {{ printf "%.3f" $value }}s (threshold: 2s).
+            Users are experiencing slow page loads. Check for slow database queries,
+            external API calls, or resource contention.
+
+      - alert: HighMemoryUsage
+        expr: |
+          (jvm_memory_used_bytes{job="api", area="heap"} / jvm_memory_max_bytes{job="api", area="heap"}) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "API JVM heap usage exceeds 80%"
+          description: >
+            JVM heap memory usage is at {{ printf "%.1f" $value }}%.
+            Risk of OutOfMemoryError. Review heap dump if this persists.
+
+      - alert: HighCPUUsage
+        expr: |
+          process_cpu_usage{job="api"} * 100 > 70
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "API process CPU usage exceeds 70%"
+          description: >
+            API process CPU usage is {{ printf "%.1f" $value }}%.
+            May indicate computational hot spots or garbage collection pressure.
+
+      - alert: TooManyConcurrentRequests
+        expr: |
+          tomcat_threads_busy_threads{job="api"} > 500
+        for: 1m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "API concurrent requests exceed 500"
+          description: >
+            There are {{ $value }} busy threads. The server is at risk of
+            rejecting new connections. Scale horizontally or investigate request patterns.
+
+      - alert: APIDown
+        expr: up{job="api"} == 0
+        for: 30s
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "API service is down"
+          description: >
+            Prometheus cannot scrape the API service at api:8080.
+            The service may have crashed or the network is partitioned.
+
+  # ═══════════════════════════════════════════════
+  # Database — PostgreSQL Alerts
+  # ═══════════════════════════════════════════════
+  - name: postgres_alerts
+    rules:
+      - alert: PostgresDown
+        expr: up{job="postgres"} == 0
+        for: 30s
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "PostgreSQL is down"
+          description: >
+            PostgreSQL exporter cannot reach the database.
+            All application services depending on PostgreSQL will be degraded.
+
+      - alert: PostgresHighConnections
+        expr: |
+          pg_stat_activity_count{datname="avgcxr_portal", state="active"}
+          + pg_stat_activity_count{datname="avgcxr_portal", state="idle"}
+          > 150
+        for: 2m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "PostgreSQL active connections exceed 150"
+          description: >
+            There are {{ $value }} active/idle connections to the avgcxr_portal database.
+            Max connections is typically 200. Connection pool exhaustion is imminent.
+
+      - alert: PostgresSlowQueries
+        expr: |
+          rate(pg_stat_statements_mean_exec_time_seconds_sum{datname="avgcxr_portal"}[5m])
+          / rate(pg_stat_statements_mean_exec_time_seconds_count{datname="avgcxr_portal"}[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "PostgreSQL slow query rate exceeds 10 queries/second"
+          description: >
+            Average query execution time has degraded. Review pg_stat_statements
+            for the top offending queries. Consider adding indexes or rewriting queries.
+
+      - alert: PostgresReplicationLag
+        expr: |
+          pg_replication_lag_seconds > 30
+        for: 2m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "PostgreSQL replication lag exceeds 30 seconds"
+          description: >
+            The standby replica is lagging by {{ printf "%.1f" $value }}s behind the primary.
+            Data freshness for read queries may be affected.
+
+      - alert: PostgresDiskSpaceLow
+        expr: |
+          (pg_database_size_bytes{datname="avgcxr_portal"} / pg_tablespace_size_bytes) * 100 > 80
+          or
+          (node_filesystem_avail_bytes{mountpoint="/var/lib/postgresql/data"} / node_filesystem_size_bytes{mountpoint="/var/lib/postgresql/data"}) < 0.2
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "PostgreSQL disk space below 20%"
+          description: >
+            The PostgreSQL data volume is running low on disk space.
+            Vacuum, archive old data, or expand the volume immediately.
+
+  # ═══════════════════════════════════════════════
+  # Redis Alerts
+  # ═══════════════════════════════════════════════
+  - name: redis_alerts
+    rules:
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 30s
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Redis is down"
+          description: >
+            Redis is unreachable. Session management, caching, and rate limiting
+            will fall back to degraded modes.
+
+      - alert: RedisHighMemory
+        expr: |
+          (redis_memory_used_bytes / redis_memory_max_bytes) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Redis memory usage exceeds 80%"
+          description: >
+            Redis is using {{ printf "%.1f" $value }}% of max memory.
+            Eviction policies may begin dropping keys. Review key TTLs and
+            consider increasing maxmemory.
+
+      - alert: RedisConnectedClients
+        expr: redis_connected_clients > 1000
+        for: 2m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Redis connected clients exceed 1000"
+          description: >
+            There are {{ $value }} clients connected to Redis.
+            Verify connection pooling is configured correctly in application services.
+
+  # ═══════════════════════════════════════════════
+  # RabbitMQ Alerts
+  # ═══════════════════════════════════════════════
+  - name: rabbitmq_alerts
+    rules:
+      - alert: RabbitMQDown
+        expr: up{job="rabbitmq"} == 0
+        for: 30s
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "RabbitMQ is down"
+          description: >
+            RabbitMQ broker is unreachable. Async processing (email notifications,
+            workflow events, document processing) is halted.
+
+      - alert: QueueDepthHigh
+        expr: rabbitmq_queue_messages{queue=~".+"} > 10000
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "RabbitMQ queue depth exceeds 10,000 messages"
+          description: >
+            Queue {{ $labels.queue }} has {{ $value }} messages waiting.
+            Consumers may be slow or stopped. Check worker pod health.
+
+      - alert: ConsumerLag
+        expr: rabbitmq_queue_messages_unacked > 5000
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "RabbitMQ consumer lag exceeds 5,000 unacked messages"
+          description: >
+            There are {{ $value }} unacknowledged messages across queues.
+            Consumers may be processing slowly or crashing on certain messages.
+
+  # ═══════════════════════════════════════════════
+  # Elasticsearch Alerts
+  # ═══════════════════════════════════════════════
+  - name: elasticsearch_alerts
+    rules:
+      - alert: ElasticsearchDown
+        expr: up{job="elasticsearch"} == 0
+        for: 30s
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Elasticsearch is down"
+          description: >
+            Elasticsearch cluster is unreachable. Scheme search, full-text
+            search, and analytics features will be degraded.
+
+      - alert: ElasticsearchClusterRed
+        expr: |
+          es_cluster_health_status{status="red"} == 1
+        for: 1m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Elasticsearch cluster status is RED"
+          description: >
+            Some primary shards are unassigned. Data loss risk. Check disk
+            space and shard allocation.
+
+      - alert: ElasticsearchLowDiskSpace
+        expr: |
+          (es_fs_total_available_bytes / es_fs_total_total_bytes) < 0.2
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Elasticsearch disk space below 20%"
+          description: >
+            Elasticsearch data node is running low on disk. New indices
+            may become read-only. Free up space or add nodes.
+
+      - alert: HighIndexingLatency
+        expr: |
+          es_indexing_indexing_time_seconds_sum
+          / es_indexing_indexing_total
+          > 5
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Elasticsearch indexing latency exceeds 5 seconds"
+          description: >
+            Average indexing latency is {{ printf "%.2f" $value }}s.
+            Bulk indexing may be needed or the cluster is under resource pressure.
+
+  # ═══════════════════════════════════════════════
+  # Infrastructure Alerts
+  # ═══════════════════════════════════════════════
+  - name: infrastructure_alerts
+    rules:
+      - alert: ContainerRestartLoop
+        expr: |
+          increase(container_restarts_total{name=~"avgcxr-.+"}[10m]) > 3
+        for: 1m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Container {{ $labels.name }} is in a restart loop"
+          description: >
+            Container has restarted {{ $value }} times in the last 10 minutes.
+            This indicates a crash loop. Check container logs in Loki.
+
+      - alert: DiskSpaceLow
+        expr: |
+          (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes{fstype!~"tmpfs|overlay"}) < 0.15
+        for: 5m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Host disk space below 15%"
+          description: >
+            Mount point {{ $labels.mountpoint }} has less than 15% free space.
+            This affects all services on this host. Immediate cleanup required.
+
+      - alert: HighNetworkLatency
+        expr: |
+          probe_duration_seconds{probe="icmp"} > 0.5
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "High network latency detected"
+          description: >
+            Network probe to {{ $labels.instance }} shows {{ printf "%.3f" $value }}s latency.
+            Investigate network configuration and inter-service communication.
+
+  # ═══════════════════════════════════════════════
+  # SLA — Uptime & Performance Commitments
+  # ═══════════════════════════════════════════════
+  - name: sla_alerts
+    rules:
+      - alert: UptimeBelow99_5
+        expr: |
+          (
+            1 - (
+              sum(rate(http_server_requests_seconds_count{job="api", status=~"5.."}[5m]))
+              /
+              sum(rate(http_server_requests_seconds_count{job="api"}[5m]))
+            )
+          ) * 100 < 99.5
+        for: 5m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "API availability below 99.5% SLA target"
+          description: >
+            Current API availability is {{ printf "%.3f" $value }}%.
+            The SLA target is 99.5%. This is a contractual obligation.
+            Incident response team must be engaged immediately.

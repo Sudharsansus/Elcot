@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: avgcxr-minio
+  namespace: avgcxr
+  labels:
+    app: avgcxr-minio
+    component: minio
+    tier: backend
+    part-of: avgcxr-portal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: avgcxr-minio
+  template:
+    metadata:
+      labels:
+        app: avgcxr-minio
+        component: minio
+        tier: backend
+        part-of: avgcxr-portal
+    spec:
+      containers:
+        - name: minio
+          image: minio/minio:latest
+          ports:
+            - name: http
+              containerPort: 9000
+              protocol: TCP
+          env:
+        - name: MINIO_ROOT_USER
+          value: "minioadmin"
+        - name: MINIO_ROOT_PASSWORD
+          value: "minioadmin123"
+        - name: TZ
+          value: "Asia/Kolkata"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+          livenessProbe:
+            httpGet:
+              path: /minio/health/live
+              port: 9000
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /minio/health/live
+              port: 9000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3

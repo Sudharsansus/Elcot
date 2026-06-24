@@ -1,0 +1,22 @@
+<div class="apply-scheme" data-testid="apply-scheme">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/dashboard">Dashboard</a> / <span>Apply for Scheme</span>
+  </nav>
+  <h1>Apply for Scheme</h1>
+  <avgc-workflow-stepper [steps]="steps" [currentStep]="currentStep"></avgc-workflow-stepper>
+  @if (loading) { <p>Loading...</p> }
+  <div class="form-container">
+    @switch (currentStep) {
+      @case (0) { <section><h2>Personal Details</h2><p>Enter your personal information including Aadhaar, PAN, and contact details.</p></section> }
+      @case (1) { <section><h2>Business Details</h2><p>Enter your company registration, GST, and entity type information.</p></section> }
+      @case (2) { <section><h2>Project Details</h2><p>Describe your AVGC project, sub-sector, estimated cost, and duration.</p></section> }
+      @case (3) { <section><h2>Financial Details</h2><p>Provide bank account information for subsidy disbursement.</p></section> }
+      @case (4) { <section><h2>Document Upload</h2><p>Upload required documents: Aadhaar, PAN, registration certificate, project proposal.</p></section> }
+    }
+  </div>
+  <div class="actions">
+    @if (currentStep > 0) { <avgc-button variant="outline" (clicked)="prevStep()">Previous</avgc-button> }
+    @if (currentStep < totalSteps - 1) { <avgc-button variant="primary" (clicked)="nextStep()">Next</avgc-button> }
+    @if (currentStep === totalSteps - 1) { <avgc-button variant="secondary" (clicked)="submit()">Submit Application</avgc-button> }
+  </div>
+</div>

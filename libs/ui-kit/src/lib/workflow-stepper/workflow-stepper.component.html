@@ -1,0 +1,27 @@
+<nav class="avgc-stepper" [class.avgc-stepper--vertical]="vertical()" aria-label="Application progress">
+  <ol class="avgc-stepper__list">
+    @for (step of steps(); track $index) {
+      <li class="avgc-stepper__item" [class.avgc-stepper__item--active]="$index === currentStep()" [class.avgc-stepper__item--completed]="step.status === 'completed'" [class.avgc-stepper__item--error]="step.status === 'error'" [class.avgc-stepper__item--pending]="step.status === 'pending'">
+        <div class="avgc-stepper__step" (click)="stepClicked.emit($index)" [attr.role]="$index === currentStep() ? 'tab' : null" [attr.aria-selected]="$index === currentStep()" [attr.aria-current]="$index === currentStep() ? 'step' : null" tabindex="0">
+          <span class="avgc-stepper__circle">
+            @if (step.status === 'completed') {
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            } @else if (step.status === 'error') {
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            } @else {
+              {{ $index + 1 }}
+            }
+          </span>
+          <div class="avgc-stepper__text">
+            <span class="avgc-stepper__label">{{ step.label }}</span>
+            @if (step.labelTamil) { <span class="avgc-stepper__label-ta">{{ step.labelTamil }}</span> }
+            @if (step.description) { <span class="avgc-stepper__desc">{{ step.description }}</span> }
+          </div>
+        </div>
+        @if ($index < steps().length - 1 && !vertical()) {
+          <div class="avgc-stepper__connector" [class.avgc-stepper__connector--completed]="step.status === 'completed'"></div>
+        }
+      </li>
+    }
+  </ol>
+</nav>

@@ -1,0 +1,9 @@
+<div data-testid="admin-dashboard"><h1>Admin Dashboard</h1>
+  <div class="stats-grid">
+    <avgc-card title="Total Applications" [elevated]="true"><p>{{ stats().totalApps }}</p></avgc-card>
+    <avgc-card title="Pending Review" [elevated]="true"><p>{{ stats().pendingReview }}</p></avgc-card>
+    <avgc-card title="Approved Today" [elevated]="true"><p>{{ stats().approvedToday }}</p></avgc-card>
+    <avgc-card title="Total Disbursed" [elevated]="true"><p>{{ stats().totalDisbursed }}</p></avgc-card>
+  </div>
+  <div class="charts"><avgc-chart type="bar" [options]="barChartOptions" height="350px"></avgc-chart></div>
+</div>

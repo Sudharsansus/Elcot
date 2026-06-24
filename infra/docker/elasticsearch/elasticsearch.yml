@@ -1,0 +1,37 @@
+cluster.name: avgcxr-elasticsearch
+node.name: avgcxr-es-node-1
+path.data: /usr/share/elasticsearch/data
+path.logs: /usr/share/elasticsearch/logs
+
+network.host: 0.0.0.0
+http.port: 9200
+transport.port: 9300
+
+discovery.type: single-node
+
+xpack.security.enabled: false
+xpack.security.enrollment.enabled: false
+xpack.security.http.ssl.enabled: false
+xpack.security.transport.ssl.enabled: false
+
+xpack.license.self_generated.type: basic
+
+# Index settings for AVGC-XR Portal
+indices.memory.index_buffer_size: 30%
+
+# Thread pool
+thread_pool.search.size: 5
+thread_pool.search.queue_size: 1000
+thread_pool.write.size: 3
+thread_pool.write.queue_size: 500
+
+# Index lifecycle
+action.auto_create_index: "avgcxr-*"
+
+# Tamil language analysis plugin
+indices.analysis.analyzer.tamil_analyzer.type: custom
+indices.analysis.analyzer.tamil_analyzer.tokenizer: standard
+indices.analysis.analyzer.tamil_analyzer.filter:
+  - lowercase
+  - tamil_stemmer
+  - stop

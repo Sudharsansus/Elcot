@@ -1,0 +1,13 @@
+.avgc-scheme-card { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 16px; transition: box-shadow 0.25s ease, transform 0.25s ease; &:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); transform: translateY(-2px); } }
+.avgc-scheme-card__badge { display: inline-flex; align-self: flex-start; padding: 4px 12px; background: #EFF6FF; color: #0D47A1; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.avgc-scheme-card__name { margin: 0; font-size: 1.25rem; font-weight: 700; color: #0F172A; line-height: 1.3; }
+.avgc-scheme-card__name-ta { margin: 2px 0 0; font-size: 0.875rem; color: #64748B; }
+.avgc-scheme-card__desc { margin: 0; font-size: 0.9375rem; color: #475569; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.avgc-scheme-card__meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.875rem; }
+.avgc-scheme-card__subsidy { font-weight: 600; color: #15803D; }
+.avgc-scheme-card__count { color: #64748B; }
+.avgc-scheme-card__dates { font-size: 0.8125rem; color: #94A3B8; }
+.avgc-scheme-card__actions { display: flex; gap: 12px; padding-top: 8px; border-top: 1px solid #F1F5F9; }
+.avgc-scheme-card__btn { padding: 10px 20px; border-radius: 6px; font-size: 0.875rem; font-weight: 600; cursor: pointer; border: 2px solid transparent; transition: all 0.2s ease; }
+.avgc-scheme-card__btn--primary { background: #0D47A1; color: #FFFFFF; &:hover { background: #0B3D8E; } }
+.avgc-scheme-card__btn--outline { background: transparent; border-color: #0D47A1; color: #0D47A1; &:hover { background: #EFF6FF; } }

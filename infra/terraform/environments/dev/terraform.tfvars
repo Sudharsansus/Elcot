@@ -1,0 +1,10 @@
+availability_zones   = ["ap-south-1a"]
+vpc_cidr             = "10.10.0.0/16"
+db_instance_class    = "db.t4g.medium"
+db_allocated_storage = 20
+db_password          = "CHANGE_ME_DEV_DB_PASSWORD"
+redis_node_type      = "cache.t3.medium"
+es_instance_type     = "t3.medium.search"
+es_volume_size       = 20
+rmq_instance_type    = "mq.t3.micro"
+rmq_admin_password   = "CHANGE_ME_DEV_RMQ_PASSWORD"

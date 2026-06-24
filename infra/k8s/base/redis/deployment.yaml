@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: avgcxr-redis
+  namespace: avgcxr
+  labels:
+    app: avgcxr-redis
+    component: redis
+    tier: backend
+    part-of: avgcxr-portal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: avgcxr-redis
+  template:
+    metadata:
+      labels:
+        app: avgcxr-redis
+        component: redis
+        tier: backend
+        part-of: avgcxr-portal
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports:
+            - name: tcp-redis
+              containerPort: 6379
+              protocol: TCP
+          env:
+        - name: TZ
+          value: "Asia/Kolkata"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3

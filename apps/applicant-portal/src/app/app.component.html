@@ -1,0 +1,56 @@
+<header class="app-header">
+  <div class="container header-content">
+    <a routerLink="/" class="logo-link" aria-label="AVGC-XR Home">
+      <div class="logo">
+        <span class="logo-emblem">TN</span>
+        <div class="logo-text">
+          <span class="logo-title">AVGC-XR</span>
+          <span class="logo-subtitle" *ngIf="isTamil()">விண்ணப்பதாரர்</span>
+          <span class="logo-subtitle" *ngIf="!isTamil()">Applicant</span>
+        </div>
+      </div>
+    </a>
+
+    <nav class="main-nav" aria-label="Main navigation">
+      <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+        {{ isTamil() ? 'முகப்பு' : 'Dashboard' }}
+      </a>
+      <a routerLink="/applications" routerLinkActive="active">
+        {{ isTamil() ? 'விண்ணப்பங்கள்' : 'Applications' }}
+      </a>
+      <a routerLink="/schemes" routerLinkActive="active">
+        {{ isTamil() ? 'திட்டங்கள்' : 'Schemes' }}
+      </a>
+      <a routerLink="/profile" routerLinkActive="active">
+        {{ isTamil() ? 'சுயவிவரம்' : 'Profile' }}
+      </a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="lang-toggle" (click)="toggleLanguage()" aria-label="Toggle language">
+        {{ isTamil() ? 'English' : 'தமிழ்' }}
+      </button>
+      <a routerLink="/auth/login" class="btn-login">
+        {{ isTamil() ? 'வெளியேறு' : 'Logout' }}
+      </a>
+    </div>
+
+    <button class="mobile-menu-btn" aria-label="Toggle menu" (click)="toggleMobileMenu()">
+      <span class="material-icons">menu</span>
+    </button>
+  </div>
+</header>
+
+<main class="app-main">
+  <div class="page-enter">
+    <router-outlet />
+  </div>
+</main>
+
+<footer class="app-footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <p>&copy; {{ currentYear }} ELCOT — Electronics Corporation of Tamil Nadu Limited. All rights reserved.</p>
+    </div>
+  </div>
+</footer>

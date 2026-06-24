@@ -1,0 +1,1 @@
+module.exports = ({ auth: { secret: process.env.ADMIN_JWT_SECRET || 'avgc-xr-admin-jwt-secret' }, apiToken: { salt: process.env.API_TOKEN_SALT || 'avgc-xr-api-token-salt' }, transfer: { token: { salt: process.env.TRANSFER_TOKEN_SALT || 'avgc-xr-transfer-salt' } } });

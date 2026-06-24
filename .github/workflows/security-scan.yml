@@ -1,0 +1,42 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 2 * * 1'
+
+jobs:
+  dependency-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: OWASP Dependency Check (Java)
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: 'avgcxr-portal'
+          path: '.'
+          format: 'HTML'
+          args: >
+            --failOnCVSS 7
+            --suppression-file .dependency-check-suppressions.xml
+      - name: npm audit
+        run: pnpm audit --audit-level high
+      - name: Trivy FS Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '1'
+      - name: Upload Reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-reports
+          path: |
+            dependency-check-report.html
+            trivy-results.txt
+          retention-days: 30

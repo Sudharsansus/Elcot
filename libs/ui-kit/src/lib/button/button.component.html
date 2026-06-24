@@ -1,0 +1,14 @@
+<button
+  [type]="type()"
+  [class]="classes"
+  [disabled]="disabled() || loading()"
+  [attr.aria-label]="ariaLabel()"
+  [attr.aria-busy]="loading()"
+  (click)="onClick()">
+  @if (loading()) {
+    <span class="avgc-btn__spinner" aria-hidden="true"></span>
+    <span class="avgc-btn__label">Loading...</span>
+  } @else {
+    <ng-content></ng-content>
+  }
+</button>

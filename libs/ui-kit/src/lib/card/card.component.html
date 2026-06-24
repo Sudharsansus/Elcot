@@ -1,0 +1,24 @@
+<div
+  class="avgc-card"
+  [class.avgc-card--elevated]="elevated()"
+  [class.avgc-card--hoverable]="hoverable()"
+  [class.avgc-card--clickable]="clickable()"
+  [class.avgc-card--pad-none]="padding() === 'none'"
+  [class.avgc-card--pad-sm]="padding() === 'sm'"
+  [class.avgc-card--pad-lg]="padding() === 'lg'"
+  role="article"
+  [attr.aria-label]="title()">
+  @if (title()) {
+    <div class="avgc-card__header">
+      <h3 class="avgc-card__title">{{ title() }}</h3>
+      @if (subtitle()) {
+        <p class="avgc-card__subtitle">{{ subtitle() }}</p>
+      }
+      <ng-content select="[avgcCardHeader]"></ng-content>
+    </div>
+  }
+  <div class="avgc-card__body">
+    <ng-content></ng-content>
+  </div>
+  <ng-content select="[avgcCardFooter]"></ng-content>
+</div>

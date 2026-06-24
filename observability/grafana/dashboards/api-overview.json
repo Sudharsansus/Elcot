@@ -1,0 +1,74 @@
+{
+  "uid": "avgc-api-overview",
+  "title": "AVGC-XR Api Overview",
+  "tags": [
+    "avgc-xr",
+    "production"
+  ],
+  "panels": [
+    {
+      "title": "Request Rate",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "rate(http_requests_total{job='avgc-api'}[5m])",
+          "legendFormat": "req/s"
+        }
+      ]
+    },
+    {
+      "title": "Error Rate",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "targets": [
+        {
+          "expr": "rate(http_requests_total{status=~'5..', job='avgc-api'}[5m])",
+          "legendFormat": "errors/s"
+        }
+      ]
+    },
+    {
+      "title": "Response Time P99",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, rate(http_server_requests_seconds_bucket{job='avgc-api'}[5m]))",
+          "legendFormat": "P99 latency"
+        }
+      ]
+    },
+    {
+      "title": "Uptime",
+      "type": "stat",
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 24
+      },
+      "targets": [
+        {
+          "expr": "up{job='avgc-api'}",
+          "legendFormat": "up"
+        }
+      ]
+    }
+  ]
+}

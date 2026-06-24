@@ -1,0 +1,80 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+namespace: avgcxr-prod
+
+commonLabels:
+  environment: production
+
+replicas:
+  - name: avgcxr-api
+    count: 3
+  - name: avgcxr-postgres
+    count: 1
+  - name: avgcxr-redis
+    count: 1
+  - name: avgcxr-elasticsearch
+    count: 1
+  - name: avgcxr-rabbitmq
+    count: 1
+
+patches:
+  - target:
+      kind: Deployment
+      name: avgcxr-api
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: elcot/avgcxr-api:prod-latest
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: 1000m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: 4000m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 1Gi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 4Gi
+
+  - target:
+      kind: Deployment
+      name: avgcxr-postgres
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 2Gi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 8Gi
+
+  - target:
+      kind: Deployment
+      name: avgcxr-elasticsearch
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 4Gi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 16Gi
+
+  - target:
+      kind: Service
+      name: avgcxr-api
+    patch: |-
+      - op: replace
+        path: /spec/type
+        value: LoadBalancer
+
+configMapGenerator:
+  - name: avgcxr-api-env
+    literals:
+      - SPRING_PROFILES_ACTIVE=production
+      - LOGGING_LEVEL_IN_ELCOT_AVGCXR=WARN
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,metrics

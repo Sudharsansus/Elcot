@@ -1,0 +1,14 @@
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: avgc_user
+    password: avgc_pass
+  mail:
+    host: localhost
+    port: 1025  # MailHog for dev
+elasticsearch:
+  uris: http://localhost:9200
+logging:
+  level:
+    in.elcot.avgcxr: DEBUG

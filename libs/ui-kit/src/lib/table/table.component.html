@@ -1,0 +1,42 @@
+<div class="avgc-table" role="table" aria-label="Data table">
+  @if (loading()) {
+    <div class="avgc-table__loading"><span class="avgc-table__spinner"></span> Loading...</div>
+  }
+  <div class="avgc-table__wrapper">
+    <table class="avgc-table__table">
+      <thead>
+        <tr>
+          @for (col of columns(); track col.key) {
+            <th class="avgc-table__th" [style.width]="col.width" [attr.align]="col.align">
+              {{ col.label }}
+              @if (col.sortable && sortable()) {
+                <button class="avgc-table__sort-btn" (click)="onSort(col.key)" [attr.aria-label]="'Sort by ' + col.label">
+                  <svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 2L10 6H2Z" fill="#94A3B8"/><path d="M6 10L2 6H10Z" fill="#CBD5E1"/></svg>
+                </button>
+              }
+            </th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @if (data().length === 0) {
+          <tr><td [attr.colspan]="columns().length" class="avgc-table__empty">{{ emptyMessage() }}</td></tr>
+        }
+        @for (row of data(); track $index) {
+          <tr class="avgc-table__row" (click)="rowClicked.emit(row)" tabindex="0" role="row">
+            @for (col of columns(); track col.key) {
+              <td class="avgc-table__td" [attr.align]="col.align">{{ row[col.key] }}</td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <div class="avgc-table__pagination">
+    <span class="avgc-table__info">Showing {{ (currentPage() - 1) * pageSize() + 1 }}-{{ Math.min(currentPage() * pageSize(), totalElements()) }} of {{ totalElements() }}</span>
+    <div class="avgc-table__pages">
+      <button class="avgc-table__page-btn" [disabled]="currentPage() <= 1" (click)="pageChanged.emit({ page: currentPage() - 1, size: pageSize() })">Previous</button>
+      <button class="avgc-table__page-btn" [disabled]="currentPage() >= totalPages()" (click)="pageChanged.emit({ page: currentPage() + 1, size: pageSize() })">Next</button>
+    </div>
+  </div>
+</div>

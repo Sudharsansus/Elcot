@@ -1,0 +1,8 @@
+.avgc-district-map { width: 100%; position: relative; }
+.avgc-district-map__svg { width: 100%; height: 100%; }
+.avgc-district-map__district { cursor: pointer; transition: opacity 0.2s ease; }
+.avgc-district-map__district:hover { opacity: 0.85; filter: brightness(1.1); }
+.avgc-district-map__shape { transition: fill 0.2s ease; }
+.avgc-district-map__legend { display: flex; align-items: center; gap: 8px; padding: 8px 0; justify-content: center; }
+.avgc-district-map__legend-label { font-size: 0.75rem; color: #64748B; }
+.avgc-district-map__legend-gradient { width: 120px; height: 10px; border-radius: 5px; background: linear-gradient(to right, rgba(13,71,161,0.2), rgba(13,71,161,1)); }

@@ -1,0 +1,4 @@
+<div class="my-applications" data-testid="my-applications">
+  <div class="page-header"><h1>My Applications</h1><avgc-button variant="primary">Apply for New Scheme</avgc-button></div>
+  <avgc-table [columns]="columns" [data]="applications()" [loading]="loading()" [totalElements]="total" [currentPage]="page" [pageSize]="size" [totalPages]="Math.ceil(total/size)" (pageChanged)="page = $event.page; loadApplications()"></avgc-table>
+</div>

@@ -1,0 +1,27 @@
+<div class="avgc-input" [class.avgc-input--error]="error()" [class.avgc-input--disabled]="disabled()">
+  @if (label()) {
+    <label class="avgc-input__label">
+      {{ label() }}
+      @if (labelTamil()) { <span class="avgc-input__label-ta">{{ labelTamil() }}</span> }
+      @if (required()) { <span class="avgc-input__required" aria-hidden="true">*</span> }
+    </label>
+  }
+  <div class="avgc-input__wrapper">
+    @if (icon()) { <span class="avgc-input__icon" aria-hidden="true">{{ icon() }}</span> }
+    <input
+      [type]="type()"
+      [placeholder]="placeholder()"
+      [disabled]="disabled()"
+      [readonly]="readonly()"
+      [required]="required()"
+      [attr.maxlength]="maxLength() || null"
+      [value]="value"
+      (input)="onInput($event)"
+      (blur)="onBlur()"
+      class="avgc-input__field"
+      [attr.aria-invalid]="!!error()"
+      [attr.aria-describedby]="error() ? 'avgc-error-' + label() : null" />
+  </div>
+  @if (error()) { <span class="avgc-input__error" id="avgc-error-{{ label() }}" role="alert">{{ error() }}</span> }
+  @if (hint() && !error()) { <span class="avgc-input__hint">{{ hint() }}</span> }
+</div>

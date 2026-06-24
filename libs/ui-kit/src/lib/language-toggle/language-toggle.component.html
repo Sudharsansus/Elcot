@@ -1,0 +1,6 @@
+<button class="avgc-lang-toggle" (click)="toggle()" role="switch" [attr.aria-checked]="currentLocale() === 'ta'" aria-label="Toggle language">
+  <span class="avgc-lang-toggle__label" [class.avgc-lang-toggle__label--active]="currentLocale() === 'en'">அ</span>
+  <span class="avgc-lang-toggle__slash">/</span>
+  <span class="avgc-lang-toggle__label" [class.avgc-lang-toggle__label--active]="currentLocale() === 'ta'">A</span>
+  <span class="avgc-lang-toggle__text">{{ currentLocale() === 'en' ? 'தமிழ்' : 'English' }}</span>
+</button>

@@ -1,0 +1,17 @@
+{
+  "nav.home": "Home",
+  "nav.schemes": "Schemes",
+  "nav.about": "About AVGC",
+  "nav.contact": "Contact",
+  "hero.title": "Tamil Nadu AVGC-XR Portal",
+  "hero.subtitle": "Animation, VFX, Gaming, Comics & Extended Reality \u2014 Government of Tamil Nadu",
+  "hero.cta": "Browse Schemes",
+  "schemes.title": "Available Schemes",
+  "schemes.filter": "Filter by sector",
+  "schemes.apply": "Apply Now",
+  "schemes.deadline": "Last date",
+  "footer.copyright": "\u00a9 2026 ELCOT, Government of Tamil Nadu",
+  "footer.disclaimer": "Designed for W3C WCAG 2.1 AA compliance",
+  "a11y.skipToContent": "Skip to main content",
+  "a11y.toggleLang": "Switch language"
+}

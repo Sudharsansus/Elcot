@@ -1,0 +1,78 @@
+{
+  "name": "admin-portal",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "apps/admin-portal/src",
+  "tags": ["scope:public", "type:app"],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/admin-portal",
+        "index": "apps/admin-portal/src/index.html",
+        "browser": "apps/admin-portal/src/main.ts",
+        "polyfills": ["zone.js"],
+        "tsConfig": "apps/admin-portal/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          "apps/admin-portal/src/favicon.ico",
+          "apps/admin-portal/src/assets/i18n",
+          "apps/admin-portal/src/assets/images",
+          "apps/admin-portal/src/assets/fonts"
+        ],
+        "styles": ["apps/admin-portal/src/styles.scss"],
+        "scripts": [],
+        "server": "apps/admin-portal/src/main.server.ts"
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            { "type": "initial", "maximumWarning": "1mb", "maximumError": "2mb" }
+          ],
+          "outputHashing": "all",
+          "fileReplacements": [
+            { "replace": "apps/admin-portal/src/environments/environment.ts", "with": "apps/admin-portal/src/environments/environment.prod.ts" }
+          ],
+          "optimization": { "scripts": true, "styles": { "minify": true }, "fonts": true }
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@nx/angular:dev-server",
+      "configurations": {
+        "production": { "buildTarget": "admin-portal:build:production" },
+        "development": { "buildTarget": "admin-portal:build:development" }
+      },
+      "defaultConfiguration": "development"
+    },
+    "test": {
+      "executor": "@nx/angular:karma",
+      "options": {
+        "polyfills": ["zone.js", "zone.js/testing"],
+        "tsConfig": "apps/admin-portal/tsconfig.spec.json",
+        "karmaConfig": "apps/admin-portal/karma.conf.js",
+        "inlineStyleLanguage": "scss",
+        "styles": ["apps/admin-portal/src/styles.scss"],
+        "assets": [
+          "apps/admin-portal/src/favicon.ico",
+          "apps/admin-portal/src/assets/i18n",
+          "apps/admin-portal/src/assets/images"
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "options": {
+        "lintFilePatterns": ["apps/admin-portal/**/*.ts", "apps/admin-portal/**/*.html"]
+      }
+    }
+  }
+}

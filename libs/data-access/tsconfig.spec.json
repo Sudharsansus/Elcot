@@ -1,0 +1,1 @@
+{"extends":"./tsconfig.json","compilerOptions":{"outDir":"../../dist/out-tsc/libs/data-access","module":"commonjs","types":["jest","node"]},"include":["**/*.spec.ts","src/test.ts"]}

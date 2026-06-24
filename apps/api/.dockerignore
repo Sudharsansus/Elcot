@@ -1,0 +1,10 @@
+target/
+.git/
+node_modules/
+.env
+*.md
+.vscode/
+.idea/
+dist/
+coverage/
+test-results/

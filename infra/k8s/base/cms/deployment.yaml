@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: avgcxr-cms
+  namespace: avgcxr
+  labels:
+    app: avgcxr-cms
+    component: cms
+    tier: backend
+    part-of: avgcxr-portal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: avgcxr-cms
+  template:
+    metadata:
+      labels:
+        app: avgcxr-cms
+        component: cms
+        tier: backend
+        part-of: avgcxr-portal
+    spec:
+      containers:
+        - name: cms
+          image: elcot/avgcxr-cms:latest
+          ports:
+            - name: http
+              containerPort: 1337
+              protocol: TCP
+          env:
+        - name: NODE_ENV
+          value: "production"
+        - name: HOST
+          value: "0.0.0.0"
+        - name: PORT
+          value: "1337"
+        - name: DATABASE_CLIENT
+          value: "postgres"
+        - name: DATABASE_HOST
+          value: "avgcxr-postgres"
+        - name: DATABASE_PORT
+          value: "5432"
+        - name: DATABASE_NAME
+          value: "avgcxr_strapi"
+        - name: DATABASE_USERNAME
+          value: "avgcxr_strapi"
+        - name: TZ
+          value: "Asia/Kolkata"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /_health
+              port: 1337
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /_health
+              port: 1337
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3

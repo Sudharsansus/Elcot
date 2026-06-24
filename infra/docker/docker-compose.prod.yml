@@ -1,0 +1,215 @@
+# =============================================================================
+# Tamil Nadu AVGC-XR Portal — Production Overrides
+# =============================================================================
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# Production hardening:
+#   - All services: restart=always, resource limits, structured JSON logging with rotation
+#   - Internal services (postgres, redis, rabbitmq, elasticsearch, minio, pgbouncer):
+#     port exposure REMOVED — only accessible via internal Docker network
+#   - Only nginx exposes ports 80/443 to the host
+#   - Healthcheck intervals tightened for faster failover detection
+# =============================================================================
+
+x-production-defaults: &prod-defaults
+  restart: always
+  logging:
+    driver: json-file
+    options:
+      max-size: "100m"
+      max-file: "10"
+      compress: "true"
+
+services:
+  # ---------------------------------------------------------------------------
+  # PostgreSQL — Production: no host port exposure, full resource limits
+  # ---------------------------------------------------------------------------
+  postgres:
+    <<: *prod-defaults
+    ports: []   # Remove port exposure; access only via pgbouncer on internal network
+    command: >
+      postgres
+      -c config_file=/etc/postgresql/postgresql.conf
+      -c shared_buffers=512MB
+      -c effective_cache_size=2GB
+      -c max_connections=200
+      -c wal_level=replica
+    deploy:
+      resources:
+        limits:
+          memory: 2Gi
+          cpus: "2.0"
+        reservations:
+          memory: 1Gi
+          cpus: "1.0"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-avgcxr_user} -d avgcxr_portal -q"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 60s
+
+  # ---------------------------------------------------------------------------
+  # Redis — Production: no host port exposure
+  # ---------------------------------------------------------------------------
+  redis:
+    <<: *prod-defaults
+    ports: []
+    deploy:
+      resources:
+        limits:
+          memory: 512Mi
+          cpus: "1.0"
+        reservations:
+          memory: 256Mi
+          cpus: "0.25"
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-avgcxr_redis_pass}", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+  # ---------------------------------------------------------------------------
+  # RabbitMQ — Production: no host port exposure, management UI via nginx
+  # ---------------------------------------------------------------------------
+  rabbitmq:
+    <<: *prod-defaults
+    ports: []
+    deploy:
+      resources:
+        limits:
+          memory: 2Gi
+          cpus: "2.0"
+        reservations:
+          memory: 1Gi
+          cpus: "0.5"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running", "-q"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+  # ---------------------------------------------------------------------------
+  # Elasticsearch — Production: no host port exposure
+  # ---------------------------------------------------------------------------
+  elasticsearch:
+    <<: *prod-defaults
+    ports: []
+    environment:
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+    deploy:
+      resources:
+        limits:
+          memory: 2Gi
+          cpus: "2.0"
+        reservations:
+          memory: 1Gi
+          cpus: "0.5"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=5s || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  # ---------------------------------------------------------------------------
+  # MinIO — Production: no host port exposure, console via nginx
+  # ---------------------------------------------------------------------------
+  minio:
+    <<: *prod-defaults
+    ports: []
+    deploy:
+      resources:
+        limits:
+          memory: 1Gi
+          cpus: "1.0"
+        reservations:
+          memory: 256Mi
+          cpus: "0.25"
+
+  # ---------------------------------------------------------------------------
+  # PgBouncer — Production: no host port exposure
+  # ---------------------------------------------------------------------------
+  pgbouncer:
+    <<: *prod-defaults
+    ports: []
+
+  # ---------------------------------------------------------------------------
+  # API — Production: resource limits, structured logging
+  # ---------------------------------------------------------------------------
+  api:
+    <<: *prod-defaults
+    environment:
+      SPRING_PROFILES_ACTIVE: docker,prod
+      LOGGING_LEVEL_ROOT: WARN
+      LOGGING_LEVEL_IN_ELCOT_AVGCXR: INFO
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,info,metrics,prometheus
+      MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS: never
+    deploy:
+      resources:
+        limits:
+          memory: 1Gi
+          cpus: "2.0"
+        reservations:
+          memory: 512Mi
+          cpus: "0.5"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+  # ---------------------------------------------------------------------------
+  # Worker — Production: resource limits
+  # ---------------------------------------------------------------------------
+  worker:
+    <<: *prod-defaults
+    environment:
+      SPRING_PROFILES_ACTIVE: docker,prod
+      LOGGING_LEVEL_ROOT: WARN
+      LOGGING_LEVEL_IN_ELCOT_AVGCXR: INFO
+    deploy:
+      resources:
+        limits:
+          memory: 768Mi
+          cpus: "1.0"
+        reservations:
+          memory: 384Mi
+          cpus: "0.25"
+
+  # ---------------------------------------------------------------------------
+  # CMS — Production: resource limits
+  # ---------------------------------------------------------------------------
+  cms:
+    <<: *prod-defaults
+    ports: []
+    environment:
+      NODE_ENV: production
+    deploy:
+      resources:
+        limits:
+          memory: 512Mi
+          cpus: "1.0"
+        reservations:
+          memory: 256Mi
+          cpus: "0.25"
+
+  # ---------------------------------------------------------------------------
+  # Nginx — Production: only service with external ports
+  # ---------------------------------------------------------------------------
+  nginx:
+    <<: *prod-defaults
+    ports:
+      - "80:80"
+      - "443:443"
+    deploy:
+      resources:
+        limits:
+          memory: 512Mi
+          cpus: "1.0"
+        reservations:
+          memory: 128Mi
+          cpus: "0.25"

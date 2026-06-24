@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:flowable="http://flowable.org/bpmn"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+             id="definitions_applicationReview"
+             targetNamespace="http://www.avgcxr.in/bpmn">
+
+    <process id="applicationReview" name="Application Review Process" isExecutable="true">
+        <documentation>Tamil Nadu AVGC-XR Portal — Application Review Workflow.
+            Stages: Submitted → Officer Review → Approval/Rejection → Fund Disbursement.
+        </documentation>
+
+        <startEvent id="startEvent" name="Application Submitted"/>
+        <sequenceFlow id="flow1" sourceRef="startEvent" targetRef="officerReview"/>
+
+        <userTask id="officerReview" name="District Officer Review"
+                  flowable:candidateGroups="DISTRICT_OFFICER">
+            <documentation>Review the application for eligibility, completeness, and authenticity.</documentation>
+        </userTask>
+        <sequenceFlow id="flow2" sourceRef="officerReview" targetRef="reviewDecision"/>
+
+        <exclusiveGateway id="reviewDecision" name="Review Decision"/>
+        <sequenceFlow id="flow_approve" name="Approve" sourceRef="reviewDecision" targetRef="nodalApproval">
+            <conditionExpression xsi:type="tFormalExpression">${action == 'approve'}</conditionExpression>
+        </sequenceFlow>
+        <sequenceFlow id="flow_reject" name="Reject" sourceRef="reviewDecision" targetRef="notifyRejection">
+            <conditionExpression xsi:type="tFormalExpression">${action == 'reject'}</conditionExpression>
+        </sequenceFlow>
+        <sequenceFlow id="flow_request_changes" name="Request Changes" sourceRef="reviewDecision" targetRef="requestChangesTask">
+            <conditionExpression xsi:type="tFormalExpression">${action == 'request_changes'}</conditionExpression>
+        </sequenceFlow>
+
+        <userTask id="requestChangesTask" name="Applicant Resubmits"
+                  flowable:candidateGroups="APPLICANT"/>
+        <sequenceFlow id="flow_resubmit" sourceRef="requestChangesTask" targetRef="officerReview"/>
+
+        <userTask id="nodalApproval" name="Nodal Officer Approval"
+                  flowable:candidateGroups="NODAL_OFFICER">
+            <documentation>Final approval and fund allocation.</documentation>
+        </userTask>
+        <sequenceFlow id="flow3" sourceRef="nodalApproval" targetRef="approvedEnd"/>
+
+        <serviceTask id="notifyRejection" name="Send Rejection Notice"
+                     flowable:class="in.elcot.avgcxr.policy.workflow.delegate.RejectionNotificationDelegate"/>
+        <sequenceFlow id="flow4" sourceRef="notifyRejection" targetRef="rejectedEnd"/>
+
+        <endEvent id="approvedEnd" name="Application Approved">
+            <documentation>Funds will be disbursed per scheme guidelines.</documentation>
+        </endEvent>
+        <endEvent id="rejectedEnd" name="Application Rejected"/>
+
+    </process>
+
+    <bpmndi:BPMNDiagram id="BPMNDiagram_applicationReview">
+        <bpmndi:BPMNPlane bpmnElement="applicationReview" id="BPMNPlane_applicationReview"/>
+    </bpmndi:BPMNDiagram>
+
+</definitions>

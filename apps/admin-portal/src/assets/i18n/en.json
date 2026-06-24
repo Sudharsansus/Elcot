@@ -1,0 +1,13 @@
+{
+  "dashboard.title": "Admin Dashboard",
+  "dashboard.pending": "Pending Reviews",
+  "dashboard.approved": "Approved Today",
+  "dashboard.stats": "Statistics",
+  "applications.title": "Application Management",
+  "applications.review": "Review Application",
+  "users.title": "User Management",
+  "users.addUser": "Add User",
+  "workflow.title": "Workflow Manager",
+  "workflow.pending": "Pending Tasks",
+  "a11y.skipToContent": "Skip to main content"
+}

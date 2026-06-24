@@ -1,0 +1,13 @@
+<div data-testid="workflow-manager"><h1>Workflow Manager</h1>
+  <div class="task-list">
+    @for (task of pendingTasks(); track task.id) {
+      <avgc-card [title]="task.name" [subtitle]="task.processName">
+        <div class="task-actions">
+          <avgc-button variant="success" size="sm" (clicked)="completeTask(task.id, 'APPROVE')">Approve</avgc-button>
+          <avgc-button variant="danger" size="sm" (clicked)="completeTask(task.id, 'REJECT')">Reject</avgc-button>
+          <avgc-button variant="outline" size="sm" (clicked)="completeTask(task.id, 'REQUEST_INFO')">Request Info</avgc-button>
+        </div>
+      </avgc-card>
+    } @empty { <avgc-empty-state title="No pending tasks" description="All tasks have been processed."></avgc-empty-state> }
+  </div>
+</div>

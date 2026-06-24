@@ -1,0 +1,11 @@
+<div class="profile-page" data-testid="profile">
+  <h1>My Profile</h1>
+  <form (ngSubmit)="saveProfile()" class="profile-form">
+    <avgc-input label="Full Name" [(ngModel)]="profileForm.fullName"></avgc-input>
+    <avgc-input label="Full Name (Tamil)" [(ngModel)]="profileForm.fullNameTamil"></avgc-input>
+    <avgc-input label="Email" type="email" [(ngModel)]="profileForm.email"></avgc-input>
+    <avgc-input label="Mobile" type="tel" [(ngModel)]="profileForm.mobile"></avgc-input>
+    <avgc-select label="District" [options]="districts"></avgc-select>
+    <avgc-button variant="primary" type="submit" [loading]="saving">Save Changes</avgc-button>
+  </form>
+</div>

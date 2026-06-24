@@ -1,0 +1,38 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: avgc-xr-worker
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:avgcxr_rmq_user}
+    password: ${RABBITMQ_PASS:avgcxr_rmq_password}
+    virtual-host: ${RABBITMQ_VHOST:/avgcxr}
+    listener:
+      simple:
+        prefetch: 10
+        default-requeue-rejected: false
+    queues:
+      avgc.application.submitted: true
+      avgc.audit.created: true
+      avgc.search.index: true
+      avgc.notification.dispatch: true
+  mail:
+    host: ${SMTP_HOST:smtp.gmail.com}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USER:}
+    password: ${SMTP_PASS:}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+elasticsearch:
+  uris: ${ES_URIS:http://localhost:9200}
+
+logging:
+  level:
+    in.elcot.avgcxr.worker: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

@@ -1,0 +1,10 @@
+spring:
+  jpa:
+    show-sql: false
+  flyway:
+    clean-disabled: true
+
+logging:
+  level:
+    in.elcot.avgcxr: INFO
+    org.springframework: WARN

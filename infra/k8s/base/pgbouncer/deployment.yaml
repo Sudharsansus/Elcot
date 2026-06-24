@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: avgcxr-pgbouncer
+  namespace: avgcxr
+  labels:
+    app: avgcxr-pgbouncer
+    component: pgbouncer
+    tier: backend
+    part-of: avgcxr-portal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: avgcxr-pgbouncer
+  template:
+    metadata:
+      labels:
+        app: avgcxr-pgbouncer
+        component: pgbouncer
+        tier: backend
+        part-of: avgcxr-portal
+    spec:
+      containers:
+        - name: pgbouncer
+          image: edoburu/pgbouncer:latest
+          ports:
+            - name: tcp-pgb
+              containerPort: 6432
+              protocol: TCP
+          env:
+        - name: TZ
+          value: "Asia/Kolkata"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          livenessProbe:
+            tcpSocket:
+              port: 6432
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 6432
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3

@@ -1,0 +1,12 @@
+.avgc-drawer__backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 1040; display: flex; justify-content: flex-end; animation: fadeIn 0.2s ease; }
+.avgc-drawer { background: #FFFFFF; height: 100%; display: flex; flex-direction: column; box-shadow: -4px 0 16px rgba(0,0,0,0.1); animation: slideIn 0.25s cubic-bezier(0.4,0,0.2,1); }
+.avgc-drawer--right { justify-self: flex-end; }
+.avgc-drawer__header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid #E2E8F0; }
+.avgc-drawer__title { margin: 0; font-size: 1.125rem; font-weight: 600; color: #0F172A; }
+.avgc-drawer__close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748B; padding: 4px 8px; border-radius: 4px; &:hover { background: #F1F5F9; color: #0F172A; } }
+.avgc-drawer__body { flex: 1; overflow-y: auto; padding: 24px; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+@media (prefers-reduced-motion: reduce) { .avgc-drawer, .avgc-drawer__backdrop { animation: none; } }

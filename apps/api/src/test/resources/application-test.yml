@@ -1,0 +1,30 @@
+# Test profile configuration
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/avgc_xr_test
+    username: avgc_test
+    password: avgc_test
+  flyway:
+    enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  rabbitmq:
+    host: localhost
+    port: 5672
+  elasticsearch:
+    uris: http://localhost:9200
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+minio:
+  endpoint: http://localhost:9000
+  access-key: minioadmin
+  secret-key: minioadmin
+  bucket: avgc-xr-test
+
+logging:
+  level:
+    in.elcot.avgcxr: DEBUG

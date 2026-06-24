@@ -1,0 +1,56 @@
+
+.avgc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 150ms ease,
+              border-color 150ms ease,
+              box-shadow 150ms ease;
+  white-space: nowrap;
+  text-decoration: none;
+  line-height: 1;
+
+  &:focus-visible {
+    outline: 3px solid #5E92F3;
+    outline-offset: 2px;
+  }
+
+  &--sm { padding: 6px 14px; font-size: 0.8125rem; min-height: 32px; }
+  &--md { padding: 10px 20px; font-size: 0.875rem; min-height: 40px; }
+  &--lg { padding: 14px 28px; font-size: 1rem; min-height: 48px; }
+
+  &--primary { background-color: #0D47A1; color: #FFFFFF; &:hover:not(:disabled) { background-color: #0B3D8E; box-shadow: 0 2px 8px rgba(13,71,161,0.3); } }
+  &--secondary { background-color: #FF6F00; color: #FFFFFF; &:hover:not(:disabled) { background-color: #EA580C; } }
+  &--outline { background-color: transparent; border-color: #0D47A1; color: #0D47A1; &:hover:not(:disabled) { background-color: #EFF6FF; } }
+  &--ghost { background-color: transparent; color: #0D47A1; &:hover:not(:disabled) { background-color: #EFF6FF; } }
+  &--danger { background-color: #DC2626; color: #FFFFFF; &:hover:not(:disabled) { background-color: #B91C1C; } }
+  &--success { background-color: #15803D; color: #FFFFFF; &:hover:not(:disabled) { background-color: #166534; } }
+
+  &--full-width { width: 100%; }
+  &--disabled { opacity: 0.5; cursor: not-allowed; }
+  &--loading { cursor: wait; position: relative; color: transparent; }
+
+  &__spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #FFFFFF;
+    border-radius: 50%;
+    animation: avgc-spin 0.6s linear infinite;
+    position: absolute;
+  }
+  &__label { opacity: 0; }
+  &--loading &__label { opacity: 1; padding-left: 24px; }
+}
+
+@keyframes avgc-spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .avgc-btn { transition: none; }
+  .avgc-btn__spinner { animation-duration: 1.5s; }
+}

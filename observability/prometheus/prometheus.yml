@@ -1,0 +1,145 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    environment: production
+    region: chennai
+    service: avgc-xr-portal
+
+rule_files:
+  - /etc/prometheus/alert-rules.yml
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
+      timeout: 10s
+
+scrape_configs:
+  # ──────────────────────────────────────────────
+  # Spring Boot API (Micrometer / Actuator)
+  # ──────────────────────────────────────────────
+  - job_name: "api"
+    metrics_path: /actuator/prometheus
+    scrape_interval: 10s
+    scrape_timeout: 5s
+    static_configs:
+      - targets: ["api:8080"]
+        labels:
+          service: api
+          component: backend
+
+  # ──────────────────────────────────────────────
+  # Background Worker (Micrometer / Actuator)
+  # ──────────────────────────────────────────────
+  - job_name: "worker"
+    metrics_path: /actuator/prometheus
+    scrape_interval: 15s
+    scrape_timeout: 5s
+    static_configs:
+      - targets: ["worker:8081"]
+        labels:
+          service: worker
+          component: backend
+
+  # ──────────────────────────────────────────────
+  # Strapi CMS
+  # ──────────────────────────────────────────────
+  - job_name: "cms"
+    scrape_interval: 30s
+    scrape_timeout: 5s
+    static_configs:
+      - targets: ["cms:1337"]
+        labels:
+          service: cms
+          component: headless-cms
+
+  # ──────────────────────────────────────────────
+  # PostgreSQL Exporter
+  # ──────────────────────────────────────────────
+  - job_name: "postgres"
+    scrape_interval: 15s
+    scrape_timeout: 5s
+    static_configs:
+      - targets: ["postgres_exporter:9187"]
+        labels:
+          service: postgres
+          component: database
+
+  # ──────────────────────────────────────────────
+  # Redis Exporter
+  # ──────────────────────────────────────────────
+  - job_name: "redis"
+    scrape_interval: 15s
+    scrape_timeout: 5s
+    static_configs:
+      - targets: ["redis_exporter:9121"]
+        labels:
+          service: redis
+          component: cache
+
+  # ──────────────────────────────────────────────
+  # RabbitMQ (Management API /api/metrics)
+  # ──────────────────────────────────────────────
+  - job_name: "rabbitmq"
+    scrape_interval: 15s
+    metrics_path: /api/metrics
+    scrape_timeout: 5s
+    basic_auth:
+      username: guest
+      password: guest
+    static_configs:
+      - targets: ["rabbitmq:15672"]
+        labels:
+          service: rabbitmq
+          component: message-broker
+
+  # ──────────────────────────────────────────────
+  # Elasticsearch Exporter
+  # ──────────────────────────────────────────────
+  - job_name: "elasticsearch"
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    static_configs:
+      - targets: ["es_exporter:9114"]
+        labels:
+          service: elasticsearch
+          component: search-engine
+
+  # ──────────────────────────────────────────────
+  # Node Exporter (host metrics)
+  # ──────────────────────────────────────────────
+  - job_name: "node_exporter"
+    scrape_interval: 15s
+    scrape_timeout: 5s
+    static_configs:
+      - targets: ["node-exporter:9100"]
+        labels:
+          service: host
+          component: infrastructure
+
+  # ──────────────────────────────────────────────
+  # cAdvisor (container metrics)
+  # ──────────────────────────────────────────────
+  - job_name: "cadvisor"
+    scrape_interval: 15s
+    scrape_timeout: 5s
+    static_configs:
+      - targets: ["cadvisor:8080"]
+        labels:
+          service: containers
+          component: infrastructure
+
+  # ──────────────────────────────────────────────
+  # MinIO (S3-compatible object storage)
+  # ──────────────────────────────────────────────
+  - job_name: "minio"
+    scrape_interval: 30s
+    scrape_timeout: 5s
+    metrics_path: /minio/v2/metrics/cluster
+    static_configs:
+      - targets: ["minio:9000"]
+        labels:
+          service: minio
+          component: object-storage

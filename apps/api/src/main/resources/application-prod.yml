@@ -1,0 +1,20 @@
+server:
+  shutdown: graceful
+
+spring:
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        generate_statistics: false
+
+logging:
+  level:
+    in.elcot.avgcxr: INFO
+    org.springframework: WARN
+    root: WARN
+
+management:
+  endpoint:
+    health:
+      show-details: never

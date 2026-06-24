@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc/public-portal",
+    "types": []
+  },
+  "files": ["src/main.ts", "src/main.server.ts"],
+  "include": ["src/**/*.d.ts", "src/**/*.ts"],
+  "exclude": ["src/**/*.spec.ts", "src/test.ts"]
+}

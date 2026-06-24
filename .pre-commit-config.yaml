@@ -1,0 +1,28 @@
+repos:
+  - repo: https://github.com/diffplug/spotless
+    rev: 2.43.0
+    hooks:
+      - id: spotless-java
+        args: [--, apply]
+        files: \.(java)$
+
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v8.57.0
+    hooks:
+      - id: eslint
+        files: \.(ts|tsx)$
+        types: [file]
+        args: [--fix]
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.3.3
+    hooks:
+      - id: prettier
+        files: \.(json|yaml|yml|md|css|scss|html)$
+        args: [--write]
+
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.12.0
+    hooks:
+      - id: hadolint-docker
+        files: Dockerfile.*

@@ -1,0 +1,7 @@
+<div class="avgc-empty-state" role="status">
+  <div class="avgc-empty-state__icon" aria-hidden="true"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.5"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg></div>
+  <h3 class="avgc-empty-state__title">{{ title() }}</h3>
+  @if (description()) { <p class="avgc-empty-state__desc">{{ description() }}</p> }
+  <ng-content></ng-content>
+  @if (actionLabel()) { <button class="avgc-empty-state__action" (click)="actionClicked.emit()">{{ actionLabel() }}</button> }
+</div>

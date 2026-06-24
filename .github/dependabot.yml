@@ -1,0 +1,23 @@
+version: 2
+updates:
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule: { interval: "weekly", day: "monday" }
+    open-pull-requests-limit: 10
+    reviewers: ["avgcxr/backend-team"]
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule: { interval: "weekly", day: "monday" }
+    open-pull-requests-limit: 10
+    reviewers: ["avgcxr/frontend-team"]
+
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule: { interval: "weekly", day: "monday" }
+    open-pull-requests-limit: 5
+    reviewers: ["avgcxr/devops-team"]
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule: { interval: "monthly" }

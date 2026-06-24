@@ -1,0 +1,1 @@
+{"extends":"./tsconfig.json","compilerOptions":{"outDir":"../../dist/out-tsc/libs/i18n","declaration":true,"declarationMap":true,"inlineSources":true,"types":[]},"include":["**/*.ts"],"exclude":["**/*.spec.ts","src/test.ts"]}

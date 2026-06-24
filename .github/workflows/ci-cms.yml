@@ -1,0 +1,24 @@
+name: CI - CMS
+
+on:
+  push:
+    branches: [main, develop]
+    paths: ['apps/cms/**']
+  pull_request:
+    branches: [main]
+    paths: ['apps/cms/**']
+
+jobs:
+  cms-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.18'
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - run: pnpm install --frozen-lockfile --filter cms...
+      - run: cd apps/cms && pnpm lint
+      - run: cd apps/cms && pnpm test

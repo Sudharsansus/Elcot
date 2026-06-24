@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: avgcxr-api
+  namespace: avgcxr
+  labels:
+    app: avgcxr-api
+    component: api
+    tier: backend
+    part-of: avgcxr-portal
+spec:
+  type: ClusterIP
+  ports:
+    - name: api
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: avgcxr-api

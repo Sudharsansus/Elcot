@@ -1,0 +1,1 @@
+module.exports = [{ name: 'strapi::logger', config: { level: process.env.LOG_LEVEL || 'info', exposeInContext: false } }, { name: 'strapi::errors', config: { shouldRedirectToAdmin: true } }, { name: 'strapi::security', config: { cors: { enabled: true, headers: ['*'], origin: ['http://localhost:4200', 'http://localhost:4300', 'http://localhost:4400'] } } }];

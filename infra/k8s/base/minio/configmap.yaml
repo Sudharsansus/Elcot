@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: avgcxr-minio-config
+  namespace: avgcxr
+  labels:
+    app: avgcxr-minio
+    component: minio
+    part-of: avgcxr-portal
+data:
+  init-buckets.sh: |
+    #!/bin/bash
+    mc alias set local http://localhost:9000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD
+    mc mb --ignore-existing local/avgcxr-documents
+    mc mb --ignore-existing local/avgcxr-media
+    mc mb --ignore-existing local/avgcxr-exports
+    mc mb --ignore-existing local/avgcxr-backups
+    mc mb --ignore-existing local/avgcxr-profiles
+    mc anonymous set none local/avgcxr-documents
+    mc anonymous set download local/avgcxr-media
+    mc anonymous set none local/avgcxr-exports

@@ -1,0 +1,133 @@
+# =============================================================================
+# Tamil Nadu AVGC-XR Portal — Development Overrides
+# =============================================================================
+# Usage: docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # API — Hot-reload via volume mount for local development
+  # ---------------------------------------------------------------------------
+  api:
+    build:
+      target: development
+    volumes:
+      - ../../apps/api/src:/app/src:ro
+      - ../../apps/api/pom.xml:/app/pom.xml:ro
+      - api_m2_cache:/root/.m2
+    environment:
+      SPRING_PROFILES_ACTIVE: docker,dev
+      LOGGING_LEVEL_ROOT: DEBUG
+      LOGGING_LEVEL_IN_ELCOT_AVGCXR: DEBUG
+      SPRING_DEVTOOLS_RESTART_ENABLED: "true"
+      SPRING_DEVTOOLS_LIVERELOAD_ENABLED: "true"
+      # Expose Spring Boot debug/actuator endpoints
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "*"
+      MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS: always
+    ports:
+      - "8080:8080"
+      - "8000:8000"   # Java remote debugging
+    # No resource limits in development
+    deploy:
+      resources: {}
+
+  # ---------------------------------------------------------------------------
+  # Worker — Also mount source for debugging
+  # ---------------------------------------------------------------------------
+  worker:
+    build:
+      target: development
+    volumes:
+      - ../../apps/worker/src:/app/src:ro
+      - api_m2_cache:/root/.m2
+    environment:
+      SPRING_PROFILES_ACTIVE: docker,dev
+      LOGGING_LEVEL_ROOT: DEBUG
+      LOGGING_LEVEL_IN_ELCOT_AVGCXR: DEBUG
+    ports:
+      - "8001:8000"   # Java remote debugging for worker
+    deploy:
+      resources: {}
+
+  # ---------------------------------------------------------------------------
+  # CMS — Mount source for Strapi development with watch mode
+  # ---------------------------------------------------------------------------
+  cms:
+    build:
+      target: development
+    volumes:
+      - ../../apps/cms/src:/app/src:ro
+      - ../../apps/cms/config:/app/config:ro
+    environment:
+      NODE_ENV: development
+    ports:
+      - "1337:1337"
+      - "9229:9229"   # Node.js inspector
+    deploy:
+      resources: {}
+
+  # ---------------------------------------------------------------------------
+  # PostgreSQL — Dev gets more verbose logging, lower memory settings
+  # ---------------------------------------------------------------------------
+  postgres:
+    environment:
+      POSTGRES_DB: avgcxr_portal
+    command: >
+      postgres
+      -c config_file=/etc/postgresql/postgresql.conf
+      -c log_min_duration_statement=100
+      -c log_statement=all
+    ports:
+      - "5432:5432"
+
+  # ---------------------------------------------------------------------------
+  # Redis — Dev: allow FLUSHALL, disable persistence for speed
+  # ---------------------------------------------------------------------------
+  redis:
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    command: redis-server /usr/local/etc/redis/redis.conf --save "" --appendonly no
+
+  # ---------------------------------------------------------------------------
+  # RabbitMQ — Expose management UI widely in dev
+  # ---------------------------------------------------------------------------
+  rabbitmq:
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  # ---------------------------------------------------------------------------
+  # Elasticsearch — Lower heap for dev machines
+  # ---------------------------------------------------------------------------
+  elasticsearch:
+    environment:
+      ES_JAVA_OPTS: "-Xms256m -Xmx256m"
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+    ports:
+      - "9200:9200"
+
+  # ---------------------------------------------------------------------------
+  # MinIO — Full access in dev
+  # ---------------------------------------------------------------------------
+  minio:
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+
+  # ---------------------------------------------------------------------------
+  # Nginx — Skip SSL in dev, verbose error pages
+  # ---------------------------------------------------------------------------
+  nginx:
+    volumes:
+      - ../nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../nginx/conf.d:/etc/nginx/conf.d:ro
+      - ../nginx/snippets:/etc/nginx/snippets:ro
+      - frontend_dist:/var/www/html:ro
+    ports:
+      - "80:80"
+      - "443:443"
+
+volumes:
+  api_m2_cache:
+    name: avgcxr-api-m2-cache

@@ -1,0 +1,17 @@
+* text=auto eol=lf
+*.java text diff=java
+*.ts text diff=typescript
+*.json text diff=json
+*.yml text diff=yaml
+*.yaml text diff=yaml
+*.md text diff=markdown
+*.sql text diff=sql
+*.sh text eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.jar binary
+*.zip binary

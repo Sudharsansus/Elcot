@@ -1,0 +1,22 @@
+# Code ownership for AVGC-XR Portal
+# Each line is a pattern followed by @team or @user
+
+* @avgcxr/core-team
+
+# Backend
+apps/api/ @avgcxr/backend-team
+apps/worker/ @avgcxr/backend-team
+packages/ @avgcxr/backend-team
+
+# Frontend
+apps/public-portal/ @avgcxr/frontend-team
+apps/applicant-portal/ @avgcxr/frontend-team
+apps/admin-portal/ @avgcxr/frontend-team
+libs/ @avgcxr/frontend-team
+
+# Infrastructure
+infra/ @avgcxr/devops-team
+observability/ @avgcxr/devops-team
+
+# Security
+**/security/ @avgcxr/security-team

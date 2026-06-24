@@ -1,0 +1,15 @@
+.avgc-input { display: flex; flex-direction: column; gap: 4px; }
+.avgc-input__label { font-size: 0.875rem; font-weight: 500; color: #334155; display: flex; align-items: center; gap: 4px; }
+.avgc-input__label-ta { font-size: 0.75rem; color: #94A3B8; margin-left: 4px; }
+.avgc-input__required { color: #DC2626; }
+.avgc-input__wrapper { position: relative; display: flex; align-items: center; }
+.avgc-input__icon { position: absolute; left: 12px; color: #94A3B8; font-size: 1rem; pointer-events: none; }
+.avgc-input__field { width: 100%; padding: 10px 14px; border: 1.5px solid #CBD5E1; border-radius: 6px; font-size: 0.9375rem; font-family: inherit; color: #0F172A; background: #FFFFFF; transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  &:focus { outline: none; border-color: #0D47A1; box-shadow: 0 0 0 3px rgba(13,71,161,0.1); }
+  &:disabled { background: #F1F5F9; color: #94A3B8; cursor: not-allowed; }
+  &::placeholder { color: #94A3B8; }
+}
+.avgc-input--error .avgc-input__field { border-color: #DC2626; &:focus { box-shadow: 0 0 0 3px rgba(220,38,38,0.1); } }
+.avgc-input__error { font-size: 0.75rem; color: #DC2626; }
+.avgc-input__hint { font-size: 0.75rem; color: #64748B; }
+.has-icon .avgc-input__field { padding-left: 38px; }

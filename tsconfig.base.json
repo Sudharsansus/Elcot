@@ -1,0 +1,50 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "baseUrl": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "bundler",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "ES2022",
+    "lib": ["ES2022", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "paths": {
+      "@avgc-xr/ui-kit": ["libs/ui-kit/src/index.ts"],
+      "@avgc-xr/design-system": ["libs/design-system/src/index.ts"],
+      "@avgc-xr/data-access": ["libs/data-access/src/index.ts"],
+      "@avgc-xr/util": ["libs/util/src/index.ts"],
+      "@avgc-xr/api-contracts": ["libs/api-contracts/src/index.ts"],
+      "@avgc-xr/auth": ["libs/auth/src/index.ts"],
+      "@avgc-xr/i18n": ["libs/i18n/src/index.ts"],
+      "@avgc-xr/testing": ["libs/testing/src/index.ts"],
+      "@avgcxr/ui-kit": ["libs/ui-kit/src/index.ts"],
+      "@avgcxr/design-system": ["libs/design-system/src/index.ts"],
+      "@avgcxr/data-access": ["libs/data-access/src/index.ts"],
+      "@avgcxr/util": ["libs/util/src/index.ts"],
+      "@avgcxr/api-contracts": ["libs/api-contracts/src/index.ts"],
+      "@avgcxr/auth": ["libs/auth/src/index.ts"],
+      "@avgcxr/i18n": ["libs/i18n/src/index.ts"],
+      "@avgcxr/testing": ["libs/testing/src/index.ts"]
+    }
+  },
+  "angularCompilerOptions": {
+    "strictTemplates": true,
+    "strictInjectionParameters": true,
+    "enableI18nLegacyMessageIdFormat": false
+  },
+  "exclude": ["node_modules", "tmp"]
+}

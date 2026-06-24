@@ -1,0 +1,19 @@
+{
+  "dashboard.title": "My Dashboard",
+  "dashboard.applications": "My Applications",
+  "dashboard.profile": "Profile",
+  "applications.title": "My Applications",
+  "applications.apply": "Apply for Scheme",
+  "applications.status.DRAFT": "Draft",
+  "applications.status.SUBMITTED": "Submitted",
+  "applications.status.APPROVED": "Approved",
+  "applications.status.REJECTED": "Rejected",
+  "profile.title": "My Profile",
+  "profile.personal": "Personal Details",
+  "profile.business": "Business Details",
+  "profile.save": "Save Changes",
+  "auth.login": "Login",
+  "auth.register": "Register",
+  "auth.logout": "Logout",
+  "a11y.skipToContent": "Skip to main content"
+}

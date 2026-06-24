@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: avgcxr-api
+  namespace: avgcxr
+  labels:
+    app: avgcxr-api
+    component: api
+    tier: backend
+    part-of: avgcxr-portal
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: avgcxr-api
+  template:
+    metadata:
+      labels:
+        app: avgcxr-api
+        component: api
+        tier: backend
+        part-of: avgcxr-portal
+    spec:
+      containers:
+        - name: api
+          image: elcot/avgcxr-api:latest
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "kubernetes"
+        - name: SERVER_PORT
+          value: "8080"
+        - name: JAVA_OPTS
+          value: "-XX:+UseG1GC -XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/./urandom"
+        - name: TZ
+          value: "Asia/Kolkata"
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: 2000m
+              memory: 2Gi
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3

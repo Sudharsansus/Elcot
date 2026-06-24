@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:flowable="http://flowable.org/bpmn"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+             id="definitions_schemeApproval"
+             targetNamespace="http://www.avgcxr.in/bpmn">
+
+    <process id="schemeApproval" name="Scheme Approval Process" isExecutable="true">
+        <documentation>Tamil Nadu AVGC-XR Portal — Scheme Lifecycle Workflow.
+            Stages: Draft → Admin Review → Published / Rejected → Retired.
+        </documentation>
+
+        <startEvent id="startEvent" name="Scheme Draft Created"/>
+        <sequenceFlow id="flow1" sourceRef="startEvent" targetRef="adminReview"/>
+
+        <userTask id="adminReview" name="Admin Review"
+                  flowable:candidateGroups="ADMIN">
+            <documentation>Verify scheme details, eligibility criteria, fund allocation.</documentation>
+        </userTask>
+        <sequenceFlow id="flow2" sourceRef="adminReview" targetRef="decisionGateway"/>
+
+        <exclusiveGateway id="decisionGateway" name="Decision"/>
+        <sequenceFlow id="flow_publish" name="Publish" sourceRef="decisionGateway" targetRef="endPublished">
+            <conditionExpression xsi:type="tFormalExpression">${action == 'publish'}</conditionExpression>
+        </sequenceFlow>
+        <sequenceFlow id="flow_reject" name="Reject" sourceRef="decisionGateway" targetRef="endRejected">
+            <conditionExpression xsi:type="tFormalExpression">${action == 'reject'}</conditionExpression>
+        </sequenceFlow>
+        <sequenceFlow id="flow_revise" name="Revise" sourceRef="decisionGateway" targetRef="adminReview">
+            <conditionExpression xsi:type="tFormalExpression">${action == 'revise'}</conditionExpression>
+        </sequenceFlow>
+
+        <endEvent id="endPublished" name="Scheme Published"/>
+        <endEvent id="endRejected" name="Scheme Rejected"/>
+    </process>
+
+    <bpmndi:BPMNDiagram id="BPMNDiagram_schemeApproval">
+        <bpmndi:BPMNPlane bpmnElement="schemeApproval" id="BPMNPlane_schemeApproval"/>
+    </bpmndi:BPMNDiagram>
+
+</definitions>

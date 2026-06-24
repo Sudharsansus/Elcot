@@ -1,0 +1,1 @@
+{"extends":["../../.eslintrc.json"],"ignorePatterns":["!**/*"],"overrides":[{"files":["*.ts"],"rules":{"@angular-eslint/directive-selector":["true","attribute","avgc","camelCase"],"@angular-eslint/component-selector":["true","element","avgc","kebab-case"]}}]}

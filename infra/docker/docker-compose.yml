@@ -1,0 +1,146 @@
+version: "3.8"
+
+x-common-env: &common-env
+  POSTGRES_DB: avgcxr_portal
+  POSTGRES_USER: avgcxr_user
+  POSTGRES_PASSWORD: ${DB_PASSWORD:-avgcxr_user}
+  REDIS_PASSWORD: ${REDIS_PASSWORD:-redis123}
+  RABBITMQ_DEFAULT_USER: avgcxr_rmq_user
+  RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-avgcxr_rmq_password}
+
+services:
+  # ─── PostgreSQL 16 ──────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: avgcxr-postgres
+    restart: unless-stopped
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    environment:
+      <<: *common-env
+      POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/initdb.d:/docker-entrypoint-initdb.d:ro
+      - ./postgres/conf.d:/etc/postgresql/conf.d:ro
+    shm_size: 256m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U avgcxr_user -d avgcxr_portal"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks: [backend]
+
+  # ─── PgBouncer ─────────────────────────────────────────
+  pgbouncer:
+    image: edoburu/pgbouncer:latest
+    container_name: avgcxr-pgbouncer
+    restart: unless-stopped
+    ports:
+      - "${PGBOUNCER_PORT:-6432}:6432"
+    volumes:
+      - ../pgbouncer/pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini:ro
+      - ../pgbouncer/userlist.txt:/etc/pgbouncer/userlist.txt:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [backend]
+
+  # ─── Redis 7 ───────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: avgcxr-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    command: redis-server /usr/local/etc/redis/redis.conf --requirepass ${REDIS_PASSWORD:-redis123}
+    volumes:
+      - redis_data:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-redis123}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [backend]
+
+  # ─── RabbitMQ 3.13 ──────────────────────────────────────
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: avgcxr-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "${RABBITMQ_PORT:-5672}:5672"
+      - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: avgcxr_rmq_user
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-avgcxr_rmq_password}
+      RABBITMQ_ERLANG_COOKIE: avgcxr_cookie
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins:ro
+      - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks: [backend]
+
+  # ─── Elasticsearch 8 ────────────────────────────────────
+  elasticsearch:
+    image: elasticsearch:8.13.0
+    container_name: avgcxr-elasticsearch
+    restart: unless-stopped
+    ports:
+      - "${ELASTICSEARCH_PORT:-9200}:9200"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.monitoring.enabled=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    networks: [backend]
+
+  # ─── MinIO ──────────────────────────────────────────────
+  minio:
+    image: minio/minio:latest
+    container_name: avgcxr-minio
+    restart: unless-stopped
+    ports:
+      - "${MINIO_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    networks: [backend]
+
+volumes:
+  postgres_data:
+  redis_data:
+  rabbitmq_data:
+  elasticsearch_data:
+  minio_data:
+
+networks:
+  frontend:
+  backend:

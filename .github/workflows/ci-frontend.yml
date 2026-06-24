@@ -1,0 +1,58 @@
+name: CI - Frontend
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'apps/public-portal/**'
+      - 'apps/applicant-portal/**'
+      - 'apps/admin-portal/**'
+      - 'libs/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'tsconfig.base.json'
+      - 'nx.json'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apps/**-portal/**'
+      - 'libs/**'
+      - 'package.json'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.18'
+          cache: 'pnpm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Nx Affected Lint
+        run: npx nx affected --target=lint --parallel=3
+
+      - name: Run Nx Affected Build
+        run: npx nx affected --target=build --parallel=3
+
+      - name: Run Nx Affected Test
+        run: npx nx affected --target=test --parallel=2 --ci --code-coverage
+
+      - name: Upload Coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: '**/coverage/'
+          retention-days: 7

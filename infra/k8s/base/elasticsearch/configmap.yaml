@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: avgcxr-elasticsearch-config
+  namespace: avgcxr
+  labels:
+    app: avgcxr-elasticsearch
+    component: elasticsearch
+    part-of: avgcxr-portal
+data:
+  elasticsearch.yml: |
+    cluster.name: avgcxr-elasticsearch
+    network.host: 0.0.0.0
+    http.port: 9200
+    discovery.type: single-node
+    xpack.security.enabled: false
+    xpack.license.self_generated.type: basic
+    indices.memory.index_buffer_size: 30%
+    thread_pool.search.size: 5
+    thread_pool.write.size: 3

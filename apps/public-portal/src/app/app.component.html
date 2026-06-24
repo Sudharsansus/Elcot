@@ -1,0 +1,90 @@
+<header class="app-header">
+  <div class="container header-content">
+    <a routerLink="/" class="logo-link" aria-label="AVGC-XR Home">
+      <div class="logo">
+        <span class="logo-emblem">TN</span>
+        <div class="logo-text">
+          <span class="logo-title">AVGC-XR</span>
+          <span class="logo-subtitle" *ngIf="isTamil()">தமிழ்நாடு</span>
+          <span class="logo-subtitle" *ngIf="!isTamil()">Tamil Nadu</span>
+        </div>
+      </div>
+    </a>
+
+    <nav class="main-nav" aria-label="Main navigation">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+        {{ isTamil() ? 'முகப்பு' : 'Home' }}
+      </a>
+      <a routerLink="/schemes" routerLinkActive="active">
+        {{ isTamil() ? 'திட்டங்கள்' : 'Schemes' }}
+      </a>
+      <a routerLink="/companies" routerLinkActive="active">
+        {{ isTamil() ? 'நிறுவனங்கள்' : 'Companies' }}
+      </a>
+      <a routerLink="/talent" routerLinkActive="active">
+        {{ isTamil() ? 'திறமை' : 'Talent' }}
+      </a>
+      <a routerLink="/events" routerLinkActive="active">
+        {{ isTamil() ? 'நிகழ்வுகள்' : 'Events' }}
+      </a>
+      <a routerLink="/about" routerLinkActive="active">
+        {{ isTamil() ? 'பற்றி' : 'About' }}
+      </a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="lang-toggle" (click)="toggleLanguage()" aria-label="Toggle language">
+        {{ isTamil() ? 'English' : 'தமிழ்' }}
+      </button>
+      <a routerLink="/auth/login" class="btn-login">
+        {{ isTamil() ? 'உள்நுழை' : 'Login' }}
+      </a>
+    </div>
+
+    <button class="mobile-menu-btn" aria-label="Toggle menu" (click)="toggleMobileMenu()">
+      <span class="material-icons">menu</span>
+    </button>
+  </div>
+</header>
+
+<main class="app-main">
+  <div class="page-enter">
+    <router-outlet />
+  </div>
+</main>
+
+<footer class="app-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-section">
+        <h4>AVGC-XR Portal</h4>
+        <p *ngIf="isTamil()">தமிழ்நாடு அரசின் அனிமேஷன், காட்சி விளைவுகள், கேமிங், காமிக்ஸ் மற்றும் நீட்டிக்கப்பட்ட யதார்த்தம் திட்டங்கள்</p>
+        <p *ngIf="!isTamil()">Tamil Nadu Government Schemes for Animation, VFX, Gaming, Comics & Extended Reality</p>
+      </div>
+      <div class="footer-section">
+        <h4>{{ isTamil() ? 'விரைவு இணைப்புகள்' : 'Quick Links' }}</h4>
+        <ul>
+          <li><a routerLink="/schemes">{{ isTamil() ? 'திட்டங்கள்' : 'Schemes' }}</a></li>
+          <li><a routerLink="/companies">{{ isTamil() ? 'நிறுவனங்கள்' : 'Companies' }}</a></li>
+          <li><a routerLink="/resources">{{ isTamil() ? 'வளங்கள்' : 'Resources' }}</a></li>
+          <li><a routerLink="/about">{{ isTamil() ? 'தொடர்பு' : 'Contact' }}</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>{{ isTamil() ? 'அரசு இணைப்புகள்' : 'Government' }}</h4>
+        <ul>
+          <li><a href="https://www.tn.gov.in" target="_blank" rel="noopener">tn.gov.in</a></li>
+          <li><a href="https://www.elcot.in" target="_blank" rel="noopener">ELCOT</a></li>
+          <li><a href="https://www.tidco.com" target="_blank" rel="noopener">TIDCO</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; {{ currentYear }} ELCOT — Electronics Corporation of Tamil Nadu Limited. All rights reserved.</p>
+      <p class="font-tamil">தமிழ்நாடு அரசு &mdash; மின்னணுவியல் கழகம் வரையறுத்த உரிமைகள்</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Mira: floating AI chat agent (bilingual EN/TA) -->
+<avgcxr-chat-widget></avgcxr-chat-widget>

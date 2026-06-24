@@ -1,0 +1,21 @@
+spring:
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: 5672
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASS}
+    listener:
+      simple:
+        prefetch: 50
+        concurrency: 10
+  mail:
+    host: ${SMTP_HOST}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USER}
+    password: ${SMTP_PASS}
+elasticsearch:
+  uris: ${ES_URIS}
+logging:
+  level:
+    root: WARN
+    in.elcot.avgcxr: INFO

@@ -1,0 +1,20 @@
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        generate_statistics: true
+  flyway:
+    clean-disabled: false
+
+logging:
+  level:
+    in.elcot.avgcxr: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+flowable:
+  async-executor-activate: false

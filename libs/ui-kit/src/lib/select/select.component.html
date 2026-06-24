@@ -1,0 +1,16 @@
+<div class="avgc-select" [class.avgc-select--error]="error()">
+  @if (label()) {
+    <label class="avgc-select__label">
+      {{ label() }}
+      @if (labelTamil()) { <span class="avgc-select__label-ta">{{ labelTamil() }}</span> }
+      @if (required()) { <span class="avgc-select__required">*</span> }
+    </label>
+  }
+  <select [value]="selectedValue" (change)="onSelect($event)" [disabled]="disabled()" [required]="required()" class="avgc-select__field" [attr.aria-invalid]="!!error()">
+    <option value="" disabled selected hidden>{{ placeholder() }}</option>
+    @for (opt of options(); track opt.value) {
+      <option [value]="opt.value">{{ opt.label }}</option>
+    }
+  </select>
+  @if (error()) { <span class="avgc-select__error" role="alert">{{ error() }}</span> }
+</div>

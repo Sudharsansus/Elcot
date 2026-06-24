@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: avgcxr-postgres
+  namespace: avgcxr
+  labels:
+    app: avgcxr-postgres
+    component: postgres
+    tier: backend
+    part-of: avgcxr-portal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: avgcxr-postgres
+  template:
+    metadata:
+      labels:
+        app: avgcxr-postgres
+        component: postgres
+        tier: backend
+        part-of: avgcxr-portal
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - name: tcp-pg
+              containerPort: 5432
+              protocol: TCP
+          env:
+        - name: POSTGRES_DB
+          value: "avgcxr_portal"
+        - name: POSTGRES_USER
+          value: "avgcxr_app"
+        - name: PGDATA
+          value: "/var/lib/postgresql/data/pgdata"
+        - name: TZ
+          value: "Asia/Kolkata"
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 2Gi
+          livenessProbe:
+            tcpSocket:
+              port: 5432
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 5432
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3

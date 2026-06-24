@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: avgcxr-rabbitmq
+  namespace: avgcxr
+  labels:
+    app: avgcxr-rabbitmq
+    component: rabbitmq
+    tier: backend
+    part-of: avgcxr-portal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: avgcxr-rabbitmq
+  template:
+    metadata:
+      labels:
+        app: avgcxr-rabbitmq
+        component: rabbitmq
+        tier: backend
+        part-of: avgcxr-portal
+    spec:
+      containers:
+        - name: rabbitmq
+          image: rabbitmq:3-management-alpine
+          ports:
+            - name: tcp-rmq
+              containerPort: 5672
+              protocol: TCP
+          env:
+        - name: RABBITMQ_DEFAULT_USER
+          value: "avgcxr_rmq_user"
+        - name: RABBITMQ_DEFAULT_VHOST
+          value: "/avgcxr"
+        - name: TZ
+          value: "Asia/Kolkata"
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          livenessProbe:
+            tcpSocket:
+              port: 5672
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 5672
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3

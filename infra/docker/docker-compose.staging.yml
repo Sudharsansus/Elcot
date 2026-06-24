@@ -1,0 +1,169 @@
+# =============================================================================
+# Tamil Nadu AVGC-XR Portal — Staging Overrides
+# =============================================================================
+# Usage: docker compose -f docker-compose.yml -f docker-compose.staging.yml up -d
+# =============================================================================
+
+services:
+  api:
+    environment:
+      SPRING_PROFILES_ACTIVE: docker,staging
+      LOGGING_LEVEL_ROOT: INFO
+      LOGGING_LEVEL_IN_ELCOT_AVGCXR: DEBUG
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,info,metrics,prometheus
+    deploy:
+      resources:
+        limits:
+          memory: 1Gi
+          cpus: "1.0"
+        reservations:
+          memory: 512Mi
+          cpus: "0.5"
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "5"
+        tag: "avgcxr-api-staging"
+
+  worker:
+    environment:
+      SPRING_PROFILES_ACTIVE: docker,staging
+      LOGGING_LEVEL_ROOT: INFO
+    deploy:
+      resources:
+        limits:
+          memory: 768Mi
+          cpus: "0.75"
+        reservations:
+          memory: 384Mi
+          cpus: "0.25"
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "5"
+        tag: "avgcxr-worker-staging"
+
+  cms:
+    environment:
+      NODE_ENV: staging
+    deploy:
+      resources:
+        limits:
+          memory: 512Mi
+          cpus: "0.5"
+        reservations:
+          memory: 256Mi
+          cpus: "0.25"
+    logging:
+      driver: json-file
+      options:
+        max-size: "30m"
+        max-file: "3"
+        tag: "avgcxr-cms-staging"
+
+  postgres:
+    environment:
+      POSTGRES_DB: avgcxr_portal
+    command: >
+      postgres
+      -c config_file=/etc/postgresql/postgresql.conf
+      -c shared_buffers=256MB
+      -c max_connections=150
+    deploy:
+      resources:
+        limits:
+          memory: 1Gi
+          cpus: "1.0"
+        reservations:
+          memory: 512Mi
+          cpus: "0.5"
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "5"
+        tag: "avgcxr-postgres-staging"
+
+  redis:
+    deploy:
+      resources:
+        limits:
+          memory: 512Mi
+          cpus: "0.5"
+        reservations:
+          memory: 128Mi
+          cpus: "0.1"
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "3"
+        tag: "avgcxr-redis-staging"
+
+  rabbitmq:
+    deploy:
+      resources:
+        limits:
+          memory: 1Gi
+          cpus: "1.0"
+        reservations:
+          memory: 512Mi
+          cpus: "0.25"
+    logging:
+      driver: json-file
+      options:
+        max-size: "30m"
+        max-file: "5"
+        tag: "avgcxr-rabbitmq-staging"
+
+  elasticsearch:
+    environment:
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    deploy:
+      resources:
+        limits:
+          memory: 1Gi
+          cpus: "1.0"
+        reservations:
+          memory: 512Mi
+          cpus: "0.5"
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "5"
+        tag: "avgcxr-elasticsearch-staging"
+
+  minio:
+    deploy:
+      resources:
+        limits:
+          memory: 512Mi
+          cpus: "0.5"
+        reservations:
+          memory: 128Mi
+          cpus: "0.1"
+    logging:
+      driver: json-file
+      options:
+        max-size: "30m"
+        max-file: "3"
+        tag: "avgcxr-minio-staging"
+
+  nginx:
+    deploy:
+      resources:
+        limits:
+          memory: 256Mi
+          cpus: "0.5"
+        reservations:
+          memory: 64Mi
+          cpus: "0.1"
+    logging:
+      driver: json-file
+      options:
+        max-size: "30m"
+        max-file: "5"
+        tag: "avgcxr-nginx-staging"

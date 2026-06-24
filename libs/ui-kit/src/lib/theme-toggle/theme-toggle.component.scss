@@ -1,0 +1,3 @@
+.avgc-theme-toggle { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 1px solid #E2E8F0; border-radius: 8px; background: #F8FAFC; cursor: pointer; color: #475569; transition: all 0.2s ease; &:hover { background: #E2E8F0; color: #0F172A; } &:focus-visible { outline: 2px solid #0D47A1; outline-offset: 2px; } }
+.avgc-theme-toggle__icon { transition: transform 0.3s ease; }
+.avgc-theme-toggle:hover .avgc-theme-toggle__icon { transform: rotate(15deg); }

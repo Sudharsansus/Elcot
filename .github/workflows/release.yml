@@ -1,0 +1,38 @@
+name: Release
+on:
+  push:
+    tags: ['v*']
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.18'
+      - uses: pnpm/action-setup@v3
+        with: { version: 9 }
+      - name: Build
+        run: |
+          pnpm install --frozen-lockfile
+          ./mvnw clean package -DskipTests -Pprod
+          pnpm run build:all
+      - name: Create Release Archive
+        run: |
+          tar -czf avgcxr-portal-${{ github.ref_name }}.tar.gz \
+            apps/api/target/api-1.0.0-SNAPSHOT.jar \
+            apps/worker/target/worker-1.0.0-SNAPSHOT.jar \
+            apps/public-portal/dist \
+            apps/applicant-portal/dist \
+            apps/admin-portal/dist \
+            apps/cms \
+            infra
+      - name: Upload Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: avgcxr-portal-*.tar.gz

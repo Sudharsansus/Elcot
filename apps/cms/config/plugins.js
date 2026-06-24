@@ -1,0 +1,1 @@
+module.exports = ({ i18n: { enabled: true, config: { defaultLocale: 'en', locales: ['en', 'ta'] } }, 'users-permissions': { config: { jwt: { expiresIn: '7d' } } } });
