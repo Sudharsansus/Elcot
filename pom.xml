@@ -49,7 +49,7 @@
         <flowable.version>7.1.0</flowable.version>
         <poi.version>5.3.0</poi.version>
         <openpdf.version>1.3.39</openpdf.version>
-        <zxing.version>3.5.3</zxing.version>
+        <zxing.version>3.5.4</zxing.version>
         <zxing-javase.version>3.5.3</zxing-javase.version>
 
         <!-- Elasticsearch -->
