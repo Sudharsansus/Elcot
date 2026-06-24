@@ -31,7 +31,16 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
-      - name: Resolve Maven dependencies
-        run: mvn -B -ntp -pl apps/api -am dependency:resolve -DskipTests
-      - name: mvn dependency:tree (Java dependencies)
-        run: mvn -B -ntp -pl apps/api -am dependency:tree -DskipTests
+      - name: Build & test API module
+        run: mvn -B -ntp -pl apps/api -am verify -Dspring.profiles.active=test
+        shell: bash
+      - name: Upload surefire reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-reports
+          path: |
+            apps/api/target/surefire-reports/
+            apps/api/target/failsafe-reports/
+          retention-days: 7
+          if-no-files-found: ignore
