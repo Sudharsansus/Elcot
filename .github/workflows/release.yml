@@ -14,11 +14,11 @@ jobs:
           cache: maven
       - uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '22'
       - uses: pnpm/action-setup@v4
       - name: Build
         run: |
-          pnpm install --frozen-lockfile
+          pnpm install --no-frozen-lockfile --shamefully-hoist
           ./mvnw clean package -DskipTests -Pprod
           pnpm run build:all
       - name: Create Release Archive
