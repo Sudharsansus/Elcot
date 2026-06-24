@@ -5,8 +5,9 @@ on:
     branches: [main]
     paths:
       - 'apps/public-portal/**'
-      - 'apps/applicant-portal/**'
       - 'apps/admin-portal/**'
+      - 'apps/applicant-portal/**'
+      - 'apps/applicant-portal/**'
       - 'libs/**'
       - 'package.json'
       - 'pnpm-lock.yaml'
@@ -16,12 +17,6 @@ on:
       - '.github/workflows/ci-frontend.yml'
   pull_request:
     branches: [main]
-    paths:
-      - 'apps/**-portal/**'
-      - 'libs/**'
-      - 'package.json'
-      - 'pnpm-lock.yaml'
-      - 'nx.json'
 
 concurrency:
   group: frontend-${{ github.ref }}
@@ -30,11 +25,14 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [public-portal, admin-portal, applicant-portal]
 
     env:
       NX_NO_CLOUD: 'true'
-      NX_VERBOSE_LOGGING: 'false'
       CI: 'true'
 
     steps:
@@ -57,25 +55,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build affected (production)
-        run: npx nx affected --target=build --configuration=production --parallel=2
-        shell: bash
+      - name: Build ${{ matrix.project }}
+        run: pnpm nx run ${{ matrix.project }}:build:production --skip-nx-cache
+        env:
+          CI: 'true'
 
-      - name: Lint affected
+      - name: Lint ${{ matrix.project }}
         if: success()
-        run: npx nx affected --target=lint --parallel=2
-        shell: bash
-
-      - name: Test affected
-        if: success()
-        run: npx nx affected --target=test --parallel=2
-        shell: bash
-
-      - name: Upload coverage
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend-coverage
-          path: '**/coverage/'
-          retention-days: 7
-          if-no-files-found: ignore
+        run: pnpm nx run ${{ matrix.project }}:lint --skip-nx-cache

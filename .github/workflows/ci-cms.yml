@@ -44,4 +44,16 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build Strapi admin
+        env:
+          CI: 'true'
+          STRAPI_ADMIN_BACKEND_URL: 'http://localhost:1337'
+          HOST: '0.0.0.0'
+          PORT: '1337'
+          DATABASE_CLIENT: 'sqlite'
+          DATABASE_FILENAME: '.tmp/data.db'
+          APP_KEYS: 'ciKey1,ciKey2,ciKey3,ciKey4'
+          API_TOKEN_SALT: 'ci-token-salt-not-secret-12345'
+          ADMIN_JWT_SECRET: 'ci-admin-jwt-not-secret-12345'
+          TRANSFER_TOKEN_SALT: 'ci-transfer-salt-not-secret-12345'
+          JWT_SECRET: 'ci-jwt-secret-not-secret-12345'
         run: pnpm run build
