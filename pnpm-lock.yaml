@@ -11,6 +11,9 @@ importers:
 
   .:
     devDependencies:
+      '@angular-builders/custom-webpack':
+        specifier: 17.0.2
+        version: 17.0.2(6jppia5cgf5jw2i4ipqwfjnyly)
       '@angular-devkit/build-angular':
         specifier: 17.3.12
         version: 17.3.12(6jppia5cgf5jw2i4ipqwfjnyly)
@@ -74,6 +77,9 @@ importers:
       '@nx/eslint':
         specifier: 17.3.2
         version: 17.3.2(@babel/traverse@7.29.7)(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@26.0.0)(js-yaml@4.1.0)(nx@17.3.2(@swc/core@1.15.43(@swc/helpers@0.5.23)))
+      '@nx/eslint-plugin':
+        specifier: 17.3.2
+        version: 17.3.2(@babel/traverse@7.29.7)(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@26.0.0)(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.4.5))(eslint@8.57.1)(nx@17.3.2(@swc/core@1.15.43(@swc/helpers@0.5.23)))(typescript@5.4.5)
       '@nx/jest':
         specifier: 17.3.2
         version: 17.3.2(@babel/traverse@7.29.7)(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@26.0.0)(babel-plugin-macros@3.1.0)(nx@17.3.2(@swc/core@1.15.43(@swc/helpers@0.5.23)))(ts-node@10.9.1(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@26.0.0)(typescript@5.4.5))(typescript@5.4.5)
@@ -509,6 +515,16 @@ packages:
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
+
+  '@angular-builders/common@1.0.2':
+    resolution: {integrity: sha512-lUusRq6jN1It5LcUTLS6Q+AYAYGTo/EEN8hV0M6Ek9qXzweAouJaSEnwv7p04/pD7yJTl0YOCbN79u+wGm3x4g==}
+    engines: {node: ^14.20.0 || ^16.13.0 || >=18.10.0}
+
+  '@angular-builders/custom-webpack@17.0.2':
+    resolution: {integrity: sha512-K0jqdW5UdVIeKiZXO4nLiiiVt0g6PKJELdxgjsBGMtyRk+RLEY+pIp1061oy/Yf09nGYseZ7Mdx3XASYHQjNwA==}
+    engines: {node: ^14.20.0 || ^16.13.0 || >=18.10.0}
+    peerDependencies:
+      '@angular/compiler-cli': ^17.0.0
 
   '@angular-devkit/architect@0.1703.12':
     resolution: {integrity: sha512-om4N+fhcVc9bUgeT7vVdyXMNvnLdMzfq+g36viHxwUdXlfah31xqEj/iR1mGRztBJcJTw8XeOnkTNQdgDf0qhQ==}
@@ -3007,6 +3023,9 @@ packages:
   '@nrwl/devkit@17.3.2':
     resolution: {integrity: sha512-31wh7dDZPM1YUCfhhk/ioHnUeoPIlKYLFLW0fGdw76Ow2nmTqrmxha2m0CSIR1/9En9GpYut2IdUdNh9CctNlA==}
 
+  '@nrwl/eslint-plugin-nx@17.3.2':
+    resolution: {integrity: sha512-KfZtT+breRD7D8dy+YLIdKD7S9t4aqtEQLpRQCnJrCALYdqIRuql9rC2J69RUosozgrk55C0LERF0/kJVPe6Gg==}
+
   '@nrwl/jest@17.3.2':
     resolution: {integrity: sha512-sL7POaqrzHUBqKMOigmGsDin9hFtzL6orzSev0qOoTPCegRvMfyPpTbYdUsyN186jj0/ReD0b9lAiSOpfq3Q1g==}
 
@@ -3051,6 +3070,15 @@ packages:
     resolution: {integrity: sha512-gbOIhwrZKCSSFFbh6nE6LLCvAU7mhSdBSnRiS14YBwJJMu4CRJ0IcaFz58iXqGWZefMivKtkNFtx+zqwUC4ziw==}
     peerDependencies:
       nx: '>= 16 <= 18'
+
+  '@nx/eslint-plugin@17.3.2':
+    resolution: {integrity: sha512-szNXnMr54SH3uQjsTgSb/ySomhbqF0nJnca1yoC7XJG8+jlQLTs8EiyqjdQ9CVo+KTxsb9ilDtAZXRNCHEyGlw==}
+    peerDependencies:
+      '@typescript-eslint/parser': ^6.13.2
+      eslint-config-prettier: ^9.0.0
+    peerDependenciesMeta:
+      eslint-config-prettier:
+        optional: true
 
   '@nx/eslint@17.3.2':
     resolution: {integrity: sha512-KArvmi9Y4Qcf0bIRXGC1/FZsjL6XtT7wzhJ5uGsJIvXAJUiMMlw/KqIR31pY4nu2cBbphCa0/P1Jp2C/IFXG8w==}
@@ -5559,6 +5587,9 @@ packages:
     resolution: {integrity: sha512-aMKprgk5YhBNyH25hj8wGt2+D52Sw1DRRIzqBwLp2Ya9mFmY8KPvvtvmna8SxVR9JMZ4kzMD68N22vlaRpkeFA==}
     engines: {node: '>=8'}
 
+  confusing-browser-globals@1.0.11:
+    resolution: {integrity: sha512-JsPKdmh8ZkmnHxDk55FZ1TqVLvEQTvoByJZRN9jzI0UjxK/QgAmsphz7PGtqgPieQZ/CQcHWXCR7ATDNhGe+YA==}
+
   connect-history-api-fallback@2.0.0:
     resolution: {integrity: sha512-U73+6lQFmfiNPrYbXqr6kZ1i1wiRqXnp2nhMsINseWXO8lDau0LGEffJ8kQi4EjLZympVgRdvqjAgiZ1tgzDDA==}
     engines: {node: '>=0.8'}
@@ -7622,6 +7653,10 @@ packages:
     resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
     engines: {node: '>=6'}
     hasBin: true
+
+  jsonc-eslint-parser@2.4.2:
+    resolution: {integrity: sha512-1e4qoRgnn448pRuMvKGsFFymUCquZV0mpGgOyIKNgD3JVDTsVJyRBGH/Fm0tBb8WsWGgmB1mDe6/yJMQM37DUA==}
+    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
   jsonc-parser@3.2.0:
     resolution: {integrity: sha512-gfFQZrcTc8CnKXp6Y4/CBT3fTc0OVuDofpre4aEeEpSBPV5X5v4+Vmx+8snU7RLPrNHPKSgLxGo9YuQzz20o+w==}
@@ -11396,6 +11431,66 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
 
+  '@angular-builders/common@1.0.2(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@26.0.0)(chokidar@3.6.0)(typescript@5.4.5)':
+    dependencies:
+      '@angular-devkit/core': 17.3.12(chokidar@3.6.0)
+      ts-node: 10.9.1(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@26.0.0)(typescript@5.4.5)
+      tsconfig-paths: 4.2.0
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+      - chokidar
+      - typescript
+
+  '@angular-builders/custom-webpack@17.0.2(6jppia5cgf5jw2i4ipqwfjnyly)':
+    dependencies:
+      '@angular-builders/common': 1.0.2(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@26.0.0)(chokidar@3.6.0)(typescript@5.4.5)
+      '@angular-devkit/architect': 0.1703.12(chokidar@3.6.0)
+      '@angular-devkit/build-angular': 17.3.12(6jppia5cgf5jw2i4ipqwfjnyly)
+      '@angular-devkit/core': 17.3.12(chokidar@3.6.0)
+      '@angular/compiler-cli': 17.3.12(@angular/compiler@17.3.12(@angular/core@17.3.12(rxjs@7.8.2)(zone.js@0.14.10)))(typescript@5.4.5)
+      lodash: 4.18.1
+      webpack-merge: 5.10.0
+    transitivePeerDependencies:
+      - '@angular/localize'
+      - '@angular/platform-server'
+      - '@angular/service-worker'
+      - '@minify-html/node'
+      - '@rspack/core'
+      - '@swc/core'
+      - '@swc/css'
+      - '@swc/html'
+      - '@swc/wasm'
+      - '@types/express'
+      - '@types/node'
+      - '@web/test-runner'
+      - browser-sync
+      - bufferutil
+      - chokidar
+      - clean-css
+      - cssnano
+      - csso
+      - debug
+      - html-minifier-terser
+      - html-webpack-plugin
+      - jest
+      - jest-environment-jsdom
+      - karma
+      - lightningcss
+      - ng-packagr
+      - node-sass
+      - protractor
+      - sass-embedded
+      - stylus
+      - sugarss
+      - supports-color
+      - tailwindcss
+      - typescript
+      - uglify-js
+      - utf-8-validate
+      - webpack-cli
+
   '@angular-devkit/architect@0.1703.12(chokidar@3.6.0)':
     dependencies:
       '@angular-devkit/core': 17.3.12(chokidar@3.6.0)
@@ -15046,7 +15141,7 @@ snapshots:
       json-parse-even-better-errors: 3.0.2
       normalize-package-data: 6.0.2
       proc-log: 4.2.0
-      semver: 7.6.0
+      semver: 7.8.5
     transitivePeerDependencies:
       - bluebird
 
@@ -15137,6 +15232,24 @@ snapshots:
       '@nx/devkit': 17.3.2(nx@17.3.2(@swc/core@1.15.43(@swc/helpers@0.5.23)))
     transitivePeerDependencies:
       - nx
+
+  '@nrwl/eslint-plugin-nx@17.3.2(@babel/traverse@7.29.7)(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@26.0.0)(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.4.5))(eslint@8.57.1)(nx@17.3.2(@swc/core@1.15.43(@swc/helpers@0.5.23)))(typescript@5.4.5)':
+    dependencies:
+      '@nx/eslint-plugin': 17.3.2(@babel/traverse@7.29.7)(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@26.0.0)(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.4.5))(eslint@8.57.1)(nx@17.3.2(@swc/core@1.15.43(@swc/helpers@0.5.23)))(typescript@5.4.5)
+    transitivePeerDependencies:
+      - '@babel/traverse'
+      - '@swc-node/register'
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+      - '@typescript-eslint/parser'
+      - debug
+      - eslint
+      - eslint-config-prettier
+      - nx
+      - supports-color
+      - typescript
+      - verdaccio
 
   '@nrwl/jest@17.3.2(@babel/traverse@7.29.7)(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@26.0.0)(babel-plugin-macros@3.1.0)(nx@17.3.2(@swc/core@1.15.43(@swc/helpers@0.5.23)))(ts-node@10.9.1(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@26.0.0)(typescript@5.4.5))(typescript@5.4.5)':
     dependencies:
@@ -15357,6 +15470,32 @@ snapshots:
       tmp: 0.2.7
       tslib: 2.8.1
       yargs-parser: 21.1.1
+
+  '@nx/eslint-plugin@17.3.2(@babel/traverse@7.29.7)(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@26.0.0)(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.4.5))(eslint@8.57.1)(nx@17.3.2(@swc/core@1.15.43(@swc/helpers@0.5.23)))(typescript@5.4.5)':
+    dependencies:
+      '@nrwl/eslint-plugin-nx': 17.3.2(@babel/traverse@7.29.7)(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@26.0.0)(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.4.5))(eslint@8.57.1)(nx@17.3.2(@swc/core@1.15.43(@swc/helpers@0.5.23)))(typescript@5.4.5)
+      '@nx/devkit': 17.3.2(nx@17.3.2(@swc/core@1.15.43(@swc/helpers@0.5.23)))
+      '@nx/js': 17.3.2(@babel/traverse@7.29.7)(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@26.0.0)(nx@17.3.2(@swc/core@1.15.43(@swc/helpers@0.5.23)))(typescript@5.4.5)
+      '@typescript-eslint/parser': 7.18.0(eslint@8.57.1)(typescript@5.4.5)
+      '@typescript-eslint/type-utils': 6.21.0(eslint@8.57.1)(typescript@5.4.5)
+      '@typescript-eslint/utils': 6.21.0(eslint@8.57.1)(typescript@5.4.5)
+      chalk: 4.1.2
+      confusing-browser-globals: 1.0.11
+      jsonc-eslint-parser: 2.4.2
+      semver: 7.8.5
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - '@babel/traverse'
+      - '@swc-node/register'
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+      - debug
+      - eslint
+      - nx
+      - supports-color
+      - typescript
+      - verdaccio
 
   '@nx/eslint@17.3.2(@babel/traverse@7.29.7)(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@26.0.0)(js-yaml@4.1.0)(nx@17.3.2(@swc/core@1.15.43(@swc/helpers@0.5.23)))':
     dependencies:
@@ -18966,6 +19105,8 @@ snapshots:
       write-file-atomic: 3.0.3
       xdg-basedir: 4.0.0
 
+  confusing-browser-globals@1.0.11: {}
+
   connect-history-api-fallback@2.0.0: {}
 
   connect@3.7.0:
@@ -21512,6 +21653,13 @@ snapshots:
 
   json5@2.2.3: {}
 
+  jsonc-eslint-parser@2.4.2:
+    dependencies:
+      acorn: 8.17.0
+      eslint-visitor-keys: 3.4.3
+      espree: 9.6.1
+      semver: 7.8.5
+
   jsonc-parser@3.2.0: {}
 
   jsonc-parser@3.2.1: {}
@@ -22406,7 +22554,7 @@ snapshots:
       make-fetch-happen: 13.0.1
       nopt: 7.2.1
       proc-log: 4.2.0
-      semver: 7.6.0
+      semver: 7.8.5
       tar: 6.2.1
       which: 4.0.0
     transitivePeerDependencies:
@@ -22491,7 +22639,7 @@ snapshots:
   normalize-package-data@6.0.2:
     dependencies:
       hosted-git-info: 7.0.2
-      semver: 7.6.0
+      semver: 7.8.5
       validate-npm-package-license: 3.0.4
 
   normalize-path@3.0.0: {}
@@ -24289,7 +24437,7 @@ snapshots:
       detect-libc: 2.1.2
       node-addon-api: 6.1.0
       prebuild-install: 7.1.3
-      semver: 7.5.4
+      semver: 7.8.5
       simple-get: 4.0.1
       tar-fs: 3.1.2
       tunnel-agent: 0.6.0
@@ -24365,7 +24513,7 @@ snapshots:
 
   simple-update-notifier@2.0.0:
     dependencies:
-      semver: 7.5.4
+      semver: 7.8.5
 
   sirv@2.0.4:
     dependencies:

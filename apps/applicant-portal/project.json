@@ -7,12 +7,12 @@
   "tags": ["scope:public", "type:app"],
   "targets": {
     "build": {
-      "executor": "@nx/angular:application",
+      "executor": "@angular-builders/custom-webpack:browser",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/applicant-portal",
         "index": "apps/applicant-portal/src/index.html",
-        "browser": "apps/applicant-portal/src/main.ts",
+        "main": "apps/applicant-portal/src/main.ts",
         "polyfills": ["zone.js"],
         "tsConfig": "apps/applicant-portal/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
@@ -24,7 +24,9 @@
         ],
         "styles": ["apps/applicant-portal/src/styles.scss"],
         "scripts": [],
-        "server": "apps/applicant-portal/src/main.server.ts"
+        "customWebpackConfig": {
+          "path": "apps/applicant-portal/webpack.config.js"
+        }
       },
       "configurations": {
         "production": {

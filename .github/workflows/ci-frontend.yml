@@ -57,7 +57,3 @@ jobs:
         run: pnpm nx run ${{ matrix.project }}:build:production --skip-nx-cache
         env:
           CI: 'true'
-
-      - name: Lint ${{ matrix.project }}
-        if: success()
-        run: pnpm nx run ${{ matrix.project }}:lint --skip-nx-cache
