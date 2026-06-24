@@ -1,6 +1,6 @@
 # ─── AVGC-XR CMS (Strapi-compatible) ───
 # Non-root user (audit fix HIGH-022)
-FROM node:20-alpine
+FROM node:22-alpine
 
 RUN addgroup -S avgcxr && adduser -S avgcxr -G avgcxr
 WORKDIR /app
