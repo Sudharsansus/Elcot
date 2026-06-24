@@ -1,0 +1,81 @@
+name: CI - Frontend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/public-portal/**'
+      - 'apps/applicant-portal/**'
+      - 'apps/admin-portal/**'
+      - 'libs/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'nx.json'
+      - 'tsconfig.base.json'
+      - '.github/workflows/ci-frontend.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apps/**-portal/**'
+      - 'libs/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'nx.json'
+
+concurrency:
+  group: frontend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      NX_NO_CLOUD: 'true'
+      NX_VERBOSE_LOGGING: 'false'
+      CI: 'true'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm 9
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.18'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build affected (production)
+        run: npx nx affected --target=build --configuration=production --parallel=2
+        shell: bash
+
+      - name: Lint affected
+        if: success()
+        run: npx nx affected --target=lint --parallel=2
+        shell: bash
+
+      - name: Test affected
+        if: success()
+        run: npx nx affected --target=test --parallel=2
+        shell: bash
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: '**/coverage/'
+          retention-days: 7
+          if-no-files-found: ignore

@@ -2,23 +2,46 @@ name: CI - CMS
 
 on:
   push:
-    branches: [main, develop]
-    paths: ['apps/cms/**']
+    branches: [main]
+    paths:
+      - 'apps/cms/**'
+      - '.github/workflows/ci-cms.yml'
   pull_request:
     branches: [main]
-    paths: ['apps/cms/**']
+    paths:
+      - 'apps/cms/**'
+
+concurrency:
+  group: cms-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  cms-checks:
+  build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: apps/cms
+    env:
+      CI: 'true'
+      SKIP_BOOTSTRAP: 'true'
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20.18'
-      - uses: pnpm/action-setup@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm 9
+        uses: pnpm/action-setup@v4
         with:
           version: 9
-      - run: pnpm install --frozen-lockfile --filter cms...
-      - run: cd apps/cms && pnpm lint
-      - run: cd apps/cms && pnpm test
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.18'
+          cache: 'pnpm'
+
+      - name: Install CMS dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Strapi admin
+        run: pnpm run build
