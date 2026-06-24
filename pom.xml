@@ -60,7 +60,7 @@
         <minio.version>8.5.9</minio.version>
 
         <!-- JWT -->
-        <jjwt.version>0.12.6</jjwt.version>
+        <jjwt.version>0.13.0</jjwt.version>
 
         <!-- MapStruct -->
         <mapstruct.version>1.5.5.Final</mapstruct.version>
