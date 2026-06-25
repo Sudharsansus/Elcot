@@ -282,3 +282,106 @@
   .chat-panel { width: 100%; height: calc(100vh - 80px); }
   .chat-launcher { width: 100%; justify-content: center; }
 }
+
+// ─── Accessibility helpers ─────────────────────────────
+// Visually-hidden but available to screen readers (aria-live region).
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// Route-aware help hint in the empty state.
+.chat-context-hint {
+  margin: 0 0 14px;
+  padding: 8px 12px;
+  background: rgba(26, 77, 143, 0.08); // --chat-accent @ 8%
+  color: var(--chat-accent);
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+// ─── "Talk to a person" escalation card ────────────────
+.chat-escalation {
+  border: 1px solid var(--chat-border);
+  border-left: 3px solid var(--chat-primary);
+  background: #fff;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.chat-escalation-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--chat-primary);
+}
+
+.chat-escalation-icon { font-size: 18px; }
+
+.chat-escalation-dismiss {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--chat-text-muted);
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 0 4px;
+  &:hover { color: var(--chat-primary); }
+  &:focus-visible { outline: 2px solid var(--chat-accent); outline-offset: 1px; }
+}
+
+.chat-escalation-hint {
+  margin: 8px 0;
+  font-size: 13px;
+  color: var(--chat-text-muted);
+  line-height: 1.45;
+}
+
+.chat-escalation-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  li { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+
+  a {
+    color: var(--chat-accent);
+    font-weight: 600;
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
+    &:focus-visible { outline: 2px solid var(--chat-accent); outline-offset: 2px; border-radius: 2px; }
+  }
+}
+
+// ─── Respect user motion / contrast preferences ────────
+@media (prefers-reduced-motion: reduce) {
+  .chat-panel,
+  .chat-launcher,
+  .typing-dots span,
+  .spinner {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@media (prefers-contrast: more), (forced-colors: active) {
+  .chat-suggestion-chip,
+  .chat-escalation { border-width: 2px; }
+  .chat-launcher,
+  .chat-header { background: var(--chat-primary); } // drop gradient for clarity
+}
