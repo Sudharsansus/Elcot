@@ -6,5 +6,4 @@ public record UpdateUserRequest(
     String phone,
     String district,
     String address,
-    String pincode
-) {}
+    String pincode) {}

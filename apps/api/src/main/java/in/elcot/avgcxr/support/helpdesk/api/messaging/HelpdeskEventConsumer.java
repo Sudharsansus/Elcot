@@ -9,15 +9,15 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class HelpdeskEventConsumer {
-    private static final Logger log = LoggerFactory.getLogger(HelpdeskEventConsumer.class);
+  private static final Logger log = LoggerFactory.getLogger(HelpdeskEventConsumer.class);
 
-    @RabbitListener(queues = "avgc.helpdesk.created")
-    public void onCreated(HelpdeskCreatedEvent event) {
-        log.info("Helpdesk created event: id={}", event.helpdeskId());
-    }
+  @RabbitListener(queues = "avgc.helpdesk.created")
+  public void onCreated(HelpdeskCreatedEvent event) {
+    log.info("Helpdesk created event: id={}", event.helpdeskId());
+  }
 
-    @RabbitListener(queues = "avgc.helpdesk.updated")
-    public void onUpdated(HelpdeskUpdatedEvent event) {
-        log.info("Helpdesk updated event: id={}, field={}", event.helpdeskId(), event.field());
-    }
+  @RabbitListener(queues = "avgc.helpdesk.updated")
+  public void onUpdated(HelpdeskUpdatedEvent event) {
+    log.info("Helpdesk updated event: id={}, field={}", event.helpdeskId(), event.field());
+  }
 }

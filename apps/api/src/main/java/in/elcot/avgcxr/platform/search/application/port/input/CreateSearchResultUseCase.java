@@ -4,5 +4,5 @@ import in.elcot.avgcxr.platform.search.api.rest.dto.response.SearchResultRespons
 import in.elcot.avgcxr.platform.search.application.command.CreateSearchResultCommand;
 
 public interface CreateSearchResultUseCase {
-    SearchResultResponse create(CreateSearchResultCommand command);
+  SearchResultResponse create(CreateSearchResultCommand command);
 }

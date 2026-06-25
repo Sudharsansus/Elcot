@@ -4,5 +4,5 @@ import in.elcot.avgcxr.ecosystem.freelancerregistry.application.command.CreateFr
 import in.elcot.avgcxr.ecosystem.freelancerregistry.domain.model.Freelancerregistry;
 
 public interface CreateFreelancerregistryUseCase {
-    Freelancerregistry create(CreateFreelancerregistryCommand command);
+  Freelancerregistry create(CreateFreelancerregistryCommand command);
 }

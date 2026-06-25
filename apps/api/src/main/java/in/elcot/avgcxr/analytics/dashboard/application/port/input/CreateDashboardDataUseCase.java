@@ -4,5 +4,5 @@ import in.elcot.avgcxr.analytics.dashboard.api.rest.dto.response.DashboardDataRe
 import in.elcot.avgcxr.analytics.dashboard.application.command.CreateDashboardDataCommand;
 
 public interface CreateDashboardDataUseCase {
-    DashboardDataResponse create(CreateDashboardDataCommand command);
+  DashboardDataResponse create(CreateDashboardDataCommand command);
 }

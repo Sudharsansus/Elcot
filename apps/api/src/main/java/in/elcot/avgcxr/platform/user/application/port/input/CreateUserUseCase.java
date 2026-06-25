@@ -4,5 +4,5 @@ import in.elcot.avgcxr.platform.user.application.command.CreateUserCommand;
 import in.elcot.avgcxr.platform.user.domain.model.User;
 
 public interface CreateUserUseCase {
-    User create(CreateUserCommand command);
+  User create(CreateUserCommand command);
 }

@@ -4,5 +4,5 @@ import in.elcot.avgcxr.ecosystem.freelancerregistry.api.rest.dto.response.Freela
 import in.elcot.avgcxr.ecosystem.freelancerregistry.application.command.CreateFreelancerProfileCommand;
 
 public interface CreateFreelancerProfileUseCase {
-    FreelancerProfileResponse create(CreateFreelancerProfileCommand command);
+  FreelancerProfileResponse create(CreateFreelancerProfileCommand command);
 }

@@ -6,8 +6,11 @@ import java.util.Optional;
 
 /** Output port for Helpdesk persistence - implemented by infrastructure adapter */
 public interface HelpdeskRepositoryPort {
-    Helpdesk save(Helpdesk entity);
-    Optional<Helpdesk> findById(HelpdeskId id);
-    void deleteById(HelpdeskId id);
-    boolean existsById(HelpdeskId id);
+  Helpdesk save(Helpdesk entity);
+
+  Optional<Helpdesk> findById(HelpdeskId id);
+
+  void deleteById(HelpdeskId id);
+
+  boolean existsById(HelpdeskId id);
 }

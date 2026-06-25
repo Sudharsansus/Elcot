@@ -4,5 +4,5 @@ import in.elcot.avgcxr.platform.user.api.rest.dto.response.UserProfileResponse;
 import in.elcot.avgcxr.platform.user.application.command.CreateUserProfileCommand;
 
 public interface CreateUserProfileUseCase {
-    UserProfileResponse create(CreateUserProfileCommand command);
+  UserProfileResponse create(CreateUserProfileCommand command);
 }

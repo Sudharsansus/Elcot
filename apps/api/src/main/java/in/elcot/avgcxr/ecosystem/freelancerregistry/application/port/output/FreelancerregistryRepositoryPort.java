@@ -6,8 +6,11 @@ import java.util.Optional;
 
 /** Output port for Freelancerregistry persistence - implemented by infrastructure adapter */
 public interface FreelancerregistryRepositoryPort {
-    Freelancerregistry save(Freelancerregistry entity);
-    Optional<Freelancerregistry> findById(FreelancerregistryId id);
-    void deleteById(FreelancerregistryId id);
-    boolean existsById(FreelancerregistryId id);
+  Freelancerregistry save(Freelancerregistry entity);
+
+  Optional<Freelancerregistry> findById(FreelancerregistryId id);
+
+  void deleteById(FreelancerregistryId id);
+
+  boolean existsById(FreelancerregistryId id);
 }

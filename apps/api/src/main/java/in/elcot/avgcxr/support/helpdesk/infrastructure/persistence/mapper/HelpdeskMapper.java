@@ -7,17 +7,18 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class HelpdeskMapper {
-    public HelpdeskEntity toEntity(Helpdesk domain) {
-        HelpdeskEntity e = new HelpdeskEntity();
-        e.setId(domain.getId().toString());
-        e.setName("name");
-        e.setDescription("description");
-        e.setCreatedAt(domain.getCreatedAt());
-        e.setUpdatedAt(domain.getUpdatedAt());
-        return e;
-    }
+  public HelpdeskEntity toEntity(Helpdesk domain) {
+    HelpdeskEntity e = new HelpdeskEntity();
+    e.setId(domain.getId().toString());
+    e.setName("name");
+    e.setDescription("description");
+    e.setCreatedAt(domain.getCreatedAt());
+    e.setUpdatedAt(domain.getUpdatedAt());
+    return e;
+  }
 
-    public Helpdesk toDomain(HelpdeskEntity entity) {
-        return new Helpdesk(HelpdeskId.of(entity.getId()), entity.getName() != null ? entity.getName() : "");
-    }
+  public Helpdesk toDomain(HelpdeskEntity entity) {
+    return new Helpdesk(
+        HelpdeskId.of(entity.getId()), entity.getName() != null ? entity.getName() : "");
+  }
 }

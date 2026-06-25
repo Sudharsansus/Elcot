@@ -6,8 +6,11 @@ import java.util.Optional;
 
 /** Output port for Workflow persistence - implemented by infrastructure adapter */
 public interface WorkflowRepositoryPort {
-    Workflow save(Workflow entity);
-    Optional<Workflow> findById(WorkflowId id);
-    void deleteById(WorkflowId id);
-    boolean existsById(WorkflowId id);
+  Workflow save(Workflow entity);
+
+  Optional<Workflow> findById(WorkflowId id);
+
+  void deleteById(WorkflowId id);
+
+  boolean existsById(WorkflowId id);
 }

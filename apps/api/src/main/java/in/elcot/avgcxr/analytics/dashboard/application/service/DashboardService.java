@@ -8,21 +8,37 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DashboardService implements GetDashboardUseCase {
-    private final DashboardRepositoryPort repo;
-    public DashboardService(DashboardRepositoryPort repo) { this.repo = repo; }
+  private final DashboardRepositoryPort repo;
 
-    @Override
-    @Cacheable(value = "dashboard-stats", key = "'all'")
-    public DashboardResponse getDashboardStats() {
-        return new DashboardResponse(repo.countTotalApplications(), repo.countPendingReviews(), repo.countApprovedToday(), repo.sumTotalDisbursed(), repo.getApplicationsByStatus(), repo.getApplicationsByDistrict(), repo.getApplicationsBySubSector());
-    }
+  public DashboardService(DashboardRepositoryPort repo) {
+    this.repo = repo;
+  }
 
-    @Override
-    @Cacheable(value = "dashboard-stats", key = "#district")
-    public DashboardResponse getDistrictStats(String district) {
-        var byDistrict = repo.getApplicationsByDistrict();
-        long districtTotal = byDistrict.getOrDefault(district, 0L);
-        return new DashboardResponse(districtTotal, 0, 0, 0, repo.getApplicationsByStatus(), byDistrict, repo.getApplicationsBySubSector());
-    }
+  @Override
+  @Cacheable(value = "dashboard-stats", key = "'all'")
+  public DashboardResponse getDashboardStats() {
+    return new DashboardResponse(
+        repo.countTotalApplications(),
+        repo.countPendingReviews(),
+        repo.countApprovedToday(),
+        repo.sumTotalDisbursed(),
+        repo.getApplicationsByStatus(),
+        repo.getApplicationsByDistrict(),
+        repo.getApplicationsBySubSector());
+  }
+
+  @Override
+  @Cacheable(value = "dashboard-stats", key = "#district")
+  public DashboardResponse getDistrictStats(String district) {
+    var byDistrict = repo.getApplicationsByDistrict();
+    long districtTotal = byDistrict.getOrDefault(district, 0L);
+    return new DashboardResponse(
+        districtTotal,
+        0,
+        0,
+        0,
+        repo.getApplicationsByStatus(),
+        byDistrict,
+        repo.getApplicationsBySubSector());
+  }
 }
-

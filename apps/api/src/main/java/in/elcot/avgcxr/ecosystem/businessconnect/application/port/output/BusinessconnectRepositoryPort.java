@@ -6,8 +6,11 @@ import java.util.Optional;
 
 /** Output port for Businessconnect persistence - implemented by infrastructure adapter */
 public interface BusinessconnectRepositoryPort {
-    Businessconnect save(Businessconnect entity);
-    Optional<Businessconnect> findById(BusinessconnectId id);
-    void deleteById(BusinessconnectId id);
-    boolean existsById(BusinessconnectId id);
+  Businessconnect save(Businessconnect entity);
+
+  Optional<Businessconnect> findById(BusinessconnectId id);
+
+  void deleteById(BusinessconnectId id);
+
+  boolean existsById(BusinessconnectId id);
 }

@@ -7,17 +7,18 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class FreelancerregistryMapper {
-    public FreelancerregistryEntity toEntity(Freelancerregistry domain) {
-        FreelancerregistryEntity e = new FreelancerregistryEntity();
-        e.setId(domain.getId().toString());
-        e.setName("name");
-        e.setDescription("description");
-        e.setCreatedAt(domain.getCreatedAt());
-        e.setUpdatedAt(domain.getUpdatedAt());
-        return e;
-    }
+  public FreelancerregistryEntity toEntity(Freelancerregistry domain) {
+    FreelancerregistryEntity e = new FreelancerregistryEntity();
+    e.setId(domain.getId().toString());
+    e.setName("name");
+    e.setDescription("description");
+    e.setCreatedAt(domain.getCreatedAt());
+    e.setUpdatedAt(domain.getUpdatedAt());
+    return e;
+  }
 
-    public Freelancerregistry toDomain(FreelancerregistryEntity entity) {
-        return new Freelancerregistry(FreelancerregistryId.of(entity.getId()), entity.getName() != null ? entity.getName() : "");
-    }
+  public Freelancerregistry toDomain(FreelancerregistryEntity entity) {
+    return new Freelancerregistry(
+        FreelancerregistryId.of(entity.getId()), entity.getName() != null ? entity.getName() : "");
+  }
 }

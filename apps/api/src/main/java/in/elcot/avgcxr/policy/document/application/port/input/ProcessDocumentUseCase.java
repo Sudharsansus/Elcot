@@ -4,5 +4,5 @@ import in.elcot.avgcxr.policy.document.application.command.ProcessDocumentComman
 import in.elcot.avgcxr.policy.document.domain.model.DocumentId;
 
 public interface ProcessDocumentUseCase {
-    void process(DocumentId id, ProcessDocumentCommand command);
+  void process(DocumentId id, ProcessDocumentCommand command);
 }

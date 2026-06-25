@@ -5,6 +5,7 @@ import in.elcot.avgcxr.platform.audit.domain.model.AuditId;
 import java.util.Optional;
 
 public interface GetAuditUseCase {
-    Optional<Audit> findById(AuditId id);
-    Audit getById(AuditId id);
+  Optional<Audit> findById(AuditId id);
+
+  Audit getById(AuditId id);
 }

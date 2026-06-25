@@ -4,5 +4,5 @@ import in.elcot.avgcxr.ecosystem.talentconnect.application.command.CreateTalentc
 import in.elcot.avgcxr.ecosystem.talentconnect.domain.model.Talentconnect;
 
 public interface CreateTalentconnectUseCase {
-    Talentconnect create(CreateTalentconnectCommand command);
+  Talentconnect create(CreateTalentconnectCommand command);
 }

@@ -5,6 +5,7 @@ import in.elcot.avgcxr.ecosystem.freelancerregistry.domain.model.Freelancerregis
 import java.util.Optional;
 
 public interface GetFreelancerregistryUseCase {
-    Optional<Freelancerregistry> findById(FreelancerregistryId id);
-    Freelancerregistry getById(FreelancerregistryId id);
+  Optional<Freelancerregistry> findById(FreelancerregistryId id);
+
+  Freelancerregistry getById(FreelancerregistryId id);
 }

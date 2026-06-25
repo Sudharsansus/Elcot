@@ -4,7 +4,4 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record FreelancerProfileResponse(
-    UUID id,
-    LocalDateTime createdAt,
-    LocalDateTime updatedAt
-) {}
+    UUID id, LocalDateTime createdAt, LocalDateTime updatedAt) {}

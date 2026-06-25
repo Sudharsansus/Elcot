@@ -5,7 +5,9 @@ import in.elcot.avgcxr.policy.application.application.command.CreateApplicationC
 import java.util.UUID;
 
 public interface CreateApplicationUseCase {
-    ApplicationResponse create(CreateApplicationCommand command);
-    ApplicationResponse createDraft(CreateApplicationCommand command);
-    UUID createReturningId(CreateApplicationCommand command);
+  ApplicationResponse create(CreateApplicationCommand command);
+
+  ApplicationResponse createDraft(CreateApplicationCommand command);
+
+  UUID createReturningId(CreateApplicationCommand command);
 }

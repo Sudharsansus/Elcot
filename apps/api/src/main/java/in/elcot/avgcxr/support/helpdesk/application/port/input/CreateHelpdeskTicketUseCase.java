@@ -4,5 +4,5 @@ import in.elcot.avgcxr.support.helpdesk.api.rest.dto.response.HelpdeskTicketResp
 import in.elcot.avgcxr.support.helpdesk.application.command.CreateHelpdeskTicketCommand;
 
 public interface CreateHelpdeskTicketUseCase {
-    HelpdeskTicketResponse create(CreateHelpdeskTicketCommand command);
+  HelpdeskTicketResponse create(CreateHelpdeskTicketCommand command);
 }

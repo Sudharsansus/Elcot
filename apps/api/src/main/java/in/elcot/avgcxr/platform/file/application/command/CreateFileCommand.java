@@ -1,9 +1,9 @@
 package in.elcot.avgcxr.platform.file.application.command;
 
 /**
- * Command for creating a file record. The byte payload travels in
- * {@code content} so the application service can hand it to the
- * storage port (MinIO) without going back through the web layer.
+ * Command for creating a file record. The byte payload travels in {@code content} so the
+ * application service can hand it to the storage port (MinIO) without going back through the web
+ * layer.
  */
 public record CreateFileCommand(
     String originalFileName,
@@ -12,5 +12,4 @@ public record CreateFileCommand(
     String uploadedBy,
     String entityType,
     String entityId,
-    byte[] content
-) {}
+    byte[] content) {}

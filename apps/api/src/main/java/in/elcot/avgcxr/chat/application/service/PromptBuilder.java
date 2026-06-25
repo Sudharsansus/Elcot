@@ -1,27 +1,28 @@
 package in.elcot.avgcxr.chat.application.service;
 
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
 
 /**
  * Builds the system prompt for the chat agent.
  *
- * <p>Includes:</p>
+ * <p>Includes:
+ *
  * <ul>
- *   <li>Mira persona (warm, helpful, bilingual)</li>
- *   <li>Domain knowledge (Tamil Nadu AVGC-XR portal)</li>
- *   <li>RAG context (retrieved documents)</li>
- *   <li>Language directive (en or ta)</li>
- *   <li>DPDP compliance note (no PII in responses)</li>
+ *   <li>Mira persona (warm, helpful, bilingual)
+ *   <li>Domain knowledge (Tamil Nadu AVGC-XR portal)
+ *   <li>RAG context (retrieved documents)
+ *   <li>Language directive (en or ta)
+ *   <li>DPDP compliance note (no PII in responses)
  * </ul>
  */
 @Service
 public class PromptBuilder {
 
-    private static final String SYSTEM_PROMPT_EN = """
+  private static final String SYSTEM_PROMPT_EN =
+      """
         You are Mira, the official AI assistant of the Tamil Nadu AVGC-XR Portal.
 
         The portal supports:
@@ -45,7 +46,8 @@ public class PromptBuilder {
         - For policy questions, cite the source document when possible.
         """;
 
-    private static final String SYSTEM_PROMPT_TA = """
+  private static final String SYSTEM_PROMPT_TA =
+      """
         நீங்கள் மிரா, தமிழ்நாடு AVGC-XR Portal-ன் அதிகாரப்பூர்வ AI உதவியாளர்.
 
         Portal ஆதரவு:
@@ -68,31 +70,33 @@ public class PromptBuilder {
         - தனிப்பட்ட தகவல் (ஆதார், பான்) கேட்காதீர்கள் / எதிரொதிக்காதீர்கள்
         """;
 
-    public String buildSystemPrompt(String language, List<RagDocument> contextDocs) {
-        String base = language != null && language.startsWith("ta") ? SYSTEM_PROMPT_TA : SYSTEM_PROMPT_EN;
-        if (contextDocs == null || contextDocs.isEmpty()) {
-            return base;
-        }
-        String contextBlock = contextDocs.stream()
-                .map(d -> String.format("[%s] %s\n%s",
-                        d.id(), d.title(), truncate(d.content(), 800)))
-                .collect(Collectors.joining("\n\n---\n\n"));
-        String directive = language != null && language.startsWith("ta")
-                ? "\n\n## CONTEXT (Tamil)\nகீழே உள்ள ஆவணங்களிலிருந்து பதிலளிக்கவும்:\n\n"
-                : "\n\n## CONTEXT (use ONLY these to answer)\n\n";
-        return base + directive + contextBlock;
+  public String buildSystemPrompt(String language, List<RagDocument> contextDocs) {
+    String base =
+        language != null && language.startsWith("ta") ? SYSTEM_PROMPT_TA : SYSTEM_PROMPT_EN;
+    if (contextDocs == null || contextDocs.isEmpty()) {
+      return base;
     }
+    String contextBlock =
+        contextDocs.stream()
+            .map(d -> String.format("[%s] %s\n%s", d.id(), d.title(), truncate(d.content(), 800)))
+            .collect(Collectors.joining("\n\n---\n\n"));
+    String directive =
+        language != null && language.startsWith("ta")
+            ? "\n\n## CONTEXT (Tamil)\nகீழே உள்ள ஆவணங்களிலிருந்து பதிலளிக்கவும்:\n\n"
+            : "\n\n## CONTEXT (use ONLY these to answer)\n\n";
+    return base + directive + contextBlock;
+  }
 
-    private static String truncate(String s, int max) {
-        if (s == null) return "";
-        return s.length() > max ? s.substring(0, max) + "..." : s;
-    }
+  private static String truncate(String s, int max) {
+    if (s == null) return "";
+    return s.length() > max ? s.substring(0, max) + "..." : s;
+  }
 
-    /** RAG document carrier. */
-    public record RagDocument(String id, String title, String content, double score) {}
+  /** RAG document carrier. */
+  public record RagDocument(String id, String title, String content, double score) {}
 
-    /** Helper: build a simple map (role -> content) for LLM messages. */
-    public static Map<String, String> msg(String role, String content) {
-        return Map.of("role", role, "content", content);
-    }
+  /** Helper: build a simple map (role -> content) for LLM messages. */
+  public static Map<String, String> msg(String role, String content) {
+    return Map.of("role", role, "content", content);
+  }
 }

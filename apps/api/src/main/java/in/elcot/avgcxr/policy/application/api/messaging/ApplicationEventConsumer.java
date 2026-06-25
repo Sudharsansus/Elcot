@@ -8,8 +8,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ApplicationEventConsumer {
-    private static final Logger log = LoggerFactory.getLogger(ApplicationEventConsumer.class);
-    @RabbitListener(queues = "avgc.application.approved")
-    public void onApproved(ApplicationApprovedEvent e) { log.info("Application approved: {}, amount: {}", e.applicationId(), e.approvedAmount()); }
-}
+  private static final Logger log = LoggerFactory.getLogger(ApplicationEventConsumer.class);
 
+  @RabbitListener(queues = "avgc.application.approved")
+  public void onApproved(ApplicationApprovedEvent e) {
+    log.info("Application approved: {}, amount: {}", e.applicationId(), e.approvedAmount());
+  }
+}

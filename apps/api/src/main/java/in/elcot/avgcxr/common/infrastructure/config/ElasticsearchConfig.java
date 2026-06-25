@@ -14,14 +14,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ElasticsearchConfig {
 
-    @Value("${spring.elasticsearch.uris}")
-    private String esUri;
+  @Value("${spring.elasticsearch.uris}")
+  private String esUri;
 
-    @Bean
-    public ElasticsearchClient elasticsearchClient(ObjectMapper objectMapper) {
-        RestClient restClient = RestClient.builder(HttpHost.create(esUri)).build();
-        ElasticsearchTransport transport = new RestClientTransport(restClient,
-                new JacksonJsonpMapper(objectMapper));
-        return new ElasticsearchClient(transport);
-    }
+  @Bean
+  public ElasticsearchClient elasticsearchClient(ObjectMapper objectMapper) {
+    RestClient restClient = RestClient.builder(HttpHost.create(esUri)).build();
+    ElasticsearchTransport transport =
+        new RestClientTransport(restClient, new JacksonJsonpMapper(objectMapper));
+    return new ElasticsearchClient(transport);
+  }
 }
