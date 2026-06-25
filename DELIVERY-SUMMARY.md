@@ -1,6 +1,9 @@
 # Delivery Summary — AVGC-XR Portal Hardening (P0–P10)
 
-**Date:** 2026-06-25 · **Integration tag:** `backend-zero-criticals` (commit `a76ca12`)
+**Last verified:** 2026-06-25 (Phase 10 complete) · **Integration tag:**
+`backend-zero-criticals` (moved to the Phase-10 merge on `main`).
+**Build:** `mvn clean verify` ✅ — 48 tests pass, Spotless green, Checkstyle green.
+**Critical CVEs:** 0 (verified via OSV re-scan).
 **Toolchain (real):** OpenJDK 21.0.11 + Maven 3.9.9, Node 25 / pnpm 9.15, osv-scanner 2.4.0.
 
 > Honesty first: the **backend is verified** on a real Maven toolchain. The
