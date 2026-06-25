@@ -39,7 +39,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install CMS dependencies
-        run: pnpm install --no-frozen-lockfile --shamefully-hoist
+        run: pnpm install --frozen-lockfile --shamefully-hoist
 
       - name: Build Strapi admin
         env:

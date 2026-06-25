@@ -19,10 +19,10 @@ fi
 echo "=== AVGC-XR Portal Release ${VERSION} ==="
 echo ""
 
-# Run tests
+# Run tests — failures must abort the release (no silent `|| true`).
 echo "[1/4] Running tests..."
 mvn test -q
-npm run test:all 2>/dev/null || true
+pnpm run test:all
 echo "  Tests passed."
 
 # Build backend
