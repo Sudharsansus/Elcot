@@ -5,8 +5,11 @@
         <span class="logo-emblem">TN</span>
         <div class="logo-text">
           <span class="logo-title">AVGC-XR</span>
-          <span class="logo-subtitle" *ngIf="isTamil()">விண்ணப்பதாரர்</span>
-          <span class="logo-subtitle" *ngIf="!isTamil()">Applicant</span>
+          @if (isTamil()) {
+            <span class="logo-subtitle">விண்ணப்பதாரர்</span>
+          } @else {
+            <span class="logo-subtitle">Applicant</span>
+          }
         </div>
       </div>
     </a>

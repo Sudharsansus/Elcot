@@ -2,97 +2,115 @@
   AI Chat Widget (Mira) — bilingual floating chat panel
   Used on every public-portal page
 -->
-<button
-  *ngIf="!chat.isOpen()"
-  class="chat-launcher"
-  (click)="chat.toggle()"
-  aria-label="Open Mira AI assistant"
-  data-testid="chat-launcher">
-  <span class="chat-launcher-icon">💬</span>
-  <span class="chat-launcher-label">{{ chat.language() === 'ta' ? 'மிரா' : 'Mira' }}</span>
-</button>
+@if (!chat.isOpen()) {
+  <button
+    class="chat-launcher"
+    (click)="chat.toggle()"
+    aria-label="Open Mira AI assistant"
+    data-testid="chat-launcher">
+    <span class="chat-launcher-icon">💬</span>
+    <span class="chat-launcher-label">{{ chat.language() === 'ta' ? 'மிரா' : 'Mira' }}</span>
+  </button>
+}
 
-<div *ngIf="chat.isOpen()" class="chat-panel" role="dialog" aria-labelledby="chat-title">
-  <header class="chat-header">
-    <div class="chat-header-info">
-      <div class="chat-avatar" aria-hidden="true">🌟</div>
-      <div>
-        <h2 id="chat-title" class="chat-title">{{ headerTitle() }}</h2>
-        <p class="chat-subtitle">{{ headerSubtitle() }}</p>
+@if (chat.isOpen()) {
+  <div class="chat-panel" role="dialog" aria-labelledby="chat-title">
+    <header class="chat-header">
+      <div class="chat-header-info">
+        <div class="chat-avatar" aria-hidden="true">🌟</div>
+        <div>
+          <h2 id="chat-title" class="chat-title">{{ headerTitle() }}</h2>
+          <p class="chat-subtitle">{{ headerSubtitle() }}</p>
+        </div>
       </div>
-    </div>
-    <div class="chat-header-actions">
-      <button class="lang-toggle"
-              (click)="toggleLanguage()"
-              [attr.aria-label]="chat.language() === 'ta' ? 'Switch to English' : 'தமிழுக்கு மாற்று'"
-              data-testid="chat-lang-toggle">
-        {{ chat.language() === 'ta' ? 'EN' : 'த' }}
-      </button>
-      <button class="chat-close"
-              (click)="chat.close()"
-              aria-label="Close chat"
-              data-testid="chat-close">×</button>
-    </div>
-  </header>
-
-  <div #scrollContainer class="chat-messages" data-testid="chat-messages">
-    <div *ngIf="chat.messages().length === 0 && !chat.isLoading()" class="chat-empty">
-      <p class="chat-empty-text">{{ emptyStateText() }}</p>
-      <div class="chat-suggestions">
-        <button *ngFor="let s of suggestedQuestions"
-                class="chat-suggestion-chip"
-                (click)="sendSuggestion(chat.language() === 'ta' ? s.ta : s.en)"
-                [attr.data-testid]="'chat-suggestion-' + (chat.language() === 'ta' ? s.ta : s.en)">
-          {{ chat.language() === 'ta' ? s.ta : s.en }}
+      <div class="chat-header-actions">
+        <button class="lang-toggle"
+                (click)="toggleLanguage()"
+                [attr.aria-label]="chat.language() === 'ta' ? 'Switch to English' : 'தமிழுக்கு மாற்று'"
+                data-testid="chat-lang-toggle">
+          {{ chat.language() === 'ta' ? 'EN' : 'த' }}
         </button>
+        <button class="chat-close"
+                (click)="chat.close()"
+                aria-label="Close chat"
+                data-testid="chat-close">×</button>
       </div>
-    </div>
+    </header>
 
-    <div *ngFor="let msg of chat.messages(); trackBy: trackByIdx"
-         class="chat-message"
-         [class.chat-message-user]="msg.role === 'USER'"
-         [class.chat-message-assistant]="msg.role === 'ASSISTANT'"
-         [attr.data-testid]="'chat-msg-' + msg.role.toLowerCase()">
-      <div class="chat-message-bubble" [class.bubble-ta]="msg.language === 'ta'">
-        <div class="chat-message-content">{{ msg.content }}</div>
-        <div *ngIf="msg.role === 'ASSISTANT' && msg.modelUsed" class="chat-message-meta">
-          <span class="badge">{{ msg.modelUsed }}</span>
-          <span *ngIf="msg.tokensUsed" class="tokens">{{ msg.tokensUsed }} tokens</span>
+    <div #scrollContainer class="chat-messages" data-testid="chat-messages">
+      @if (chat.messages().length === 0 && !chat.isLoading()) {
+        <div class="chat-empty">
+          <p class="chat-empty-text">{{ emptyStateText() }}</p>
+          <div class="chat-suggestions">
+            @for (s of suggestedQuestions; track $index) {
+              <button class="chat-suggestion-chip"
+                      (click)="sendSuggestion(chat.language() === 'ta' ? s.ta : s.en)"
+                      [attr.data-testid]="'chat-suggestion-' + (chat.language() === 'ta' ? s.ta : s.en)">
+                {{ chat.language() === 'ta' ? s.ta : s.en }}
+              </button>
+            }
+          </div>
         </div>
-      </div>
-    </div>
+      }
 
-    <div *ngIf="chat.isLoading()" class="chat-message chat-message-assistant" data-testid="chat-typing">
-      <div class="chat-message-bubble">
-        <div class="typing-dots">
-          <span></span><span></span><span></span>
+      @for (msg of chat.messages(); track $index) {
+        <div class="chat-message"
+             [class.chat-message-user]="msg.role === 'USER'"
+             [class.chat-message-assistant]="msg.role === 'ASSISTANT'"
+             [attr.data-testid]="'chat-msg-' + msg.role.toLowerCase()">
+          <div class="chat-message-bubble" [class.bubble-ta]="msg.language === 'ta'">
+            <div class="chat-message-content">{{ msg.content }}</div>
+            @if (msg.role === 'ASSISTANT' && msg.modelUsed) {
+              <div class="chat-message-meta">
+                <span class="badge">{{ msg.modelUsed }}</span>
+                @if (msg.tokensUsed) {
+                  <span class="tokens">{{ msg.tokensUsed }} tokens</span>
+                }
+              </div>
+            }
+          </div>
         </div>
-      </div>
+      }
+
+      @if (chat.isLoading()) {
+        <div class="chat-message chat-message-assistant" data-testid="chat-typing">
+          <div class="chat-message-bubble">
+            <div class="typing-dots">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+        </div>
+      }
+
+      @if (chat.lastError()) {
+        <div class="chat-error" role="alert" data-testid="chat-error">
+          {{ chat.lastError() }}
+        </div>
+      }
     </div>
 
-    <div *ngIf="chat.lastError()" class="chat-error" role="alert" data-testid="chat-error">
-      {{ chat.lastError() }}
-    </div>
+    <footer class="chat-input-area">
+      <textarea
+        class="chat-input"
+        rows="1"
+        [placeholder]="placeholderText()"
+        [ngModel]="userInput()"
+        (ngModelChange)="userInput.set($event)"
+        (keydown)="onKeydown($event)"
+        [disabled]="chat.isLoading()"
+        data-testid="chat-input"
+        aria-label="Type your message"></textarea>
+      <button class="chat-send"
+              (click)="send()"
+              [disabled]="!userInput().trim() || chat.isLoading()"
+              [attr.aria-label]="sendButtonText()"
+              data-testid="chat-send">
+        @if (!chat.isLoading()) {
+          <span>{{ sendButtonText() }}</span>
+        } @else {
+          <span class="spinner" aria-hidden="true"></span>
+        }
+      </button>
+    </footer>
   </div>
-
-  <footer class="chat-input-area">
-    <textarea
-      class="chat-input"
-      rows="1"
-      [placeholder]="placeholderText()"
-      [ngModel]="userInput()"
-      (ngModelChange)="userInput.set($event)"
-      (keydown)="onKeydown($event)"
-      [disabled]="chat.isLoading()"
-      data-testid="chat-input"
-      aria-label="Type your message"></textarea>
-    <button class="chat-send"
-            (click)="send()"
-            [disabled]="!userInput().trim() || chat.isLoading()"
-            [attr.aria-label]="sendButtonText()"
-            data-testid="chat-send">
-      <span *ngIf="!chat.isLoading()">{{ sendButtonText() }}</span>
-      <span *ngIf="chat.isLoading()" class="spinner" aria-hidden="true"></span>
-    </button>
-  </footer>
-</div>
+}
