@@ -11,29 +11,33 @@ Raw evidence: [`docs/security/osv-backend-2026-06-25.md`](docs/security/osv-back
 
 ### Backend (Maven) — TRUSTWORTHY (real Maven Central)
 
-**Phase-7 fix applied (2026-06-25) — verified by re-scan:**
+**✅ Backend criticals cleared — verified by OSV re-scan at each step:**
 
-| Scan | Critical | High | Medium | Low | Findings |
+| Stage | Critical | High | Medium | Low | Findings |
 |---|---|---|---|---|---|
-| Before (initial scan) | 10 | 32 | 39 | 9 | 90 |
-| **After overrides** | **1** | **25** | **31** | **8** | **65** |
+| Initial (Spring Boot 3.4.13) | 10 | 32 | 39 | 9 | 90 |
+| After component overrides (3.4.13) | 1 | 25 | 31 | 8 | 65 |
+| **After Spring Boot 3.5.16** | **0** | **6** | **13** | **0** | **19** |
 
-Surgical version overrides on Spring Boot **3.4.13** (it is the LAST 3.4.x release —
-no 3.4.14 exists): `tomcat 10.1.50→10.1.55`, `thymeleaf 3.1.3→3.1.5.RELEASE`,
-`minio 8.5.9→8.6.0`, `poi 5.3.0→5.4.0`. **Build + 48 tests still pass.** Cleared 6
-of 7 unique critical CVEs (tomcat ×3, thymeleaf ×3) + 7 high + 8 medium. Evidence:
-[`docs/security/osv-backend-2026-06-25-after-overrides.md`](docs/security/osv-backend-2026-06-25-after-overrides.md).
+Two steps, both built + tested green (48 tests pass each time):
 
-> ⚠️ **1 critical REMAINS and CANNOT be cleared on the 3.4.x line:**
-> `spring-security-web:6.4.13` — **CVE-2026-22732**. OSV shows the 6.4.x branch as
-> `fixed (none)`; the fix lands only in **6.5.9 / 7.0.4**, i.e. **Spring Boot 3.5.x**
-> (3.5.16 manages spring-security 6.5.11). Moving to 3.5.x is a minor upgrade with
-> potential breaking changes — **deferred to an explicit decision** (was reserved
-> for "Phase 8"). Until then this one critical is an accepted, documented risk.
->
-> *Count caveat:* findings aggregate all 13 reactor modules, so a few libs (e.g.
-> `jackson-databind`) appear at multiple versions; the deployed `avgcxr-api`
-> carries one version each. The 80%-coverage gate remains the other backend gap.
+1. **Phase 7 — surgical overrides on 3.4.13** (it is the LAST 3.4.x release):
+   `tomcat 10.1.50→10.1.55`, `thymeleaf 3.1.3→3.1.5.RELEASE`, `minio 8.5.9→8.6.0`,
+   `poi 5.3.0→5.4.0`. Cleared 6 of 7 unique critical CVEs.
+2. **Phase 8 — Spring Boot 3.4.13 → 3.5.16** (the last critical, `spring-security-web`
+   CVE-2026-22732, had no 6.4.x fix). 3.5.16 brings spring-security **6.5.11** →
+   **critical cleared**, and its newer netty/jackson BOM also swept most highs.
+
+Evidence: [`docs/security/osv-backend-2026-06-25-after-overrides.md`](docs/security/osv-backend-2026-06-25-after-overrides.md)
+(after Phase 7), [`docs/security/osv-backend-2026-06-25-after-3.5.md`](docs/security/osv-backend-2026-06-25-after-3.5.md) (after Phase 8).
+
+> **Remaining (no criticals):** 6 high / 13 medium — chiefly **2 unique
+> `jackson-databind` CVEs** (CVE-2026-54512/54513, counted across 3 versions),
+> plus mediums in opentelemetry/commons/bouncycastle. These are HIGH, not
+> CRITICAL — targeted overrides are the next step. *Count caveat:* findings
+> aggregate all 13 reactor modules, so a few libs appear at multiple versions;
+> the deployed `avgcxr-api` carries one each. The 80%-coverage gate remains the
+> other backend gap.
 
 ### Frontend (npm) — current committed lockfile (Angular **17** / Strapi **4**)
 
