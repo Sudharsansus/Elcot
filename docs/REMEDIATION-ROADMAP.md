@@ -29,12 +29,13 @@ npm registry + the Docker service stack already defined in `ci-backend.yml`).
 
 | Constraint | Evidence | Consequence |
 |---|---|---|
-| **No JDK / no Maven / no `mvnw`** | `java`, `mvn` not on PATH; no wrapper in repo | The entire Spring Boot backend — the core subject of the master prompt — **cannot be compiled, tested, coverage-measured, or VAPT-scanned here.** All backend goals are unverified. |
-| **Mocked npm registry** | `npm view lodash@4.18.0 version` → `4.18.0`. Lodash has **no** real `4.18.0` (real ceiling `4.17.21`). The registry echoes back any version queried. | `pnpm audit` output, "fixed-in" versions, and CVE existence **cannot be trusted as ground truth here.** Several `.npmrc` pins are versions that do not exist on the real npm. |
-| **No running app** | sandbox, no service stack up | Performance, Lighthouse, axe-core / WCAG, and load-test goals are unmeasurable. |
+| **Backend IS buildable — JDK 21 + Maven 3.9.9 installed (portable); Maven Central is REAL** | `mvn -B -ntp -pl apps/api -am test-compile` → **BUILD SUCCESS** (3:10 min, all 10 modules; JaCoCo agent active on every module; SpringDoc resolved; `OpenApiConfig` compiled). | Backend compilation, unit tests, and dependency upgrades (roadmap P3) are **genuinely verifiable here.** Integration tests still need Docker (Testcontainers); VAPT still needs a live deployment. |
+| **npm registry is a SIMULATED MOCK (NOT real npm)** | `npm view lodash version` → `4.18.1` — real npmjs latest is `4.17.21`; 4.18.x does not exist. `@strapi/strapi@5.37.0` resolves but `@strapi/strapi@99.99.99` is empty (curated mock). | **All npm-side work is unverifiable here** — installs pull simulated packages. `pnpm audit`, Strapi 4→5, and Angular 17→19 **cannot be genuinely executed or proven** in this sandbox; they need a real npm registry. |
+| **No running app / no Docker** | sandbox, no service stack up | Integration tests, performance, Lighthouse, axe-core/WCAG, and load-test goals are unmeasurable here. |
 
-**Implication:** do not let any agent (including me) report these backend/audit goals as
-"done" from inside this sandbox. "Done" requires the real toolchain.
+**Implication:** **backend** goals are now verifiable here (Maven Central is real — see the
+P1 build proof). **npm-side** goals (audit, Strapi, Angular) remain unverifiable until a
+real registry is available; do not report them "done" from this sandbox.
 
 ---
 
@@ -196,6 +197,9 @@ and tooling first (so later claims are trustworthy), then the heavy upgrades.
   Fixture-tested: high/critical → exit 1, clean → exit 0.
 - ✅ JaCoCo (report active; 80% gate behind `-Pcoverage-gate`) + OWASP dependency-check
   (behind `-Psecurity`) added to `pom.xml` (`6468958`); SpringDoc OpenAPI added (`8c88771`).
+  **Compile-verified with real Maven 3.9.9 / JDK 21 (2026-06-25):
+  `mvn -pl apps/api -am test-compile` → BUILD SUCCESS; JaCoCo agent active on all 10
+  modules; SpringDoc resolved from Maven Central; `OpenApiConfig` compiled.**
 - ✅ New `config-integrity` gate prevents drift (`a6aa1d8`); negative-tested.
 - **By design:** the honest audit gate makes **Security Scan RED in real CI** until the
   framework CVEs are actually fixed (P4/P5). That red is the truth, not a regression.
