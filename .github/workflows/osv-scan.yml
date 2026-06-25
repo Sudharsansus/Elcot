@@ -1,0 +1,37 @@
+name: OSV Vulnerability Scan
+
+# Scans dependencies against OSV (https://osv.dev) — Google's free open-source
+# vulnerability database. No API key, no rate limiting (unlike NVD).
+#
+# This gate is intentionally HONEST-RED while known CVEs remain: osv-scanner exits
+# non-zero when vulnerabilities are found. As of 2026-06-25 the backend (Maven) and
+# the Angular-17/Strapi-4 frontend lockfile both have findings — see
+# docs/SECURITY-SCANNING.md and SECURITY_KNOWN_ISSUES.md. It turns green when the
+# dependency bumps (Spring Boot patch, Angular 19, Strapi 5) land with a real
+# lockfile regen. The failure is intentional and is not suppressed.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: '0 6 * * 1' # weekly, Monday 06:00 UTC
+
+permissions:
+  contents: read
+
+jobs:
+  osv-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install osv-scanner (pinned binary)
+        run: |
+          curl -sSfL -o osv-scanner \
+            "https://github.com/google/osv-scanner/releases/download/v2.4.0/osv-scanner_linux_amd64"
+          chmod +x osv-scanner
+          ./osv-scanner --version
+
+      - name: Scan repository (lockfiles + manifests)
+        run: ./osv-scanner --recursive --format table ./

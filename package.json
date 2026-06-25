@@ -13,7 +13,10 @@
     "affected:test": "nx affected --target=test",
     "affected:lint": "nx affected --target=lint",
     "format:check": "prettier --check \"apps/**/*.ts\" \"libs/**/*.ts\"",
-    "format:write": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\""
+    "format:write": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
+    "scan:vulns": "osv-scanner --recursive .",
+    "scan:fe": "osv-scanner -L pnpm-lock.yaml",
+    "scan:java": "osv-scanner -L apps/api/pom.xml"
   },
   "devDependencies": {
     "nx": "^20.3.0",
