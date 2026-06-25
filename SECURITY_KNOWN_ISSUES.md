@@ -1,43 +1,55 @@
 # Security — Known Issues
 
-## ⚠️ REAL CVE SCAN STATUS — 25 June 2026
+## ✅ REAL CVE SCAN — 25 June 2026 (source: OSV)
 
-### Backend (Spring Boot 3.4.13)
+The NVD route was abandoned (no API key, 4+ h throttled). Instead the scan was run
+against **[OSV](https://osv.dev/)** — Google's free open-source vulnerability
+database (no API key, no rate-limit). Tool: **osv-scanner 2.4.0** + the OSV batch
+API. Methodology and reproduction: [`docs/SECURITY-SCANNING.md`](docs/SECURITY-SCANNING.md).
+Raw evidence: [`docs/security/osv-backend-2026-06-25.md`](docs/security/osv-backend-2026-06-25.md),
+[`docs/security/osv-frontend-2026-06-25.md`](docs/security/osv-frontend-2026-06-25.md).
 
-**Status:** Compile-verified ✅ | 48 tests pass ✅ | 17.8% line coverage (real) ⚠️
+### Backend (Maven) — TRUSTWORTHY (real Maven Central)
 
-**CVE scan status:** **NOT COMPLETED.** Scan attempted on a real JDK 21 + Maven
-3.9.9 toolchain **without `NVD_API_KEY`**. OWASP dependency-check was throttled by
-the NVD public feed (≈6 requests / 30 s) and was **killed at 6% progress
-(20,000 / 360,825 CVEs downloaded)** because it would not complete in the available
-time. It produced **zero** vulnerability-report lines — so **no CVE count exists
-yet; do not infer one.**
+Full resolved tree: **321 deps scanned · 32 affected · 90 findings · 70 unique
+advisories (69 CVEs).** Severity: **CRITICAL 10 · HIGH 32 · MEDIUM 39 · LOW 9.**
 
-**Path to resolution:**
+**Critical drivers (real, actionable):**
 
-1. Acquire a free NVD API key: <https://nvd.nist.gov/developers/request-an-api-key> (instant).
-2. Set `NVD_API_KEY=<key>` in the environment.
-3. Re-run: `mvn -Psecurity verify` (profile already wired; `failBuildOnCVSS=7`).
-4. Expected time: ~5 minutes with the key (vs 4+ hours / throttled without).
+- `org.apache.tomcat.embed:tomcat-embed-core:10.1.50` — 3 critical (CVE-2026-43515/43512/41293) + 6 high. Pulled by Spring Boot's embedded Tomcat.
+- `org.springframework.security:spring-security-web:6.4.13` — critical CVE-2026-22732.
+- `org.thymeleaf:thymeleaf(-spring6):3.1.3.RELEASE` — 3 critical (CVE-2026-41901/40477/40478).
+- Also high: `jackson-databind`, `io.netty:*:4.1.130`, `io.minio:minio:8.5.9` (→8.6.0), `postgresql:42.7.8`, `spring-boot:3.4.13`.
 
-**Honest current state — what IS vs ISN'T verified:**
+> **Implication:** even the Phase-3 "upgraded" Spring Boot 3.4.13 now carries
+> criticals — a further patch/minor bump (latest 3.4.x or 3.5.x, which ships
+> patched Tomcat/Security/Thymeleaf) is required. The 80%-coverage gate and these
+> CVE bumps are the two real remaining backend gaps.
+>
+> *Count caveat:* findings aggregate all 13 reactor modules, so a few libs (e.g.
+> `jackson-databind`) appear at multiple versions; the deployed `avgcxr-api`
+> carries one version each.
 
-- ✅ Verified build — `mvn clean compile` **and** `mvn verify` both **BUILD SUCCESS** on real Maven Central (Spring Boot 3.4.13 / Java 21).
-- ✅ Verified tests — **48 run, 0 failures, 0 errors, 2 skipped**.
-- ✅ Verified coverage — **17.8% line / 14.9% instruction** (real JaCoCo; below the 80% gate).
-- ❌ Verified CVE count — **pending NVD API key.**
+### Frontend (npm) — current committed lockfile (Angular **17** / Strapi **4**)
 
-### Frontend (Angular 19 + Strapi 5)
+**37 packages affected · 96 known vulns: 4 Critical · 22 High · 58 Medium · 11 Low · 1 Unknown.**
 
-**Status:** Code-complete ⏳ | Real verification blocked by the mocked npm registry in this sandbox.
+> ⚠️ This is the **pre-upgrade baseline** — the committed `pnpm-lock.yaml` is still
+> Angular 17 / Strapi 4 (the Angular-19/Strapi-5 lockfile can't be regenerated
+> against this machine's mock registry). The affected set — `@angular/*` 17.x,
+> `@strapi/*` 4.x, `vite` 5.4.x, `webpack-dev-server` 4.15.x, `esbuild`, `postcss`,
+> `tar`, `cookie`, `qs`, `elliptic` — is **exactly what the Angular-19 + Strapi-5
+> upgrades target.** A few mock-pinned overrides (e.g. `lodash 4.18.0`) are absent
+> from OSV and don't appear. Re-scan after a real lockfile regen to confirm the
+> upgrades clear these.
 
-**CVE scan status:** **NOT COMPLETED** in a real environment. `pnpm audit` here would
-read the mock registry (which advertises non-existent versions such as
-`@angular/core@22.0.2`), so any result would be meaningless.
+### What IS vs ISN'T verified now
 
-**Path to resolution:** Run in a real CI environment with real npm access; also move
-`pnpm.overrides` into `pnpm-workspace.yaml` first (pnpm 9.15 no longer reads the
-`package.json` field — see `docs/PHASE-4-REAL-ENV-VERIFICATION.md`).
+- ✅ Build — `mvn clean compile` **and** `mvn verify` both **BUILD SUCCESS** (Spring Boot 3.4.13 / Java 21).
+- ✅ Tests — **48 run, 0 failures, 0 errors, 2 skipped**.
+- ✅ Coverage — **17.8% line / 14.9% instruction** (real JaCoCo; below the 80% gate).
+- ✅ **Backend CVE count — REAL (OSV): 10 critical / 32 high** (see above).
+- 🟡 Frontend CVE count — real but for the **Angular-17 baseline**; re-scan post lockfile-regen.
 
 ---
 
