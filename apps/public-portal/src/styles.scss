@@ -1251,3 +1251,43 @@ img {
     will-change: auto;
   }
 }
+
+// ============================================================
+// AUTH FORMS — shared layout for the projected forms inside <app-auth-shell>
+// (global, because projected content can't be styled by the shell component)
+// ============================================================
+.auth-heading {
+  font-family: var(--font-serif);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 6px;
+}
+.auth-subheading {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  margin: 0 0 24px;
+  line-height: 1.5;
+}
+.auth-form { display: flex; flex-direction: column; gap: 14px; }
+.auth-form .mat-mdc-form-field { width: 100%; }
+.auth-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.auth-submit {
+  width: 100%;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 13px 20px;
+  background: var(--color-primary); color: #fff;
+  border: none; border-radius: var(--radius-md);
+  font-family: inherit; font-size: var(--text-base); font-weight: 700; cursor: pointer;
+  transition: background-color var(--duration-fast) ease, transform var(--duration-fast) ease;
+}
+.auth-submit:hover:not(:disabled) { background: var(--color-primary-dark); transform: translateY(-1px); }
+.auth-submit:disabled { opacity: 0.65; cursor: not-allowed; }
+.auth-submit:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
+.auth-links {
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  margin-top: 18px; font-size: var(--text-sm);
+}
+.auth-links a { color: var(--color-primary); font-weight: 600; text-decoration: none; }
+.auth-links a:hover { text-decoration: underline; }
+@media (max-width: 480px) { .auth-grid-2 { grid-template-columns: 1fr; } }

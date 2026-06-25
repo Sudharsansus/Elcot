@@ -56,13 +56,20 @@ export class ContactComponent implements OnInit {
       return;
     }
     this.sending.set(true);
-    // When backend is ready: POST to /api/contact
-    // For now, simulate success after 600ms
-    setTimeout(() => {
-      this.sending.set(false);
-      this.submitted.set(true);
-      this.form.reset();
-    }, 600);
+    // No fake "message sent": compose a real email to the ELCOT facilitation
+    // desk via the user's mail client. (When a backend /api/contact endpoint
+    // exists, switch to a POST — but never claim a send that didn't happen.)
+    const { name, email, phone, subject, message } = this.form.value;
+    const to = 'facilitation@elcot.in';
+    const body =
+      `Name: ${name}\nEmail: ${email}\nPhone: ${phone || '-'}\n\n${message}`;
+    const href = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    if (typeof window !== 'undefined') {
+      window.location.href = href;
+    }
+    this.sending.set(false);
+    this.submitted.set(true);
+    this.form.reset();
   }
 
   t(key: string): string { return this.i18n.translate(key); }
