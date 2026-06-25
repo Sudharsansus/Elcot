@@ -1,0 +1,89 @@
+<header class="navbar" [class.scrolled]="scrolled()" [class.menu-open]="mobileMenuOpen()">
+  <div class="navbar-inner container">
+    <!-- Logo / Brand -->
+    <a routerLink="/" class="navbar-brand" (click)="closeMobileMenu()" aria-label="Tamil Nadu AVGC-XR Portal home">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 40 40" width="40" height="40">
+          <defs>
+            <linearGradient id="brandGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#1a237e"/>
+              <stop offset="100%" stop-color="#3949ab"/>
+            </linearGradient>
+          </defs>
+          <rect width="40" height="40" rx="10" fill="url(#brandGrad)"/>
+          <path d="M12 28 L20 10 L28 28 M15 22 H25" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-title">{{ lang() === 'ta' ? 'தமிழ்நாடு AVGC-XR' : 'Tamil Nadu AVGC-XR' }}</span>
+        <span class="brand-subtitle">{{ t('common.tagline') }}</span>
+      </div>
+    </a>
+
+    <!-- Desktop navigation -->
+    <nav class="navbar-nav" aria-label="Primary">
+      @for (link of navLinks; track link.route) {
+        <a
+          [routerLink]="link.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: !!link.exact }"
+          class="nav-link"
+        >{{ t(link.labelKey) }}</a>
+      }
+    </nav>
+
+    <!-- Right actions -->
+    <div class="navbar-actions">
+      <button
+        type="button"
+        class="lang-toggle"
+        (click)="toggleLanguage()"
+        [attr.aria-label]="t('a11y.toggleLang')"
+      >
+        <mat-icon>translate</mat-icon>
+        <span class="lang-label">{{ lang() === 'en' ? 'தமிழ்' : 'English' }}</span>
+      </button>
+
+      <a routerLink="/auth/login" class="btn btn-primary btn-login">
+        {{ t('common.login') }}
+      </a>
+
+      <a routerLink="/auth/register" class="btn btn-cta btn-register">
+        {{ t('common.register') }}
+      </a>
+
+      <button
+        type="button"
+        class="mobile-toggle"
+        (click)="toggleMobileMenu()"
+        [attr.aria-label]="mobileMenuOpen() ? t('a11y.closeMenu') : t('a11y.openMenu')"
+        [attr.aria-expanded]="mobileMenuOpen()"
+      >
+        <mat-icon>{{ mobileMenuOpen() ? 'close' : 'menu' }}</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu drawer -->
+  <div class="mobile-menu" [class.open]="mobileMenuOpen()">
+    <nav class="mobile-nav" aria-label="Mobile">
+      @for (link of navLinks; track link.route) {
+        <a
+          [routerLink]="link.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: !!link.exact }"
+          class="mobile-link"
+          (click)="closeMobileMenu()"
+        >{{ t(link.labelKey) }}</a>
+      }
+      <div class="mobile-actions">
+        <a routerLink="/auth/login" class="btn btn-outline" (click)="closeMobileMenu()">
+          {{ t('common.login') }}
+        </a>
+        <a routerLink="/auth/register" class="btn btn-cta" (click)="closeMobileMenu()">
+          {{ t('common.register') }}
+        </a>
+      </div>
+    </nav>
+  </div>
+</header>

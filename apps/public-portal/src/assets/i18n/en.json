@@ -1,17 +1,210 @@
 {
-  "nav.home": "Home",
-  "nav.schemes": "Schemes",
-  "nav.about": "About AVGC",
-  "nav.contact": "Contact",
-  "hero.title": "Tamil Nadu AVGC-XR Portal",
-  "hero.subtitle": "Animation, VFX, Gaming, Comics & Extended Reality \u2014 Government of Tamil Nadu",
-  "hero.cta": "Browse Schemes",
-  "schemes.title": "Available Schemes",
-  "schemes.filter": "Filter by sector",
-  "schemes.apply": "Apply Now",
-  "schemes.deadline": "Last date",
-  "footer.copyright": "\u00a9 2026 ELCOT, Government of Tamil Nadu",
-  "footer.disclaimer": "Designed for W3C WCAG 2.1 AA compliance",
-  "a11y.skipToContent": "Skip to main content",
-  "a11y.toggleLang": "Switch language"
+  "common": {
+    "appName": "Tamil Nadu AVGC-XR Portal",
+    "appNameTa": "தமிழ்நாடு AVGC-XR போர்டல்",
+    "tagline": "Government of Tamil Nadu",
+    "loading": "Loading...",
+    "retry": "Retry",
+    "viewAll": "View all",
+    "learnMore": "Learn more",
+    "explore": "Explore",
+    "browse": "Browse",
+    "register": "Register",
+    "login": "Login",
+    "apply": "Apply Now",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search"
+  },
+  "nav": {
+    "home": "Home",
+    "schemes": "Schemes",
+    "businessConnect": "Business Connect",
+    "talentConnect": "Talent Connect",
+    "freelancers": "Freelancers",
+    "news": "News & Events",
+    "about": "About",
+    "contact": "Contact",
+    "menu": "Menu",
+    "closeMenu": "Close menu"
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Government of Tamil Nadu",
+      "title": "Empowering the AVGC-XR Future of Tamil Nadu",
+      "subtitle": "The official portal for Animation, Visual Effects, Gaming, Comics, and Extended Reality industry stakeholders, scheme applicants, and ecosystem partners.",
+      "ctaPrimary": "Apply for a Scheme",
+      "ctaSecondary": "Explore the Ecosystem"
+    },
+    "stats": {
+      "title": "Tamil Nadu AVGC-XR at a Glance",
+      "subtitle": "Real impact across the state — by the numbers",
+      "applications": "Applications Received",
+      "beneficiaries": "Beneficiaries Supported",
+      "studios": "Registered Studios",
+      "freelancers": "Active Freelancers"
+    },
+    "schemes": {
+      "title": "Featured Schemes & Incentives",
+      "subtitle": "Production subsidies, training grants, infrastructure funding, and market access support for the AVGC-XR industry.",
+      "viewAll": "Browse all schemes"
+    },
+    "ecosystem": {
+      "title": "Explore the AVGC-XR Ecosystem",
+      "subtitle": "Connect with companies, talent, and freelancers across the state.",
+      "businessConnect": {
+        "title": "Business Connect",
+        "description": "A searchable directory of AVGC-XR companies, studios, service providers, and ecosystem partners across Tamil Nadu."
+      },
+      "talentConnect": {
+        "title": "Talent Connect",
+        "description": "A digital skill registry for students and professionals. Discover jobs, internships, and career opportunities."
+      },
+      "freelancerRegistry": {
+        "title": "Freelancer Registry",
+        "description": "A dedicated registry enabling profile-based discoverability of verified freelancers by companies and stakeholders."
+      }
+    },
+    "news": {
+      "title": "Latest Updates",
+      "subtitle": "Announcements, partnerships, and policy developments.",
+      "viewAll": "All updates"
+    },
+    "cta": {
+      "title": "Ready to Get Started?",
+      "subtitle": "Register as an applicant, explore available schemes, or join the AVGC-XR ecosystem.",
+      "register": "Register Now",
+      "browse": "Browse Schemes"
+    }
+  },
+  "schemes": {
+    "title": "Schemes & Incentives",
+    "subtitle": "Government of Tamil Nadu schemes supporting the AVGC-XR industry across production, training, infrastructure, and market access.",
+    "filters": {
+      "title": "Filter",
+      "category": "Category",
+      "department": "Department",
+      "amount": "Maximum Amount",
+      "status": "Status",
+      "reset": "Reset filters",
+      "allCategories": "All categories",
+      "allDepartments": "All departments",
+      "allStatus": "All status"
+    },
+    "card": {
+      "maxAmount": "Up to",
+      "deadline": "Deadline",
+      "eligibility": "Eligibility",
+      "documents": "Required documents",
+      "applicants": "Applicants",
+      "sanctioned": "Sanctioned",
+      "viewDetails": "View details"
+    },
+    "empty": {
+      "title": "No schemes match your filters",
+      "description": "Try resetting the filters or browsing all available schemes.",
+      "action": "Reset filters"
+    },
+    "categories": {
+      "production": "Production",
+      "training": "Training",
+      "infrastructure": "Infrastructure",
+      "export": "Market Access",
+      "freelancer": "Freelancer",
+      "scholarship": "Scholarship"
+    }
+  },
+  "about": {
+    "title": "About the AVGC-XR Portal",
+    "subtitle": "A Government of Tamil Nadu initiative to grow the state's Animation, Visual Effects, Gaming, Comics, and Extended Reality industry.",
+    "intro": "The Tamil Nadu AVGC-XR Portal is a centralized digital platform for seamless interaction between Government departments, AVGC-XR industry stakeholders, academic institutions, startups, freelancers, and beneficiaries.",
+    "vision": {
+      "title": "Our Vision",
+      "content": "To position Tamil Nadu as a global hub for the AVGC-XR industry — driving employment, innovation, and creative exports from the state."
+    },
+    "mission": {
+      "title": "Our Mission",
+      "content": "To enable policy dissemination, stakeholder engagement, application processing, incentive management, and performance monitoring through a modern, mobile-friendly, AI-first digital platform."
+    },
+    "elcot": {
+      "title": "About ELCOT",
+      "content": "Electronics Corporation of Tamil Nadu Limited (ELCOT) is a wholly owned Public Sector Undertaking of the Government of Tamil Nadu, established in 1977. ELCOT serves as the Optional Procurement agency of the Government of Tamil Nadu for IT-related products and leads the State's digital infrastructure initiatives."
+    },
+    "stats": {
+      "title": "By the Numbers",
+      "applications": "Applications Received",
+      "beneficiaries": "Beneficiaries",
+      "funding": "Total Disbursed",
+      "districts": "Districts Active"
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Reach out to the ELCOT AVGC-XR team for support, partnerships, or queries.",
+    "office": {
+      "title": "ELCOT Headquarters",
+      "address": "9th Floor, Sigapi Achi Building, 18/3 Rukmani Lakshmipathy Road, Egmore, Chennai – 600 008",
+      "phone": "+91 44 2855 6100",
+      "email": "facilitation@elcot.in",
+      "website": "https://elcot.tn.gov.in",
+      "hours": "Monday – Friday, 10:00 AM to 5:30 PM IST"
+    },
+    "form": {
+      "title": "Send us a message",
+      "name": "Full name",
+      "email": "Email address",
+      "phone": "Phone number (optional)",
+      "subject": "Subject",
+      "message": "Your message",
+      "submit": "Send message",
+      "success": "Thank you. Your message has been recorded. We'll respond within 2 business days.",
+      "error": "We couldn't send your message. Please try again or email us directly."
+    },
+    "helpdesk": {
+      "title": "Helpdesk",
+      "description": "For application support, scheme queries, and technical issues.",
+      "email": "helpdesk@avgcxr.tn.gov.in",
+      "phone": "1800-XXX-XXXX (toll-free)"
+    },
+    "grievance": {
+      "title": "Grievance Redressal",
+      "description": "If you have a grievance regarding any application or portal service, please raise it through the Grievance module."
+    }
+  },
+  "footer": {
+    "about": "About the Portal",
+    "aboutText": "The Tamil Nadu AVGC-XR Portal is a flagship initiative of the Government of Tamil Nadu, implemented by ELCOT, to grow the state's creative economy.",
+    "quickLinks": "Quick Links",
+    "resources": "Resources",
+    "contact": "Contact",
+    "schemes": "All Schemes",
+    "ecosystem": "Ecosystem",
+    "policy": "Tamil Nadu AVGC-XR Policy 2024",
+    "guidelines": "Guidelines & Circulars",
+    "faqs": "FAQs",
+    "downloads": "Downloads",
+    "address": "9th Floor, Sigapi Achi Building, 18/3 Rukmani Lakshmipathy Road, Egmore, Chennai – 600 008",
+    "phone": "+91 44 2855 6100",
+    "email": "facilitation@elcot.in",
+    "copyright": "© 2026 Electronics Corporation of Tamil Nadu Limited. All rights reserved.",
+    "disclaimer": "Designed for W3C WCAG 2.1 AA compliance. Built with open standards (W3C, BPMN 2.0, ISO 27001 alignment).",
+    "poweredBy": "Powered by ELCOT"
+  },
+  "states": {
+    "loading": "Loading...",
+    "empty": "Nothing to show yet",
+    "emptyDescription": "Data will appear here once available.",
+    "error": "Something went wrong",
+    "errorDescription": "We couldn't load the data. Please try again.",
+    "serviceUnavailable": "Service temporarily unavailable",
+    "serviceUnavailableDescription": "We're having trouble connecting. Showing the latest available information."
+  },
+  "a11y": {
+    "skipToContent": "Skip to main content",
+    "toggleLang": "Switch language",
+    "openMenu": "Open navigation menu",
+    "closeMenu": "Close navigation menu"
+  }
 }

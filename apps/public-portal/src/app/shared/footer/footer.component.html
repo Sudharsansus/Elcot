@@ -1,0 +1,70 @@
+<footer class="footer">
+  <div class="footer-top container">
+    <div class="footer-grid">
+      <!-- Brand column -->
+      <div class="footer-col footer-brand-col">
+        <div class="footer-brand">
+          <svg viewBox="0 0 40 40" width="44" height="44" aria-hidden="true">
+            <defs>
+              <linearGradient id="footerGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#1a237e"/>
+                <stop offset="100%" stop-color="#3949ab"/>
+              </linearGradient>
+            </defs>
+            <rect width="40" height="40" rx="10" fill="url(#footerGrad)"/>
+            <path d="M12 28 L20 10 L28 28 M15 22 H25" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div>
+            <div class="footer-brand-name">{{ t('common.appName') }}</div>
+            <div class="footer-brand-tag">{{ t('common.tagline') }}</div>
+          </div>
+        </div>
+        <p class="footer-about">{{ t('footer.aboutText') }}</p>
+      </div>
+
+      <!-- Quick links -->
+      <div class="footer-col">
+        <h4 class="footer-heading">{{ t('footer.quickLinks') }}</h4>
+        <ul class="footer-list">
+          @for (link of quickLinks; track link.route) {
+            <li><a [routerLink]="link.route">{{ t(link.labelKey) }}</a></li>
+          }
+        </ul>
+      </div>
+
+      <!-- Resources -->
+      <div class="footer-col">
+        <h4 class="footer-heading">{{ t('footer.resources') }}</h4>
+        <ul class="footer-list">
+          @for (r of resources; track r.href) {
+            <li><a [routerLink]="r.href">{{ t(r.labelKey) }}</a></li>
+          }
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div class="footer-col">
+        <h4 class="footer-heading">{{ t('footer.contact') }}</h4>
+        <address class="footer-address">
+          <p>{{ t('footer.address') }}</p>
+          <p>
+            <mat-icon>phone</mat-icon>
+            <a [href]="'tel:' + t('footer.phone')">{{ t('footer.phone') }}</a>
+          </p>
+          <p>
+            <mat-icon>email</mat-icon>
+            <a [href]="'mailto:' + t('footer.email')">{{ t('footer.email') }}</a>
+          </p>
+        </address>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="container footer-bottom-inner">
+      <p class="copyright">{{ t('footer.copyright') }}</p>
+      <p class="disclaimer">{{ t('footer.disclaimer') }}</p>
+      <p class="powered-by">{{ t('footer.poweredBy') }}</p>
+    </div>
+  </div>
+</footer>

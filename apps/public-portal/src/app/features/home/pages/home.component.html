@@ -1,135 +1,185 @@
+<!-- ============================================================ -->
+<!-- HOME PAGE TEMPLATE -->
+<!-- ============================================================ -->
+
+<!-- HERO SECTION -->
 <section class="hero">
-  <div class="container">
-    <div class="hero-content">
-      <h1>
-        <span *ngIf="!isTamil()">Tamil Nadu AVGC-XR Portal</span>
-        <span *ngIf="isTamil()" class="font-tamil">தமிழ்நாடு AVGC-XR தளம்</span>
-      </h1>
-      <p class="hero-subtitle" *ngIf="!isTamil()">
-        Empowering the Animation, VFX, Gaming, Comics & Extended Reality ecosystem in Tamil Nadu.
-        Explore government schemes, subsidies, and support programs.
-      </p>
-      <p class="hero-subtitle font-tamil" *ngIf="isTamil()">
-        தமிழ்நாட்டில் அனிமேஷன், காட்சி விளைவுகள், கேமிங், காமிக்ஸ் மற்றும் நீட்டிக்கப்பட்ட யதார்த்தம் சூழலை வளர்க்கிறது.
-        அரசு திட்டங்கள், மானியங்கள் மற்றும் ஆதரவு திட்டங்களைக் கண்டறியுங்கள்.
-      </p>
-      <div class="hero-actions">
-        <a routerLink="/schemes" mat-raised-button color="primary" class="hero-cta">
-          <span class="material-icons">explore</span>
-          {{ isTamil() ? 'திட்டங்களைக் கண்டறியுங்கள்' : 'Explore Schemes' }}
-        </a>
-        <a routerLink="/auth/register" mat-stroked-button color="primary">
-          {{ isTamil() ? 'பதிவு செய்யுங்கள்' : 'Register Now' }}
-        </a>
-      </div>
+  <div class="hero-bg" aria-hidden="true">
+    <div class="hero-blob hero-blob-1"></div>
+    <div class="hero-blob hero-blob-2"></div>
+    <div class="hero-blob hero-blob-3"></div>
+  </div>
+
+  <div class="container hero-inner">
+    <div class="hero-eyebrow">
+      <span class="hero-eyebrow-dot"></span>
+      <span>{{ t('home.hero.eyebrow') }}</span>
+    </div>
+
+    <h1 class="hero-title">
+      <span class="hero-title-line">{{ t('home.hero.title') }}</span>
+    </h1>
+
+    <p class="hero-subtitle">{{ t('home.hero.subtitle') }}</p>
+
+    <div class="hero-actions">
+      <a routerLink="/schemes" class="btn btn-primary btn-lg">
+        <mat-icon>arrow_forward</mat-icon>
+        {{ t('home.hero.ctaPrimary') }}
+      </a>
+      <a routerLink="/companies" class="btn btn-outline-light btn-lg">
+        {{ t('home.hero.ctaSecondary') }}
+      </a>
+    </div>
+
+    <div class="hero-trust">
+      <span class="trust-label">Powered by</span>
+      <span class="trust-org">Electronics Corporation of Tamil Nadu (ELCOT)</span>
     </div>
   </div>
 </section>
 
+<!-- STATS BAR -->
 <section class="stats-section">
   <div class="container">
     <div class="stats-grid">
-      <div class="stat-card">
-        <span class="material-icons stat-icon">policy</span>
-        <div class="stat-value">{{ stats().totalSchemes }}</div>
-        <div class="stat-label">{{ isTamil() ? 'திட்டங்கள்' : 'Schemes' }}</div>
-      </div>
-      <div class="stat-card">
-        <span class="material-icons stat-icon">groups</span>
-        <div class="stat-value">{{ stats().totalBeneficiaries }}</div>
-        <div class="stat-label">{{ isTamil() ? 'பயனாளர்கள்' : 'Beneficiaries' }}</div>
-      </div>
-      <div class="stat-card">
-        <span class="material-icons stat-icon">currency_rupee</span>
-        <div class="stat-value">{{ stats().totalFunding }} Cr</div>
-        <div class="stat-label">{{ isTamil() ? 'நிதி' : 'Funding (Crores)' }}</div>
-      </div>
-      <div class="stat-card">
-        <span class="material-icons stat-icon">business</span>
-        <div class="stat-value">{{ stats().totalCompanies }}</div>
-        <div class="stat-label">{{ isTamil() ? 'நிறுவனங்கள்' : 'Companies' }}</div>
-      </div>
+      @for (stat of statsDisplay(); track stat.label) {
+        <div class="stat-card" [style.--accent]="stat.color">
+          <div class="stat-icon">
+            <mat-icon>{{ stat.icon }}</mat-icon>
+          </div>
+          <div class="stat-value">{{ stat.value }}</div>
+          <div class="stat-label">{{ stat.label }}</div>
+        </div>
+      }
     </div>
   </div>
 </section>
 
-<section class="sectors-section">
-  <div class="container">
-    <h2 class="section-title">{{ isTamil() ? 'துறைகள்' : 'AVGC-XR Sectors' }}</h2>
-    <div class="sectors-grid">
-      <a *ngFor="let sector of sectors" [routerLink]="['/schemes']" [queryParams]="{ category: sector.key }" class="sector-card" [style.--sector-color]="sector.color">
-        <span class="material-icons sector-icon">{{ sector.icon }}</span>
-        <span class="sector-label">{{ isTamil() ? sector.labelTa : sector.label }}</span>
-      </a>
-    </div>
-  </div>
-</section>
-
-<section class="schemes-section">
+<!-- FEATURED SCHEMES -->
+<section class="section schemes-section">
   <div class="container">
     <div class="section-header">
-      <h2 class="section-title">{{ isTamil() ? 'சிறப்பு திட்டங்கள்' : 'Featured Schemes' }}</h2>
-      <a routerLink="/schemes" class="view-all">
-        {{ isTamil() ? 'அனைத்தையும் காண்க' : 'View All' }}
-        <span class="material-icons">arrow_forward</span>
-      </a>
+      <h2 class="section-title">{{ t('home.schemes.title') }}</h2>
+      <p class="section-subtitle">{{ t('home.schemes.subtitle') }}</p>
     </div>
 
-    <!-- Loading state -->
-    <div *ngIf="loading()" class="schemes-grid">
-      <div *ngFor="let i of [1,2,3,4,5,6]" class="scheme-card skeleton-card">
-        <div class="skeleton" style="height: 160px;"></div>
-        <div class="skeleton" style="height: 20px; margin: 12px;"></div>
-        <div class="skeleton" style="height: 14px; margin: 0 12px 12px;"></div>
-      </div>
-    </div>
-
-    <!-- Error state -->
-    <div *ngIf="error()" class="error-message">
-      <span class="material-icons">error_outline</span>
-      <p>{{ error() }}</p>
-    </div>
-
-    <!-- Schemes grid -->
-    <div *ngIf="!loading() && featuredSchemes().length > 0" class="schemes-grid">
-      <a *ngFor="let scheme of featuredSchemes()" [routerLink]="['/schemes', scheme.id]" class="scheme-card">
-        <div class="scheme-thumbnail">
-          <img [src]="scheme.thumbnail || '/assets/images/placeholder.svg'" [alt]="scheme.name" loading="lazy" />
-          <span class="category-badge" [style.background-color]="getCategoryColor(scheme.category)">
-            {{ scheme.category }}
-          </span>
-        </div>
-        <div class="scheme-info">
-          <h3>{{ getSchemeTitle(scheme) }}</h3>
-          <p class="scheme-desc">{{ scheme.description }}</p>
-          <div class="scheme-meta">
-            <span class="funding">
-              <span class="material-icons">currency_rupee</span>
-              {{ scheme.maxFunding ? scheme.maxFunding + ' Cr' : 'TBD' }}
-            </span>
-            <span class="deadline" *ngIf="scheme.deadline">
-              <span class="material-icons">event</span>
-              {{ scheme.deadline | date:'shortDate' }}
-            </span>
+    <div class="schemes-grid">
+      @for (s of featuredSchemes(); track s.id) {
+        <article class="scheme-card" [style.--accent]="s.color">
+          <div class="scheme-card-header">
+            <div class="scheme-icon">
+              <mat-icon>{{ s.icon }}</mat-icon>
+            </div>
+            <span class="scheme-category">{{ getCategoryLabel(s) }}</span>
           </div>
-        </div>
-      </a>
+
+          <h3 class="scheme-name">{{ getSchemeName(s) }}</h3>
+          <p class="scheme-description">{{ getSchemeDescription(s) }}</p>
+
+          <div class="scheme-stats">
+            <div class="scheme-amount">
+              <span class="scheme-amount-label">{{ t('schemes.card.maxAmount') }}</span>
+              <span class="scheme-amount-value">{{ formatAmount(s.maxAmount) }}</span>
+            </div>
+            <div class="scheme-meta">
+              <span class="meta-item">
+                <mat-icon>group</mat-icon>
+                {{ s.applicantsCount }}
+              </span>
+              <span class="meta-item">
+                <mat-icon>check_circle</mat-icon>
+                {{ s.sanctionedCount }}
+              </span>
+            </div>
+          </div>
+
+          <a [routerLink]="['/schemes', s.slug]" class="scheme-cta">
+            {{ t('schemes.card.viewDetails') }}
+            <mat-icon>arrow_forward</mat-icon>
+          </a>
+        </article>
+      }
     </div>
 
-    <!-- Empty state -->
-    <div *ngIf="!loading() && featuredSchemes().length === 0" class="empty-state">
-      <span class="material-icons">search_off</span>
-      <p>{{ isTamil() ? 'திட்டங்கள் எதுவும் கிடைக்கவில்லை' : 'No schemes found' }}</p>
+    <div class="section-footer">
+      <a routerLink="/schemes" class="btn btn-outline btn-lg">
+        {{ t('home.schemes.viewAll') }}
+        <mat-icon>arrow_forward</mat-icon>
+      </a>
     </div>
   </div>
 </section>
 
-<section class="cta-section">
+<!-- ECOSYSTEM -->
+<section class="section ecosystem-section">
   <div class="container">
-    <h2>{{ isTamil() ? 'தமிழ்நாட்டின் AVGC-XR சூழலின் ஒரு பகுதியாக மாறுங்கள்' : 'Be Part of Tamil Nadu\'s AVGC-XR Ecosystem' }}</h2>
-    <p>{{ isTamil() ? 'இன்றே பதிவு செய்து, அரசு திட்டங்கள் மற்றும் ஆதரவுக்கு விண்ணப்பிக்கவும்.' : 'Register today and apply for government schemes and support.' }}</p>
-    <a routerLink="/auth/register" mat-raised-button color="accent" class="cta-button">
-      {{ isTamil() ? 'பதிவு செய்யுங்கள்' : 'Register Now' }}
-    </a>
+    <div class="section-header">
+      <h2 class="section-title">{{ t('home.ecosystem.title') }}</h2>
+      <p class="section-subtitle">{{ t('home.ecosystem.subtitle') }}</p>
+    </div>
+
+    <div class="ecosystem-grid">
+      @for (card of ecosystemCards(); track card.title) {
+        <a [routerLink]="card.route" class="ecosystem-card">
+          <div class="ecosystem-icon">
+            <mat-icon>{{ card.icon }}</mat-icon>
+          </div>
+          <h3 class="ecosystem-title">{{ card.title }}</h3>
+          <p class="ecosystem-description">{{ card.description }}</p>
+          <span class="ecosystem-cta">
+            {{ card.cta }}
+            <mat-icon>arrow_forward</mat-icon>
+          </span>
+        </a>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- NEWS & UPDATES -->
+<section class="section news-section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">{{ t('home.news.title') }}</h2>
+      <p class="section-subtitle">{{ t('home.news.subtitle') }}</p>
+    </div>
+
+    <div class="news-grid">
+      @for (n of news(); track n.id) {
+        <article class="news-card">
+          <div class="news-icon">
+            <mat-icon>{{ n.icon }}</mat-icon>
+          </div>
+          <div class="news-meta">{{ formatDate(n.date) }}</div>
+          <h3 class="news-title">{{ getNewsTitle(n) }}</h3>
+          <p class="news-excerpt">{{ getNewsExcerpt(n) }}</p>
+        </article>
+      }
+    </div>
+
+    <div class="section-footer">
+      <a routerLink="/events" class="btn btn-outline btn-lg">
+        {{ t('home.news.viewAll') }}
+        <mat-icon>arrow_forward</mat-icon>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section cta-section">
+  <div class="container cta-inner">
+    <h2 class="cta-title">{{ t('home.cta.title') }}</h2>
+    <p class="cta-subtitle">{{ t('home.cta.subtitle') }}</p>
+    <div class="cta-actions">
+      <a routerLink="/auth/register" class="btn btn-cta btn-lg">
+        {{ t('home.cta.register') }}
+        <mat-icon>arrow_forward</mat-icon>
+      </a>
+      <a routerLink="/schemes" class="btn btn-outline-light btn-lg">
+        {{ t('home.cta.browse') }}
+      </a>
+    </div>
   </div>
 </section>

@@ -1,104 +1,162 @@
-<div class="page-container">
+<section class="schemes-page">
+  <!-- Page header -->
   <div class="page-header">
-    <h1>{{ isTamil() ? 'திட்டங்கள்' : 'Government Schemes' }}</h1>
-    <p>{{ isTamil() ? 'AVGC-XR துறைக்கான அரசு திட்டங்கள் மற்றும் மானியங்களைக் கண்டறியுங்கள்' : 'Discover government schemes and subsidies for the AVGC-XR sector' }}</p>
+    <div class="container">
+      <h1 class="page-title">{{ t('schemes.title') }}</h1>
+      <p class="page-subtitle">{{ t('schemes.subtitle') }}</p>
+    </div>
   </div>
 
-  <div class="content-layout">
-    <aside class="filter-sidebar">
-      <div class="filter-section">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>{{ isTamil() ? 'தேடு' : 'Search' }}</mat-label>
-          <input matInput [formControl]="searchControl" (input)="onSearchInput($any($event.target).value)" placeholder="Search schemes..." />
-          <span matSuffix class="material-icons">search</span>
-        </mat-form-field>
+  <div class="container schemes-layout">
+    <!-- Filters sidebar -->
+    <aside class="filters-sidebar" aria-label="Filters">
+      <div class="filters-header">
+        <h2 class="filters-title">
+          <mat-icon>tune</mat-icon>
+          {{ t('schemes.filters.title') }}
+        </h2>
+        @if (hasActiveFilters()) {
+          <button type="button" class="reset-btn" (click)="resetFilters()">
+            {{ t('schemes.filters.reset') }}
+          </button>
+        }
       </div>
 
-      <div class="filter-section">
-        <h3>{{ isTamil() ? 'வகை' : 'Category' }}</h3>
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-select [formControl]="categoryControl">
-            <mat-option value="">{{ isTamil() ? 'அனைத்தும்' : 'All Categories' }}</mat-option>
-            <mat-option *ngFor="let cat of categories" [value]="cat.value">
-              {{ isTamil() ? cat.labelTa : cat.label }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
+      <form [formGroup]="filterForm" class="filters-form">
+        <!-- Search -->
+        <div class="filter-group">
+          <label class="filter-label">{{ t('common.search') }}</label>
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-icon matPrefix>search</mat-icon>
+            <input matInput type="text" [formControl]="searchControl" placeholder="...">
+          </mat-form-field>
+        </div>
 
-      <div class="filter-section">
-        <h3>{{ isTamil() ? 'நிலை' : 'Status' }}</h3>
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-select [formControl]="statusControl">
-            <mat-option value="">{{ isTamil() ? 'அனைத்தும்' : 'All Statuses' }}</mat-option>
-            <mat-option *ngFor="let s of statusOptions" [value]="s.value">
-              {{ isTamil() ? s.labelTa : s.label }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-
-      <button mat-stroked-button color="primary" class="full-width" (click)="clearFilters()">
-        {{ isTamil() ? 'வடிகட்டிகளை அகற்று' : 'Clear Filters' }}
-      </button>
-    </aside>
-
-    <main class="schemes-content">
-      <div class="results-info">
-        <span>{{ total() }} {{ isTamil() ? 'திட்டங்கள்' : 'schemes found' }}</span>
-      </div>
-
-      <div *ngIf="loading()" class="loading-grid">
-        <div *ngFor="let i of [1,2,3,4,5,6]" class="scheme-card">
-          <div class="skeleton" style="height: 160px;"></div>
-          <div style="padding: 12px;">
-            <div class="skeleton" style="height: 20px; margin-bottom: 8px;"></div>
-            <div class="skeleton" style="height: 14px;"></div>
+        <!-- Category -->
+        <div class="filter-group">
+          <label class="filter-label">{{ t('schemes.filters.category') }}</label>
+          <div class="category-grid">
+            <button
+              type="button"
+              class="category-chip"
+              [class.active]="!selectedCategory()"
+              (click)="categoryControl.setValue('')"
+            >
+              {{ t('schemes.filters.allCategories') }}
+            </button>
+            @for (cat of categories; track cat.value) {
+              <button
+                type="button"
+                class="category-chip"
+                [class.active]="selectedCategory() === cat.value"
+                [style.--chip-color]="cat.color"
+                (click)="categoryControl.setValue(cat.value)"
+              >
+                <mat-icon>{{ cat.icon }}</mat-icon>
+                {{ t('schemes.categories.' + cat.value) }}
+              </button>
+            }
           </div>
         </div>
-      </div>
 
-      <div *ngIf="!loading()" class="schemes-grid">
-        <a *ngFor="let scheme of schemes()" [routerLink]="['/schemes', scheme.id]" class="scheme-card">
-          <div class="scheme-thumbnail">
-            <img [src]="scheme.thumbnail || '/assets/images/placeholder.svg'" [alt]="getSchemeTitle(scheme)" loading="lazy" />
-            <span class="category-badge">{{ scheme.category }}</span>
-            <span class="status-badge" [class]="scheme.status?.toLowerCase()">{{ scheme.status }}</span>
+        <!-- Status -->
+        <div class="filter-group">
+          <label class="filter-label">{{ t('schemes.filters.status') }}</label>
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-select [formControl]="statusControl" placeholder="{{ t('schemes.filters.allStatus') }}">
+              <mat-option [value]="">{{ t('schemes.filters.allStatus') }}</mat-option>
+              @for (s of statuses; track s.value) {
+                <mat-option [value]="s.value">
+                  {{ lang() === 'ta' ? s.labelTa : s.labelEn }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Department -->
+        @if (departments.length > 0) {
+          <div class="filter-group">
+            <label class="filter-label">{{ t('schemes.filters.department') }}</label>
+            <mat-form-field appearance="outline" class="filter-field">
+              <mat-select [formControl]="departmentControl" placeholder="{{ t('schemes.filters.allDepartments') }}">
+                <mat-option [value]="">{{ t('schemes.filters.allDepartments') }}</mat-option>
+                @for (d of departments; track d) {
+                  <mat-option [value]="d">{{ d }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
           </div>
-          <div class="scheme-body">
-            <h3>{{ getSchemeTitle(scheme) }}</h3>
-            <p>{{ scheme.description }}</p>
-            <div class="scheme-meta">
-              <span *ngIf="scheme.maxFunding" class="funding">
-                <span class="material-icons">currency_rupee</span>
-                {{ scheme.maxFunding }} Cr
-              </span>
-              <span *ngIf="scheme.deadline" class="deadline">
-                <span class="material-icons">event</span>
-                {{ scheme.deadline | date:'mediumDate' }}
-              </span>
-            </div>
-          </div>
-        </a>
+        }
+      </form>
+    </aside>
+
+    <!-- Schemes list -->
+    <div class="schemes-content">
+      <div class="results-header">
+        <span class="results-count">
+          {{ filteredSchemes().length }} {{ t('schemes.title') }}
+        </span>
       </div>
 
-      <div *ngIf="!loading() && schemes().length === 0" class="empty-state">
-        <span class="material-icons">search_off</span>
-        <p>{{ isTamil() ? 'திட்டங்கள் எதுவும் கிடைக்கவில்லை' : 'No schemes match your criteria' }}</p>
-      </div>
+      @if (filteredSchemes().length === 0) {
+        <app-state-message
+          variant="empty"
+          [title]="t('schemes.empty.title')"
+          [description]="t('schemes.empty.description')"
+          [actionLabel]="t('schemes.empty.action')"
+          (action)="resetFilters()"
+        />
+      } @else {
+        <div class="schemes-grid">
+          @for (s of filteredSchemes(); track s.id) {
+            <article class="scheme-card" [style.--accent]="s.color">
+              <div class="scheme-card-header">
+                <div class="scheme-icon">
+                  <mat-icon>{{ s.icon }}</mat-icon>
+                </div>
+                <span class="scheme-category">{{ getCategoryLabel(s) }}</span>
+              </div>
 
-      <nav *ngIf="totalPages() > 1" class="pagination" aria-label="Pagination">
-        <button mat-button [disabled]="page() === 1" (click)="goToPage(page() - 1)">
-          <span class="material-icons">chevron_left</span>
-        </button>
-        <button *ngFor="let p of [].constructor(totalPages()); let i = index" mat-button
-          [class.active]="page() === (i + 1)" (click)="goToPage(i + 1)">
-          {{ i + 1 }}
-        </button>
-        <button mat-button [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)">
-          <span class="material-icons">chevron_right</span>
-        </button>
-      </nav>
-    </main>
+              <h3 class="scheme-name">{{ getName(s) }}</h3>
+              <p class="scheme-description">{{ getDescription(s) }}</p>
+
+              <div class="scheme-dept">
+                <mat-icon>account_balance</mat-icon>
+                <span>{{ getDepartment(s) }}</span>
+              </div>
+
+              <div class="scheme-stats">
+                <div class="scheme-amount">
+                  <span class="scheme-amount-label">{{ t('schemes.card.maxAmount') }}</span>
+                  <span class="scheme-amount-value">{{ formatAmount(s.maxAmount) }}</span>
+                </div>
+                <div class="scheme-meta">
+                  <span class="meta-item">
+                    <mat-icon>group</mat-icon>
+                    {{ s.applicantsCount }}
+                  </span>
+                  <span class="meta-item">
+                    <mat-icon>check_circle</mat-icon>
+                    {{ s.sanctionedCount }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="scheme-footer">
+                <div class="scheme-deadline">
+                  <mat-icon>event</mat-icon>
+                  <span>{{ t('schemes.card.deadline') }}: {{ formatDate(s.deadline) }}</span>
+                </div>
+                <a [routerLink]="['/schemes', s.slug]" class="scheme-cta">
+                  {{ t('schemes.card.viewDetails') }}
+                  <mat-icon>arrow_forward</mat-icon>
+                </a>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </div>
   </div>
-</div>
+</section>

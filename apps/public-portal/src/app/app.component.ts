@@ -1,49 +1,37 @@
-import { Component, inject, signal, computed, DestroyRef, OnInit } from '@angular/core';
+// ============================================================
+// UPDATED: app.component.ts (with Navbar + Footer)
+// ============================================================
+// Replace: apps/public-portal/src/app/app.component.ts
+// ============================================================
+
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { DOCUMENT, NgIf } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { ChatWidgetComponent } from './features/chat/chat-widget/chat-widget.component';
+import { NavbarComponent } from './shared/navbar/navbar.component';
+import { FooterComponent } from './shared/footer/footer.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NgIf, RouterModule, ChatWidgetComponent],
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+  imports: [RouterOutlet, NavbarComponent, FooterComponent],
+  template: `
+    <app-navbar></app-navbar>
+
+    <main id="main-content" class="main-content" role="main">
+      <router-outlet></router-outlet>
+    </main>
+
+    <app-footer></app-footer>
+  `,
+  styles: [`
+    :host {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .main-content {
+      flex: 1;
+      display: block;
+    }
+  `]
 })
-export class AppComponent implements OnInit {
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly document = inject(DOCUMENT) as Document;
-  private readonly translate = inject(TranslateService);
-
-  readonly title = signal('Tamil Nadu AVGC-XR Portal');
-  readonly currentLanguage = signal<string>('en');
-  readonly isTamil = computed(() => this.currentLanguage() === 'ta');
-  readonly currentYear = new Date().getFullYear();
-  readonly mobileMenuOpen = signal(false);
-
-  ngOnInit(): void {
-    const savedLang = localStorage.getItem('avgcxr-lang') || 'en';
-    this.currentLanguage.set(savedLang);
-    this.translate.setDefaultLang('en');
-    this.translate.use(savedLang);
-    this.document.documentElement.lang = savedLang;
-
-    this.translate.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
-      this.currentLanguage.set(event.lang);
-      this.document.documentElement.lang = event.lang;
-      localStorage.setItem('avgcxr-lang', event.lang);
-    });
-  }
-
-  toggleLanguage(): void {
-    const newLang = this.currentLanguage() === 'en' ? 'ta' : 'en';
-    this.translate.use(newLang);
-  }
-
-  toggleMobileMenu(): void {
-    this.mobileMenuOpen.update(v => !v);
-  }
-}
+export class AppComponent {}

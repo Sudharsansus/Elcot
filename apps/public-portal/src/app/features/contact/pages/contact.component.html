@@ -1,0 +1,147 @@
+<section class="contact-page">
+  <div class="contact-hero">
+    <div class="container">
+      <h1 class="contact-title">{{ t('contact.title') }}</h1>
+      <p class="contact-subtitle">{{ t('contact.subtitle') }}</p>
+    </div>
+  </div>
+
+  <div class="container contact-content">
+    <div class="contact-grid">
+      <!-- Office info -->
+      <div class="contact-info">
+        <div class="info-card">
+          <div class="info-icon">
+            <mat-icon>business</mat-icon>
+          </div>
+          <h2 class="info-title">{{ t('contact.office.title') }}</h2>
+          <p class="info-text">{{ t('contact.office.address') }}</p>
+
+          <div class="info-list">
+            <a [href]="'tel:' + t('contact.office.phone')" class="info-item">
+              <mat-icon>phone</mat-icon>
+              <span>{{ t('contact.office.phone') }}</span>
+            </a>
+            <a [href]="'mailto:' + t('contact.office.email')" class="info-item">
+              <mat-icon>email</mat-icon>
+              <span>{{ t('contact.office.email') }}</span>
+            </a>
+            <a [href]="t('contact.office.website')" target="_blank" rel="noopener" class="info-item">
+              <mat-icon>language</mat-icon>
+              <span>{{ t('contact.office.website') }}</span>
+            </a>
+            <div class="info-item">
+              <mat-icon>schedule</mat-icon>
+              <span>{{ t('contact.office.hours') }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card info-card-secondary">
+          <div class="info-icon info-icon-secondary">
+            <mat-icon>support_agent</mat-icon>
+          </div>
+          <h2 class="info-title">{{ t('contact.helpdesk.title') }}</h2>
+          <p class="info-text">{{ t('contact.helpdesk.description') }}</p>
+          <div class="info-list">
+            <a [href]="'mailto:' + t('contact.helpdesk.email')" class="info-item">
+              <mat-icon>email</mat-icon>
+              <span>{{ t('contact.helpdesk.email') }}</span>
+            </a>
+            <div class="info-item">
+              <mat-icon>phone</mat-icon>
+              <span>{{ t('contact.helpdesk.phone') }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card info-card-tertiary">
+          <div class="info-icon info-icon-tertiary">
+            <mat-icon>report_problem</mat-icon>
+          </div>
+          <h2 class="info-title">{{ t('contact.grievance.title') }}</h2>
+          <p class="info-text">{{ t('contact.grievance.description') }}</p>
+          <a routerLink="/grievance" class="btn-link">
+            Raise a grievance
+            <mat-icon>arrow_forward</mat-icon>
+          </a>
+        </div>
+      </div>
+
+      <!-- Contact form -->
+      <div class="contact-form-wrapper">
+        <div class="form-card">
+          <h2 class="form-title">{{ t('contact.form.title') }}</h2>
+
+          @if (submitted()) {
+            <div class="form-success">
+              <mat-icon>check_circle</mat-icon>
+              <p>{{ t('contact.form.success') }}</p>
+              <button type="button" class="btn-link" (click)="submitted.set(false)">
+                Send another message
+              </button>
+            </div>
+          } @else {
+            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="contact-form">
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>{{ t('contact.form.name') }}</mat-label>
+                <input matInput type="text" formControlName="name" required>
+                @if (nameControl.touched && nameControl.hasError('required')) {
+                  <mat-error>Name is required</mat-error>
+                }
+                @if (nameControl.touched && nameControl.hasError('minlength')) {
+                  <mat-error>Name must be at least 2 characters</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>{{ t('contact.form.email') }}</mat-label>
+                <input matInput type="email" formControlName="email" required>
+                @if (emailControl.touched && emailControl.hasError('required')) {
+                  <mat-error>Email is required</mat-error>
+                }
+                @if (emailControl.touched && emailControl.hasError('email')) {
+                  <mat-error>Please enter a valid email</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>{{ t('contact.form.phone') }}</mat-label>
+                <input matInput type="tel" formControlName="phone">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>{{ t('contact.form.subject') }}</mat-label>
+                <input matInput type="text" formControlName="subject" required>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="form-field form-field-full">
+                <mat-label>{{ t('contact.form.message') }}</mat-label>
+                <textarea matInput formControlName="message" rows="5" required></textarea>
+              </mat-form-field>
+
+              <div class="form-actions">
+                <button
+                  type="submit"
+                  mat-flat-button
+                  color="primary"
+                  class="submit-btn"
+                  [disabled]="sending()"
+                >
+                  @if (sending()) {
+                    <span>Sending...</span>
+                  } @else {
+                    <ng-container>
+                      <mat-icon>send</mat-icon>
+                      <span>{{ t('contact.form.submit') }}</span>
+                    </ng-container>
+                  }
+                </button>
+              </div>
+            </form>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

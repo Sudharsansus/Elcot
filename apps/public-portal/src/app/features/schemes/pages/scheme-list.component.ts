@@ -1,133 +1,159 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+// ============================================================
+// PUBLIC PORTAL — SCHEMES LIST PAGE
+// ============================================================
+// Drop into: apps/public-portal/src/app/features/schemes/pages/
+// Replaces the existing scheme-list component.
+// ============================================================
+
+import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormControl } from '@angular/forms';
-import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
-import { ApiService, PaginatedResponse, PaginationParams } from '../../../core/services/api.service';
-import { AnalyticsService } from '../../../core/services/analytics.service';
-import { Scheme } from '@avgcxr/api-contracts';
+import { I18nService } from '../../../core/services/i18n.service';
+import { SCHEMES_DATA, Scheme } from '../schemes.data';
+import { StateMessageComponent } from '../../../shared/state-message.component';
 
 @Component({
   selector: 'app-scheme-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, DatePipe, MatIconModule, MatButtonModule, MatSelectModule, MatFormFieldModule, MatInputModule, MatProgressSpinnerModule, MatChipsModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule, RouterModule, ReactiveFormsModule,
+    MatIconModule, MatButtonModule, MatSelectModule,
+    MatFormFieldModule, MatInputModule, MatChipsModule,
+    StateMessageComponent
+  ],
   templateUrl: './scheme-list.component.html',
   styleUrls: ['./scheme-list.component.scss']
 })
 export class SchemeListComponent implements OnInit {
-  private readonly api = inject(ApiService);
-  private readonly analytics = inject(AnalyticsService);
-  private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
+  private readonly i18n = inject(I18nService);
   private readonly fb = inject(FormBuilder);
 
-  readonly schemes = signal<Scheme[]>([]);
-  readonly loading = signal(true);
-  readonly total = signal(0);
-  readonly page = signal(1);
-  readonly pageSize = signal(12);
-  readonly searchQuery = signal('');
-  readonly isTamil = signal(false);
+  readonly lang = this.i18n.currentLanguage;
+  readonly allSchemes = signal<Scheme[]>(SCHEMES_DATA);
+  readonly searchTerm = signal('');
+  readonly selectedCategory = signal<string>('');
+  readonly selectedStatus = signal<string>('');
+  readonly selectedDepartment = signal<string>('');
 
   readonly filterForm: FormGroup = this.fb.group({
+    search: [''],
     category: [''],
     status: [''],
-    district: [''],
-    search: ['']
+    department: ['']
   });
 
   get searchControl(): FormControl { return this.filterForm.get('search') as FormControl; }
   get categoryControl(): FormControl { return this.filterForm.get('category') as FormControl; }
   get statusControl(): FormControl { return this.filterForm.get('status') as FormControl; }
+  get departmentControl(): FormControl { return this.filterForm.get('department') as FormControl; }
 
-  readonly categories: { value: string; label: string; labelTa: string }[] = [
-    { value: 'ANIMATION', label: 'Animation', labelTa: 'அனிமேஷன்' },
-    { value: 'VFX', label: 'VFX', labelTa: 'காட்சி விளைவுகள்' },
-    { value: 'GAMING', label: 'Gaming', labelTa: 'கேமிங்' },
-    { value: 'COMICS', label: 'Comics', labelTa: 'காமிக்ஸ்' },
-    { value: 'XR', label: 'Extended Reality', labelTa: 'நீட்டிக்கப்பட்ட யதார்த்தம்' },
+  readonly categories = [
+    { value: 'production', icon: 'movie_filter', color: 'var(--color-sector-animation)' },
+    { value: 'training', icon: 'school', color: 'var(--color-sector-gaming)' },
+    { value: 'infrastructure', icon: 'view_in_ar', color: 'var(--color-sector-xr)' },
+    { value: 'export', icon: 'public', color: 'var(--color-sector-vfx)' },
+    { value: 'freelancer', icon: 'person', color: 'var(--color-sector-comics)' },
+    { value: 'scholarship', icon: 'menu_book', color: 'var(--color-primary)' }
   ];
 
-  readonly statusOptions: { value: string; label: string; labelTa: string }[] = [
-    { value: 'OPEN', label: 'Open', labelTa: 'திறந்துள்ளது' },
-    { value: 'CLOSED', label: 'Closed', labelTa: 'மூடப்பட்டது' },
-    { value: 'UPCOMING', label: 'Upcoming', labelTa: 'வரவிருக்கும்' },
+  readonly statuses = [
+    { value: 'active', labelEn: 'Active', labelTa: 'செயலில்' },
+    { value: 'upcoming', labelEn: 'Upcoming', labelTa: 'வரவிருக்கும்' },
+    { value: 'closed', labelEn: 'Closed', labelTa: 'மூடப்பட்டது' }
   ];
 
-  readonly totalPages = computed(() => Math.ceil(this.total() / this.pageSize()));
+  readonly departments = Array.from(
+    new Set(SCHEMES_DATA.map((s: Scheme) => s.department))
+  );
+
+  readonly filteredSchemes = computed(() => {
+    const search = this.searchTerm().toLowerCase().trim();
+    const category = this.selectedCategory();
+    const status = this.selectedStatus();
+    const department = this.selectedDepartment();
+
+    return this.allSchemes().filter(s => {
+      if (category && s.category !== category) return false;
+      if (status && s.status !== status) return false;
+      if (department && s.department !== department) return false;
+      if (search) {
+        const name = this.lang() === 'ta' ? s.nameTa : s.name;
+        const desc = this.lang() === 'ta' ? s.descriptionTa : s.description;
+        return (
+          name.toLowerCase().includes(search) ||
+          desc.toLowerCase().includes(search) ||
+          s.department.toLowerCase().includes(search)
+        );
+      }
+      return true;
+    });
+  });
+
+  readonly hasActiveFilters = computed(() =>
+    !!(this.searchTerm() || this.selectedCategory() || this.selectedStatus() || this.selectedDepartment())
+  );
 
   ngOnInit(): void {
-    this.analytics.trackPageView('/schemes');
-    const lang = localStorage.getItem('avgcxr-lang');
-    this.isTamil.set(lang === 'ta');
-
-    this.route.queryParams.subscribe(params => {
-      if (params['category']) this.filterForm.patchValue({ category: params['category'] });
-      this.loadSchemes();
-    });
-
-    this.filterForm.valueChanges.subscribe(() => {
-      this.page.set(1);
-      this.loadSchemes();
-    });
+    this.searchControl.valueChanges.subscribe(v => this.searchTerm.set(v || ''));
+    this.categoryControl.valueChanges.subscribe(v => this.selectedCategory.set(v || ''));
+    this.statusControl.valueChanges.subscribe(v => this.selectedStatus.set(v || ''));
+    this.departmentControl.valueChanges.subscribe(v => this.selectedDepartment.set(v || ''));
   }
 
-  loadSchemes(): void {
-    this.loading.set(true);
-    const { category, status, district, search } = this.filterForm.value;
-    const filters: Record<string, string> = {};
-    if (category) filters['category'] = category;
-    if (status) filters['status'] = status;
-    if (district) filters['district'] = district;
-
-    const pagination: PaginationParams = {
-      page: this.page(),
-      pageSize: this.pageSize(),
-      sort: 'createdAt',
-      sortDir: 'desc'
-    };
-
-    const searchParams = search ? { ...filters, search } : filters;
-
-    this.api.getPaginated<Scheme>('/schemes', pagination, searchParams).subscribe({
-      next: (response: PaginatedResponse<Scheme>) => {
-        this.schemes.set(response.data);
-        this.total.set(response.total);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.schemes.set([]);
-        this.loading.set(false);
-      }
-    });
-  }
-
-  onSearchInput(value: string): void {
-    this.searchQuery.set(value);
-    if (value.length === 0 || value.length >= 3) {
-      this.page.set(1);
-      this.loadSchemes();
-    }
-  }
-
-  goToPage(p: number): void {
-    this.page.set(p);
-    this.loadSchemes();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  clearFilters(): void {
+  resetFilters(): void {
     this.filterForm.reset();
-    this.router.navigate([], { relativeTo: this.route });
+    this.searchTerm.set('');
+    this.selectedCategory.set('');
+    this.selectedStatus.set('');
+    this.selectedDepartment.set('');
   }
 
-  getSchemeTitle(scheme: Scheme): string {
-    return (this.isTamil() && scheme.nameTamil) ? scheme.nameTamil : scheme.name;
+  getName(s: Scheme): string {
+    return this.lang() === 'ta' ? s.nameTa : s.name;
   }
+
+  getDescription(s: Scheme): string {
+    return this.lang() === 'ta' ? s.descriptionTa : s.description;
+  }
+
+  getDepartment(s: Scheme): string {
+    return this.lang() === 'ta' ? s.departmentTa : s.department;
+  }
+
+  getCategoryLabel(s: Scheme): string {
+    return this.t(`schemes.categories.${s.category}`);
+  }
+
+  getStatusLabel(status: string): string {
+    const s = this.statuses.find(x => x.value === status);
+    if (!s) return status;
+    return this.lang() === 'ta' ? s.labelTa : s.labelEn;
+  }
+
+  formatAmount(amount: number): string {
+    if (amount >= 10000000) {
+      return `₹${(amount / 10000000).toFixed(amount % 10000000 === 0 ? 0 : 1)} Crore`;
+    }
+    if (amount >= 100000) {
+      return `₹${(amount / 100000).toFixed(amount % 100000 === 0 ? 0 : 1)} Lakh`;
+    }
+    return `₹${amount.toLocaleString('en-IN')}`;
+  }
+
+  formatDate(dateStr: string): string {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString(this.lang() === 'ta' ? 'ta-IN' : 'en-IN', {
+      year: 'numeric', month: 'long', day: 'numeric'
+    });
+  }
+
+  t(key: string): string { return this.i18n.translate(key); }
 }

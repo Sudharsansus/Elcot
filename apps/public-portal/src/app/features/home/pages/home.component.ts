@@ -1,83 +1,142 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+// ============================================================
+// PUBLIC PORTAL — HOME PAGE
+// ============================================================
+// Drop into: apps/public-portal/src/app/features/home/pages/
+// Files: home.component.ts (this) + home.component.html + home.component.scss
+// Replaces existing home component.
+// ============================================================
+
+import { Component, ChangeDetectionStrategy, inject, OnInit, signal, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { ApiService } from '../../../core/services/api.service';
-import { AnalyticsService } from '../../../core/services/analytics.service';
-import { Scheme, SchemeCategory } from '@avgcxr/api-contracts';
-
-interface HomeStats {
-  totalSchemes: number;
-  totalBeneficiaries: number;
-  totalFunding: number;
-  totalCompanies: number;
-}
-
-const SECTOR_CATEGORIES = [
-  { key: 'ANIMATION' as SchemeCategory, icon: 'movie', label: 'Animation', labelTa: 'அனிமேஷன்', color: '#e91e63' },
-  { key: 'VFX' as SchemeCategory, icon: 'auto_fix_high', label: 'VFX', labelTa: 'காட்சி விளைவுகள்', color: '#9c27b0' },
-  { key: 'GAMING' as SchemeCategory, icon: 'sports_esports', label: 'Gaming', labelTa: 'கேமிங்', color: '#2196f3' },
-  { key: 'COMICS' as SchemeCategory, icon: 'auto_stories', label: 'Comics', labelTa: 'காமிக்ஸ்', color: '#ff9800' },
-  { key: 'XR' as SchemeCategory, icon: 'view_in_ar', label: 'Extended Reality', labelTa: 'நீட்டிக்கப்பட்ட யதார்த்தம்', color: '#4caf50' },
-];
-
-const CATEGORY_COLORS: Record<string, string> = {
-  ANIMATION: '#e91e63', VFX: '#9c27b0', GAMING: '#2196f3', COMICS: '#ff9800', XR: '#4caf50'
-};
+import { I18nService } from '../../../core/services/i18n.service';
+import { SCHEMES_DATA, HOMEPAGE_STATS, HOMEPAGE_NEWS, Scheme } from '../../schemes/schemes.data';
+import { StateMessageComponent } from '../../../shared/state-message.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatIconModule, MatButtonModule, DatePipe],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, RouterModule, MatIconModule, MatButtonModule, StateMessageComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  private readonly api = inject(ApiService);
-  private readonly analytics = inject(AnalyticsService);
+  private readonly i18n = inject(I18nService);
 
-  readonly featuredSchemes = signal<Scheme[]>([]);
-  readonly stats = signal<HomeStats>({ totalSchemes: 12, totalBeneficiaries: 350, totalFunding: 150, totalCompanies: 85 });
-  readonly loading = signal(true);
+  readonly lang = this.i18n.currentLanguage;
+  readonly featuredSchemes = signal<Scheme[]>(SCHEMES_DATA.filter((s: Scheme) => s.featured));
+  readonly stats = signal(HOMEPAGE_STATS);
+  readonly news = signal(HOMEPAGE_NEWS);
+  readonly loading = signal(false);  // Static data, no loading state
   readonly error = signal<string | null>(null);
-  readonly isTamil = signal(false);
-  readonly sectors = SECTOR_CATEGORIES;
+
+  // Use computed for current language reactive text
+  readonly statsDisplay = computed(() => {
+    const lang = this.lang();
+    return [
+      {
+        icon: 'description',
+        value: this.stats().applications.toLocaleString('en-IN'),
+        label: lang === 'ta' ? 'விண்ணப்பங்கள் பெறப்பட்டன' : 'Applications Received',
+        color: 'var(--color-primary)'
+      },
+      {
+        icon: 'groups',
+        value: this.stats().beneficiaries.toLocaleString('en-IN'),
+        label: lang === 'ta' ? 'பயனாளிகள் ஆதரிக்கப்பட்டனர்' : 'Beneficiaries Supported',
+        color: 'var(--color-secondary)'
+      },
+      {
+        icon: 'business',
+        value: this.stats().studios.toLocaleString('en-IN'),
+        label: lang === 'ta' ? 'பதிவு செய்யப்பட்ட ஸ்டுடியோக்கள்' : 'Registered Studios',
+        color: 'var(--color-success)'
+      },
+      {
+        icon: 'person',
+        value: this.stats().freelancers.toLocaleString('en-IN'),
+        label: lang === 'ta' ? 'செயலில் உள்ள ஃப்ரீலான்ஸர்கள்' : 'Active Freelancers',
+        color: 'var(--color-info)'
+      }
+    ];
+  });
+
+  readonly ecosystemCards = computed(() => {
+    const lang = this.lang();
+    return [
+      {
+        icon: 'business_center',
+        title: lang === 'ta' ? 'வணிக இணைப்பு' : 'Business Connect',
+        description: lang === 'ta'
+          ? 'தமிழ்நாடு முழுவதும் உள்ள AVGC-XR நிறுவனங்கள், ஸ்டுடியோக்கள் மற்றும் சேவை வழங்குநர்களின் தேடக்கூடிய அடைவு.'
+          : 'A searchable directory of AVGC-XR companies, studios, service providers, and ecosystem partners across Tamil Nadu.',
+        route: '/companies',
+        cta: lang === 'ta' ? 'நிறுவனங்களை உலாவு' : 'Browse companies'
+      },
+      {
+        icon: 'school',
+        title: lang === 'ta' ? 'திறமை இணைப்பு' : 'Talent Connect',
+        description: lang === 'ta'
+          ? 'மாணவர்கள் மற்றும் நிபுணர்களுக்கான டிஜிட்டல் திறன் பதிவேடு. வேலைவாய்ப்பு, இன்டர்ன்ஷிப் மற்றும் தொழில் வாய்ப்புகளைக் கண்டறியவும்.'
+          : 'A digital skill registry for students and professionals. Discover jobs, internships, and career opportunities.',
+        route: '/talent',
+        cta: lang === 'ta' ? 'திறமையாளர்களைக் காண்க' : 'Explore talent'
+      },
+      {
+        icon: 'badge',
+        title: lang === 'ta' ? 'ஃப்ரீலான்ஸர் பதிவேடு' : 'Freelancer Registry',
+        description: lang === 'ta'
+          ? 'நிறுவனங்கள் மற்றும் பங்குதாரர்களால் சரிபார்க்கப்பட்ட ஃப்ரீலான்ஸர்களின் சுயவிவர அடிப்படையிலான கண்டுபிடிப்பு.'
+          : 'A dedicated registry enabling profile-based discoverability of verified freelancers by companies and stakeholders.',
+        route: '/freelancers',
+        cta: lang === 'ta' ? 'ஃப்ரீலான்ஸர்களைக் காண்க' : 'Find freelancers'
+      }
+    ];
+  });
 
   ngOnInit(): void {
-    this.analytics.trackPageView('/');
-    const lang = localStorage.getItem('avgcxr-lang');
-    this.isTamil.set(lang === 'ta');
-    this.loadStats();
-    this.loadFeaturedSchemes();
+    // Static data already loaded; no API calls
+    // When backend is ready: load /api/stats, /api/schemes/featured, /api/news
   }
 
-  private loadStats(): void {
-    this.api.get<HomeStats>('/public/stats').subscribe({
-      next: (data) => this.stats.set(data),
-      error: () => { /* Using fallback stats */ }
+  formatAmount(amount: number): string {
+    if (amount >= 10000000) {
+      return `₹${(amount / 10000000).toFixed(amount % 10000000 === 0 ? 0 : 1)} Crore`;
+    }
+    if (amount >= 100000) {
+      return `₹${(amount / 100000).toFixed(amount % 100000 === 0 ? 0 : 1)} Lakh`;
+    }
+    return `₹${amount.toLocaleString('en-IN')}`;
+  }
+
+  getSchemeName(s: Scheme): string {
+    return this.lang() === 'ta' ? s.nameTa : s.name;
+  }
+
+  getSchemeDescription(s: Scheme): string {
+    return this.lang() === 'ta' ? s.descriptionTa : s.description;
+  }
+
+  getCategoryLabel(s: Scheme): string {
+    return this.t(`schemes.categories.${s.category}`);
+  }
+
+  formatDate(dateStr: string): string {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString(this.lang() === 'ta' ? 'ta-IN' : 'en-IN', {
+      year: 'numeric', month: 'long', day: 'numeric'
     });
   }
 
-  private loadFeaturedSchemes(): void {
-    this.api.get<Scheme[]>('/schemes', { featured: 'true', pageSize: 6 }).subscribe({
-      next: (data) => {
-        const schemes = Array.isArray(data) ? data : (data as unknown as { data: Scheme[] }).data ?? [];
-        this.featuredSchemes.set(schemes);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.error.set('Failed to load schemes');
-        this.loading.set(false);
-      }
-    });
+  getNewsTitle(n: typeof HOMEPAGE_NEWS[number]): string {
+    return this.lang() === 'ta' ? n.titleTa : n.titleEn;
+  }
+  getNewsExcerpt(n: typeof HOMEPAGE_NEWS[number]): string {
+    return this.lang() === 'ta' ? n.excerptTa : n.excerptEn;
   }
 
-  getSchemeTitle(scheme: Scheme): string {
-    return (this.isTamil() && scheme.nameTamil) ? scheme.nameTamil : scheme.name;
-  }
-
-  getCategoryColor(category: string): string {
-    return CATEGORY_COLORS[category] || 'var(--color-primary)';
-  }
+  t(key: string): string { return this.i18n.translate(key); }
 }

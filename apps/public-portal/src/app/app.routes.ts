@@ -1,3 +1,9 @@
+// ============================================================
+// UPDATED: app.routes.ts (add contact + grievance routes)
+// ============================================================
+// Replace: apps/public-portal/src/app/app.routes.ts
+// ============================================================
+
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
@@ -32,6 +38,14 @@ export const routes: Routes = [
   {
     path: 'about',
     loadChildren: () => import('./features/about/about.routes').then(m => m.ABOUT_ROUTES)
+  },
+  {
+    path: 'contact',
+    loadComponent: () => import('./features/contact/pages/contact.component').then(m => m.ContactComponent)
+  },
+  {
+    path: 'grievance',
+    loadComponent: () => import('./features/contact/pages/contact.component').then(m => m.ContactComponent)
   },
   {
     path: 'auth',
