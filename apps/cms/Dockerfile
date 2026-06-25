@@ -5,8 +5,12 @@ FROM node:22-alpine
 RUN addgroup -S avgcxr && adduser -S avgcxr -G avgcxr
 WORKDIR /app
 
+# No committed package-lock.json (mock-registry machine can't produce a real
+# one), so use `npm install` not `npm ci` (ci REQUIRES a lockfile and would fail).
+# On Render's real npm this resolves correctly; commit the generated lockfile
+# afterwards and switch back to `npm ci` for reproducible builds.
 COPY package*.json ./
-RUN npm ci --production --ignore-scripts && chown -R avgcxr:avgcxr /app
+RUN npm install --omit=dev --ignore-scripts && chown -R avgcxr:avgcxr /app
 USER avgcxr
 
 COPY --chown=avgcxr:avgcxr . .

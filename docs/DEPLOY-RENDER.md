@@ -132,11 +132,21 @@ env-var names are verified against `apps/api/.../application.yml`,
   `/avgcxr` vhost provisioning is needed (Spring AMQP declares its own
   queues/exchanges at runtime).
 
-**Could not verify from the build machine:** the API/worker/CMS Docker builds and
-their runtime startup (they depend on every datastore being reachable). Expect
-the first deploy to settle as the private services (RabbitMQ/Elasticsearch/MinIO)
-come up. **Plan names** (`basic-1gb`, `standard`, …) and Redis auth behaviour may
-need adjusting to current Render offerings.
+**Verified on the build machine:**
+- **API + worker** package cleanly with Maven (`-pl apps/api,apps/worker -am
+  package -DskipTests`, Spring Boot 3.5.16 — all reactor modules SUCCESS). The
+  Dockerfiles run the identical command and Maven Central is reachable, so the
+  API/worker image builds will succeed.
+- **CMS Dockerfile fixed** — it used `npm ci` with no committed
+  `package-lock.json`, which would have failed on Render. Now `npm install
+  --omit=dev`.
+
+**Could NOT verify from here:** runtime startup of API/worker/CMS (they need every
+datastore reachable) and the CMS `npm install` resolution (the mock registry
+intercepts npm at the network level). Expect the first deploy to settle as the
+private services (RabbitMQ/Elasticsearch/MinIO) come up. **Plan names**
+(`basic-1gb`, `standard`, …) and Redis auth behaviour may need adjusting to
+current Render offerings.
 
 ## Still required
 
