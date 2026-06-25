@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+    "https://checkstyle.org/dtds/configuration_1_3.dtd">
+<!--
+  AVGC-XR Portal — Checkstyle (enforced at `validate`, fails the build on violation).
+
+  Scope: a focused set that COMPLEMENTS Spotless (google-java-format), which already
+  enforces formatting, brace placement, import ordering and unused-import removal.
+  These rules catch correctness/hygiene issues Spotless does not.
+
+  DELIBERATELY DEFERRED (verified 2026-06-25 against the Spotless-formatted tree),
+  because they conflict with the adopted google-java-format style or require large
+  manual cleanups — tracked, not silently dropped:
+    - AvoidStarImport   — 126 occurrences. google-java-format does NOT expand
+                          wildcard imports; enforcing requires expanding each by hand.
+    - NeedBraces        —  80 occurrences. google-java-format permits braceless
+                          single-statement `if`/`for`; enforcing fights the formatter.
+    - LineLength        —   7 occurrences, all UNWRAPPABLE long string literals
+                          (SQL, a 431-char autoconfigure.exclude, config defaults).
+  Re-enable these incrementally as the code is cleaned (see DELIVERY-SUMMARY.md).
+-->
+<module name="Checker">
+    <property name="severity" value="warning"/>
+    <module name="TreeWalker">
+        <!-- import hygiene (beyond Spotless's unused-import removal) -->
+        <module name="UnusedImports"/>
+        <module name="RedundantImport"/>
+        <!-- structure / correctness -->
+        <module name="OneTopLevelClass"/>
+        <module name="EqualsHashCode"/>
+        <module name="MissingSwitchDefault"/>
+        <module name="FallThrough"/>
+        <!-- small style not owned by the formatter -->
+        <module name="UpperEll"/>
+        <module name="ArrayTypeStyle"/>
+        <module name="ModifierOrder"/>
+    </module>
+</module>

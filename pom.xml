@@ -289,6 +289,35 @@
                         </execution>
                     </executions>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>3.6.0</version>
+                    <!-- Pin a Java-21-capable Checkstyle (the plugin's bundled one is
+                         too old to parse records/sealed types). -->
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.puppycrawl.tools</groupId>
+                            <artifactId>checkstyle</artifactId>
+                            <version>10.20.1</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <configLocation>${maven.multiModuleProjectDirectory}/checkstyle.xml</configLocation>
+                        <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                        <failOnViolation>true</failOnViolation>
+                        <violationSeverity>warning</violationSeverity>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>checkstyle-validate</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -315,6 +344,21 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <!-- Spotless: ENFORCED in the build (inherits version/config/execution
+                 from pluginManagement above; bound to the validate phase -> goal check).
+                 Activating it here propagates to every child module, so a format
+                 violation fails `mvn verify`. Run `mvn spotless:apply` to auto-fix. -->
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+            </plugin>
+            <!-- Checkstyle: ENFORCED in the build (config/version/execution from
+                 pluginManagement; bound to validate -> goal check, fails on violation).
+                 Rule set: checkstyle.xml (a Google-style subset). -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
