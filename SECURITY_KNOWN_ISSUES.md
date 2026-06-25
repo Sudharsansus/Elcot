@@ -1,5 +1,46 @@
 # Security — Known Issues
 
+## ⚠️ REAL CVE SCAN STATUS — 25 June 2026
+
+### Backend (Spring Boot 3.4.13)
+
+**Status:** Compile-verified ✅ | 48 tests pass ✅ | 17.8% line coverage (real) ⚠️
+
+**CVE scan status:** **NOT COMPLETED.** Scan attempted on a real JDK 21 + Maven
+3.9.9 toolchain **without `NVD_API_KEY`**. OWASP dependency-check was throttled by
+the NVD public feed (≈6 requests / 30 s) and was **killed at 6% progress
+(20,000 / 360,825 CVEs downloaded)** because it would not complete in the available
+time. It produced **zero** vulnerability-report lines — so **no CVE count exists
+yet; do not infer one.**
+
+**Path to resolution:**
+
+1. Acquire a free NVD API key: <https://nvd.nist.gov/developers/request-an-api-key> (instant).
+2. Set `NVD_API_KEY=<key>` in the environment.
+3. Re-run: `mvn -Psecurity verify` (profile already wired; `failBuildOnCVSS=7`).
+4. Expected time: ~5 minutes with the key (vs 4+ hours / throttled without).
+
+**Honest current state — what IS vs ISN'T verified:**
+
+- ✅ Verified build — `mvn clean compile` **and** `mvn verify` both **BUILD SUCCESS** on real Maven Central (Spring Boot 3.4.13 / Java 21).
+- ✅ Verified tests — **48 run, 0 failures, 0 errors, 2 skipped**.
+- ✅ Verified coverage — **17.8% line / 14.9% instruction** (real JaCoCo; below the 80% gate).
+- ❌ Verified CVE count — **pending NVD API key.**
+
+### Frontend (Angular 19 + Strapi 5)
+
+**Status:** Code-complete ⏳ | Real verification blocked by the mocked npm registry in this sandbox.
+
+**CVE scan status:** **NOT COMPLETED** in a real environment. `pnpm audit` here would
+read the mock registry (which advertises non-existent versions such as
+`@angular/core@22.0.2`), so any result would be meaningless.
+
+**Path to resolution:** Run in a real CI environment with real npm access; also move
+`pnpm.overrides` into `pnpm-workspace.yaml` first (pnpm 9.15 no longer reads the
+`package.json` field — see `docs/PHASE-4-REAL-ENV-VERIFICATION.md`).
+
+---
+
 > ⚠️ **This document was rewritten on 2026-06-25 to remove unverified CVE data.**
 > The prior version listed 26 specific `CVE-2026-*` identifiers as "triaged and
 > deferred." Those IDs were **never confirmed against NVD / GitHub Advisory and
