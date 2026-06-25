@@ -15,7 +15,7 @@ FROM nginxinc/nginx-unprivileged:1.27-alpine AS server
 
 COPY --from=builder /app/dist/public-portal/browser /usr/share/nginx/html
 COPY apps/public-portal/nginx.conf /etc/nginx/templates/default.conf.template
-ENV API_UPSTREAM=api:8080
+ENV API_UPSTREAM=avgcxr-api:8080
 
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
