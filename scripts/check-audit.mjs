@@ -1,112 +1,115 @@
 #!/usr/bin/env node
 // scripts/check-audit.mjs
-// Security audit filter for the AVGC-XR Portal.
-// Fails on CRITICAL/HIGH vulns in non-whitelisted packages.
-// Passes on whitelisted packages (Y2 hardening plan covers them).
-// Updated: 2026-06-24
+//
+// Honest dependency-audit gate for the AVGC-XR Portal.
+//
+// Runs `pnpm audit` and FAILS (exit 1) on ANY critical or high advisory.
+// There is NO whitelist, NO ignore list, and NO deferral filter. A green
+// result from this script means there are genuinely zero critical/high
+// advisories in the dependency tree — it is not "zero except the known ones".
+//
+// (Replaces the prior version, which whitelisted @angular/*, @strapi/strapi,
+//  vite and launch-editor and passed the build despite their advisories —
+//  the exact "known-issues filter" forbidden by the hardening spec. See
+//  docs/REMEDIATION-ROADMAP.md and docs/adr/0002-dependency-vulnerability-handling.md.)
+//
+// Usage:
+//   node scripts/check-audit.mjs            # runs `pnpm audit --json` itself
+//   node scripts/check-audit.mjs audit.json # reads a pre-captured report
 import fs from 'node:fs';
-import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 
-const auditPath = process.argv[2] || 'audit.json';
-if (!fs.existsSync(auditPath)) {
-  console.error(`❌ Audit file not found: ${auditPath}`);
-  console.error('   Run: pnpm audit --json > audit.json');
-  process.exit(2);
-}
+const BLOCKING = new Set(['critical', 'high']);
 
-const audit = JSON.parse(fs.readFileSync(auditPath, 'utf8'));
-
-// pnpm audit --json emits top-level "advisories" keyed by GHSA ID,
-// with each entry holding {module_name, severity, title, ...}.
-// npm audit --json emits top-level "vulnerabilities" keyed by package
-// name with {severity, via: [{title}], ...}. Support both.
-let vulns = {};
-if (audit.advisories && typeof audit.advisories === 'object') {
-  // pnpm format: re-key by module_name for the filter logic
-  for (const adv of Object.values(audit.advisories)) {
-    const name = adv.module_name;
-    if (!name) continue;
-    vulns[name] = {
-      severity: adv.severity,
-      via: [{ title: adv.title }],
-    };
+function loadAuditJson() {
+  const fileArg = process.argv[2];
+  if (fileArg) {
+    if (!fs.existsSync(fileArg)) {
+      console.error(`audit file not found: ${fileArg}`);
+      process.exit(2);
+    }
+    return fs.readFileSync(fileArg, 'utf8');
   }
-} else if (audit.vulnerabilities && typeof audit.vulnerabilities === 'object') {
-  vulns = audit.vulnerabilities;
-}
-
-// Whitelisted packages: known issues requiring major framework upgrade
-// See SECURITY_KNOWN_ISSUES.md and SCALING-ROADMAP.md (Y2 Hardening section)
-const KNOWN_PACKAGES = [
-  // Angular: requires 17→19 major upgrade (~3 weeks work)
-  '@angular/core', '@angular/compiler', '@angular/common',
-  '@angular/platform-server', '@angular/ssr', '@angular/router',
-  '@angular/forms', '@angular/animations', '@angular/material',
-  '@angular/cdk', '@angular/elements', '@angular/upgrade',
-  '@angular/compiler-cli', '@angular/build', '@angular-devkit/build-angular',
-  // Strapi: requires 4→5 major upgrade (API changes)
-  '@strapi/strapi',
-  // Vite: requires 5→6 major upgrade (Angular 17 incompatible with 6)
-  'vite',
-  // Transitive of vite 5.x
-  'launch-editor',
-];
-
-let criticalCount = 0, highCount = 0, moderateCount = 0, lowCount = 0;
-const unexpected = [];
-const known = [];
-
-for (const [pkgName, info] of Object.entries(vulns)) {
-  const sev = info.severity || 'unknown';
-  if (sev === 'critical') criticalCount++;
-  else if (sev === 'high') highCount++;
-  else if (sev === 'moderate') moderateCount++;
-  else if (sev === 'low') lowCount++;
-
-  if (sev !== 'critical' && sev !== 'high') continue;
-
-  const isKnown = KNOWN_PACKAGES.some(p => pkgName === p || pkgName.startsWith(p + '@'));
-  if (isKnown) {
-    known.push(`${sev.toUpperCase().padEnd(8)} ${pkgName}`);
-  } else {
-    unexpected.push(`${sev.toUpperCase().padEnd(8)} ${pkgName} (${info.via?.[0]?.title || 'see audit'})`);
+  // Run pnpm audit ourselves. pnpm audit exits non-zero when it finds vulns,
+  // so we capture stdout via spawnSync (which never throws on a non-zero exit)
+  // instead of a shell pipeline that would need a forbidden `|| true`.
+  const res = spawnSync('pnpm', ['audit', '--json'], {
+    encoding: 'utf8',
+    shell: process.platform === 'win32', // pnpm is a .cmd shim on Windows
+    maxBuffer: 64 * 1024 * 1024,
+  });
+  if (res.error) {
+    console.error(`failed to run pnpm audit: ${res.error.message}`);
+    process.exit(2);
   }
+  return res.stdout || '';
 }
 
-console.log('');
-console.log('━'.repeat(64));
-console.log('  AVGC-XR Portal — Security Audit');
-console.log('━'.repeat(64));
-console.log(`  Total vulns:      ${Object.keys(vulns).length}`);
-console.log(`  Critical:         ${criticalCount}`);
-console.log(`  High:             ${highCount}`);
-console.log(`  Moderate:         ${moderateCount} (informational)`);
-console.log(`  Low:              ${lowCount} (informational)`);
-console.log('');
-console.log(`  Known (Y2 plan):  ${known.length}`);
-console.log(`  Unexpected:       ${unexpected.length}`);
-console.log('━'.repeat(64));
+function parseFindings(raw) {
+  let audit;
+  try {
+    audit = JSON.parse(raw);
+  } catch {
+    console.error('could not parse audit JSON output. First 500 chars:');
+    console.error(raw.slice(0, 500));
+    process.exit(2);
+  }
 
-if (known.length > 0) {
-  console.log('');
-  console.log('  Known issues (deferred to Year 2 hardening):');
-  for (const v of known.slice(0, 10)) console.log(`    [OK]    ${v}`);
-  if (known.length > 10) console.log(`    [OK]    ... and ${known.length - 10} more`);
-  console.log('  See SECURITY_KNOWN_ISSUES.md and SCALING-ROADMAP.md');
+  const findings = [];
+  // pnpm: { advisories: { <id>: { module_name, severity, title } } }
+  if (audit.advisories && typeof audit.advisories === 'object') {
+    for (const adv of Object.values(audit.advisories)) {
+      findings.push({
+        name: adv.module_name || '(unknown)',
+        severity: String(adv.severity || 'unknown').toLowerCase(),
+        title: adv.title || 'see advisory',
+      });
+    }
+    // npm: { vulnerabilities: { <pkg>: { severity, via: [{ title }] } } }
+  } else if (audit.vulnerabilities && typeof audit.vulnerabilities === 'object') {
+    for (const [name, info] of Object.entries(audit.vulnerabilities)) {
+      const title = Array.isArray(info.via)
+        ? info.via.find((v) => v && v.title)?.title
+        : undefined;
+      findings.push({
+        name,
+        severity: String(info.severity || 'unknown').toLowerCase(),
+        title: title || 'see advisory',
+      });
+    }
+  }
+  return findings;
 }
 
-if (unexpected.length > 0) {
-  console.log('');
-  console.log('  ❌ UNEXPECTED VULNS — build FAILED:');
-  for (const v of unexpected) console.log(`    [FAIL]  ${v}`);
-  console.log('');
-  console.log('  Action: pin to fixed version via .npmrc override, or');
-  console.log('          add to KNOWN_PACKAGES list with justification.');
+const findings = parseFindings(loadAuditJson());
+
+const counts = { critical: 0, high: 0, moderate: 0, low: 0 };
+for (const f of findings) {
+  if (f.severity in counts) counts[f.severity] += 1;
+}
+const blocking = findings.filter((f) => BLOCKING.has(f.severity));
+
+const line = '━'.repeat(64);
+console.log(`\n${line}`);
+console.log('  AVGC-XR Portal — Dependency Audit (honest gate, no whitelist)');
+console.log(line);
+console.log(
+  `  critical: ${counts.critical}   high: ${counts.high}   ` +
+    `moderate: ${counts.moderate}   low: ${counts.low}`,
+);
+console.log(line);
+
+if (blocking.length > 0) {
+  console.log(`\n  ❌ ${blocking.length} critical/high advisory(ies) — build FAILED:`);
+  const order = { critical: 0, high: 1 };
+  for (const f of blocking.sort((a, b) => order[a.severity] - order[b.severity])) {
+    console.log(`    [${f.severity.toUpperCase().padEnd(8)}] ${f.name} — ${f.title}`);
+  }
+  console.log('\n  Fix: upgrade the affected package to a patched version, or pin a fixed');
+  console.log('  transitive version via package.json "pnpm.overrides".');
+  console.log('  There is NO deferral whitelist. See docs/REMEDIATION-ROADMAP.md.\n');
   process.exit(1);
 }
 
-console.log('');
-console.log('  ✅ All critical/high vulns are tracked in Y2 hardening plan.');
-console.log('     New critical/high vulns in other packages will fail the build.');
-console.log('');
+console.log('\n  ✅ Zero critical/high advisories.\n');
 process.exit(0);
