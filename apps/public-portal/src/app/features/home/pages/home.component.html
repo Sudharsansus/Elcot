@@ -1,111 +1,104 @@
 <!-- ============================================================ -->
-<!-- HOME PAGE TEMPLATE — TN Government Visual Language -->
+<!-- HOME — Tamil Nadu AVGC-XR Portal (ELCOT) -->
 <!-- ============================================================ -->
 
-<!-- GOVERNMENT MASTHEAD (formal strip above hero) -->
+<!-- GOVERNMENT MASTHEAD -->
 <section class="gov-masthead">
-  <div class="masthead-content">
-    <div class="emblem" aria-label="Government of Tamil Nadu Emblem">🛡️</div>
+  <div class="container masthead-content">
+    <app-tn-emblem class="masthead-emblem" [size]="52" [ring]="false" [decorative]="true"></app-tn-emblem>
     <div class="masthead-text">
-      <div class="masthead-hi">தமிழ்நாடு அரசு</div>
+      <div class="masthead-hi">{{ isTa() ? 'தமிழ்நாடு அரசு' : 'தமிழ்நாடு அரசு' }}</div>
       <div class="masthead-en">Government of Tamil Nadu</div>
     </div>
     <div class="masthead-dept">
-      <div class="dept-hi">தமிழ்நாடு மின்னணுவியல் கழகம்</div>
-      <div class="dept-en">Electronics Corporation of Tamil Nadu (ELCOT)</div>
+      <div class="dept-hi">தமிழ்நாடு மின்னணுவியல் கழகம் (ELCOT)</div>
+      <div class="dept-en">Electronics Corporation of Tamil Nadu</div>
     </div>
   </div>
 </section>
 
-<!-- HERO SECTION — content-focused, no gradient/blobs -->
+<!-- HERO -->
 <section class="hero">
+  @defer (on idle) {
+    <app-hero-canvas class="hero-canvas-layer" dot="255,255,255" line="255,210,0"></app-hero-canvas>
+  } @placeholder {
+    <div class="hero-canvas-layer" aria-hidden="true"></div>
+  }
+  <div class="hero-overlay" aria-hidden="true"></div>
+
   <div class="container hero-content">
-    <div class="hero-text">
-      <div class="hero-tag">
-        <span class="tag-bullet"></span>
-        <span>{{ t('home.hero.tagline') }}</span>
-      </div>
-      <h1 class="hero-title">
-        <span class="title-en">{{ t('home.hero.title') }}</span>
-        <span class="title-ta">{{ t('home.hero.titleTa') }}</span>
-      </h1>
-      <p class="hero-subtitle">{{ t('home.hero.subtitle') }}</p>
-      <div class="hero-actions">
-        <a routerLink="/schemes" class="btn btn-primary">
-          <mat-icon>description</mat-icon>
-          View Schemes &amp; Incentives
-        </a>
-        <a routerLink="/companies" class="btn btn-secondary">
-          <mat-icon>business</mat-icon>
-          Explore the Industry
-        </a>
-      </div>
+    <div class="hero-eyebrow">
+      <span class="hero-eyebrow-dot" aria-hidden="true"></span>
+      {{ isTa() ? 'அதிகாரப்பூர்வ இணையதளம் — TN AVGC-XR கொள்கை' : 'Official Portal — TN AVGC-XR Policy' }}
     </div>
-    <div class="hero-stats">
-      <div class="stat-item">
-        <div class="stat-value">7+</div>
-        <div class="stat-label">Active Schemes</div>
-      </div>
-      <div class="stat-divider"></div>
-      <div class="stat-item">
-        <div class="stat-value">₹244 Cr</div>
-        <div class="stat-label">Incentive Pool</div>
-      </div>
-      <div class="stat-divider"></div>
-      <div class="stat-item">
-        <div class="stat-value">5</div>
-        <div class="stat-label">Industry Verticals</div>
-      </div>
+
+    <h1 class="hero-title">
+      <span class="hero-title-en">Animation · VFX · Gaming · Comics · Extended Reality</span>
+      <span class="hero-title-ta">அனிமேஷன் · VFX · கேமிங் · காமிக்ஸ் · நீட்டிக்கப்பட்ட யதார்த்தம்</span>
+    </h1>
+
+    <p class="hero-subtitle">
+      {{ isTa()
+        ? 'தமிழ்நாட்டின் படைப்பாற்றல் தொழில்துறைக்கான அரசு ஊக்கத்திட்டங்கள், பயிற்சி மற்றும் சந்தை அணுகலுக்கான ஒற்றை சாளரம்.'
+        : 'A single window to Government of Tamil Nadu incentives, training and market access for the state’s creative-tech industry.' }}
+    </p>
+
+    <div class="hero-actions">
+      <a routerLink="/schemes" class="btn btn-hero-primary">
+        <mat-icon aria-hidden="true">explore</mat-icon>
+        {{ isTa() ? 'திட்டங்களை ஆராயுங்கள்' : 'Explore Schemes' }}
+      </a>
+      <a routerLink="/auth/register" class="btn btn-hero-ghost">
+        {{ isTa() ? 'விண்ணப்பிக்க பதிவு செய்க' : 'Register to Apply' }}
+        <mat-icon aria-hidden="true">arrow_forward</mat-icon>
+      </a>
     </div>
-  </div>
-</section>
 
-<!-- QUICK INFO STRIP — government-portal pattern -->
-<section class="info-strip">
-  <div class="container">
-    <a routerLink="/schemes" class="info-card">
-      <mat-icon>how_to_reg</mat-icon>
-      <div class="info-card-text">
-        <div class="info-card-title">Apply for a Scheme</div>
-        <div class="info-card-desc">Scholarships, subsidies, training</div>
-      </div>
-    </a>
-    <a routerLink="/companies" class="info-card">
-      <mat-icon>business</mat-icon>
-      <div class="info-card-text">
-        <div class="info-card-title">Business Connect</div>
-        <div class="info-card-desc">Find AVGC-XR companies</div>
-      </div>
-    </a>
-    <a routerLink="/talent" class="info-card">
-      <mat-icon>groups</mat-icon>
-      <div class="info-card-text">
-        <div class="info-card-title">Talent Directory</div>
-        <div class="info-card-desc">Hire trained professionals</div>
-      </div>
-    </a>
-    <a routerLink="/events" class="info-card">
-      <mat-icon>event</mat-icon>
-      <div class="info-card-text">
-        <div class="info-card-title">News &amp; Events</div>
-        <div class="info-card-desc">Workshops, conferences, EOIs</div>
-      </div>
-    </a>
-  </div>
-</section>
-
-<!-- STATS BAR (kept from previous, auto-picks-up new colors) -->
-<section class="stats-section">
-  <div class="container">
-    <div class="stats-grid">
-      @for (stat of statsDisplay(); track stat.label) {
-        <div class="stat-card">
-          <div class="stat-icon">
-            <mat-icon>{{ stat.icon }}</mat-icon>
-          </div>
-          <div class="stat-value">{{ stat.value }}</div>
-          <div class="stat-label">{{ stat.label }}</div>
+    <dl class="hero-stats">
+      @for (st of heroStats(); track st.label) {
+        <div class="hero-stat">
+          <dt class="hero-stat-label">{{ st.label }}</dt>
+          <dd class="hero-stat-value"
+              [appCountUp]="st.value"
+              [countUpPad]="st.pad"
+              [countUpPrefix]="st.prefix"
+              [countUpSuffix]="st.suffix"
+              [countUpDuration]="1400"></dd>
         </div>
+      }
+    </dl>
+  </div>
+</section>
+
+<!-- SCHEME FINDER (interactive centerpiece) -->
+<section class="section finder-section" id="scheme-finder">
+  <div class="container" appReveal="up">
+    <app-scheme-finder></app-scheme-finder>
+  </div>
+</section>
+
+<!-- SECTOR EXPLORER -->
+<section class="section sectors-section">
+  <div class="container">
+    <div class="section-header" appReveal="up">
+      <span class="section-kicker">{{ isTa() ? 'ஐந்து துறைகள்' : 'Five verticals' }}</span>
+      <h2 class="section-title">{{ isTa() ? 'AVGC-XR சுற்றுச்சூழல் அமைப்பு' : 'The AVGC-XR ecosystem' }}</h2>
+      <p class="section-subtitle">
+        {{ isTa()
+          ? 'ஒரே கொள்கையின் கீழ் ஐந்து படைப்பாற்றல் துறைகள் — ஒவ்வொன்றும் தனித்துவமான ஆதரவுடன்.'
+          : 'Five creative-tech verticals under one policy — each with dedicated support.' }}
+      </p>
+    </div>
+
+    <div class="sectors-grid">
+      @for (sec of sectorCards(); track sec.key; let i = $index) {
+        <article class="sector-card" [appReveal]="'scale'" [revealDelay]="i * 70"
+                 [style.--sector]="sec.color" tabindex="0">
+          <div class="sector-icon"><mat-icon aria-hidden="true">{{ sec.icon }}</mat-icon></div>
+          <h3 class="sector-name">{{ sec.label }}</h3>
+          <p class="sector-blurb">{{ sec.blurb }}</p>
+          <span class="sector-bar" aria-hidden="true"></span>
+        </article>
       }
     </div>
   </div>
@@ -114,127 +107,157 @@
 <!-- FEATURED SCHEMES -->
 <section class="section schemes-section">
   <div class="container">
-    <div class="section-header">
+    <div class="section-header" appReveal="up">
+      <span class="section-kicker">{{ isTa() ? 'ஊக்கத்திட்டங்கள்' : 'Incentives' }}</span>
       <h2 class="section-title">{{ t('home.schemes.title') }}</h2>
       <p class="section-subtitle">{{ t('home.schemes.subtitle') }}</p>
     </div>
 
     <div class="schemes-grid">
-      @for (s of featuredSchemes(); track s.id) {
-        <article class="scheme-card">
-          <div class="scheme-card-header">
-            <div class="scheme-icon">
-              <mat-icon>{{ s.icon }}</mat-icon>
-            </div>
-            <span class="scheme-category">{{ getCategoryLabel(s) }}</span>
+      @for (s of featuredSchemes(); track s.id; let i = $index) {
+        <article class="scheme-card" [appReveal]="i % 2 === 0 ? 'left' : 'right'" [revealDelay]="(i % 3) * 60">
+          <div class="scheme-card-top">
+            <div class="scheme-icon"><mat-icon aria-hidden="true">{{ s.icon }}</mat-icon></div>
+            <span class="scheme-category">{{ categoryLabel(s) }}</span>
           </div>
 
-          <h3 class="scheme-name">{{ getSchemeName(s) }}</h3>
-          <p class="scheme-description">{{ getSchemeDescription(s) }}</p>
+          <h3 class="scheme-name">{{ schemeName(s) }}</h3>
+          <p class="scheme-description">{{ schemeDescription(s) }}</p>
 
-          <div class="scheme-stats">
+          <div class="scheme-foot">
             <div class="scheme-amount">
               <span class="scheme-amount-label">{{ t('schemes.card.maxAmount') }}</span>
               <span class="scheme-amount-value">{{ formatAmount(s.maxAmount) }}</span>
             </div>
-            <div class="scheme-meta">
-              <span class="meta-item">
-                <mat-icon>group</mat-icon>
-                {{ s.applicantsCount }}
-              </span>
-              <span class="meta-item">
-                <mat-icon>check_circle</mat-icon>
-                {{ s.sanctionedCount }}
-              </span>
+            <div class="scheme-time">
+              <mat-icon aria-hidden="true">schedule</mat-icon>
+              {{ processingTime(s) }}
             </div>
           </div>
 
           <a [routerLink]="['/schemes', s.slug]" class="scheme-cta">
             {{ t('schemes.card.viewDetails') }}
-            <mat-icon>arrow_forward</mat-icon>
+            <mat-icon aria-hidden="true">arrow_forward</mat-icon>
           </a>
         </article>
       }
     </div>
 
-    <div class="section-footer">
+    <div class="section-footer" appReveal="fade">
       <a routerLink="/schemes" class="btn btn-outline btn-lg">
         {{ t('home.schemes.viewAll') }}
-        <mat-icon>arrow_forward</mat-icon>
+        <mat-icon aria-hidden="true">arrow_forward</mat-icon>
       </a>
     </div>
   </div>
 </section>
 
-<!-- ECOSYSTEM -->
-<section class="section ecosystem-section">
+<!-- APPLICATION JOURNEY -->
+<section class="section journey-section">
   <div class="container">
-    <div class="section-header">
-      <h2 class="section-title">{{ t('home.ecosystem.title') }}</h2>
-      <p class="section-subtitle">{{ t('home.ecosystem.subtitle') }}</p>
+    <div class="section-header" appReveal="up">
+      <span class="section-kicker">{{ isTa() ? 'செயல்முறை' : 'How it works' }}</span>
+      <h2 class="section-title">{{ isTa() ? 'விண்ணப்பத்திலிருந்து வழங்கல் வரை' : 'From application to disbursal' }}</h2>
+      <p class="section-subtitle">
+        {{ isTa() ? 'ஐந்து தெளிவான படிகள் — முழுவதும் ஆன்லைனில்.' : 'Five clear steps — fully online.' }}
+      </p>
     </div>
 
-    <div class="ecosystem-grid">
-      @for (card of ecosystemCards(); track card.title) {
-        <a [routerLink]="card.route" class="ecosystem-card">
-          <div class="ecosystem-icon">
-            <mat-icon>{{ card.icon }}</mat-icon>
+    <ol class="journey">
+      @for (step of journey(); track step.index; let i = $index) {
+        <li class="journey-step" [appReveal]="'up'" [revealDelay]="i * 90">
+          <div class="journey-marker">
+            <span class="journey-num">{{ step.index }}</span>
+            <mat-icon aria-hidden="true">{{ step.icon }}</mat-icon>
           </div>
-          <h3 class="ecosystem-title">{{ card.title }}</h3>
-          <p class="ecosystem-description">{{ card.description }}</p>
-          <span class="ecosystem-cta">
-            {{ card.cta }}
-            <mat-icon>arrow_forward</mat-icon>
-          </span>
-        </a>
+          <h3 class="journey-label">{{ step.label }}</h3>
+          <p class="journey-desc">{{ step.desc }}</p>
+        </li>
       }
-    </div>
+    </ol>
   </div>
 </section>
 
 <!-- NEWS & UPDATES -->
 <section class="section news-section">
   <div class="container">
-    <div class="section-header">
+    <div class="section-header" appReveal="up">
+      <span class="section-kicker">{{ isTa() ? 'புதுப்பிப்புகள்' : 'Newsroom' }}</span>
       <h2 class="section-title">{{ t('home.news.title') }}</h2>
       <p class="section-subtitle">{{ t('home.news.subtitle') }}</p>
     </div>
 
     <div class="news-grid">
-      @for (n of news(); track n.id) {
-        <article class="news-card">
-          <div class="news-icon">
-            <mat-icon>{{ n.icon }}</mat-icon>
-          </div>
+      @for (n of news(); track n.id; let i = $index) {
+        <article class="news-card" [appReveal]="'up'" [revealDelay]="i * 80">
+          <div class="news-icon"><mat-icon aria-hidden="true">{{ n.icon }}</mat-icon></div>
           <div class="news-meta">{{ formatDate(n.date) }}</div>
-          <h3 class="news-title">{{ getNewsTitle(n) }}</h3>
-          <p class="news-excerpt">{{ getNewsExcerpt(n) }}</p>
+          <h3 class="news-title">{{ newsTitle(n) }}</h3>
+          <p class="news-excerpt">{{ newsExcerpt(n) }}</p>
         </article>
       }
     </div>
 
-    <div class="section-footer">
+    <div class="section-footer" appReveal="fade">
       <a routerLink="/events" class="btn btn-outline btn-lg">
         {{ t('home.news.viewAll') }}
-        <mat-icon>arrow_forward</mat-icon>
+        <mat-icon aria-hidden="true">arrow_forward</mat-icon>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ECOSYSTEM CONNECT -->
+<section class="section ecosystem-section">
+  <div class="container">
+    <div class="section-header" appReveal="up">
+      <span class="section-kicker">{{ isTa() ? 'இணையுங்கள்' : 'Connect' }}</span>
+      <h2 class="section-title">{{ t('home.ecosystem.title') }}</h2>
+      <p class="section-subtitle">{{ t('home.ecosystem.subtitle') }}</p>
+    </div>
+
+    <div class="ecosystem-grid">
+      <a routerLink="/companies" class="ecosystem-card" [appReveal]="'up'" [revealDelay]="0">
+        <div class="ecosystem-icon"><mat-icon aria-hidden="true">business_center</mat-icon></div>
+        <h3 class="ecosystem-title">{{ isTa() ? 'வணிக இணைப்பு' : 'Business Connect' }}</h3>
+        <p class="ecosystem-description">
+          {{ isTa() ? 'தமிழ்நாடு முழுவதும் உள்ள AVGC-XR நிறுவனங்கள் மற்றும் ஸ்டுடியோக்களின் அடைவு.' : 'A searchable directory of AVGC-XR companies, studios and service providers across Tamil Nadu.' }}
+        </p>
+        <span class="ecosystem-cta">{{ isTa() ? 'நிறுவனங்களை உலாவு' : 'Browse companies' }}<mat-icon aria-hidden="true">arrow_forward</mat-icon></span>
+      </a>
+
+      <a routerLink="/talent" class="ecosystem-card" [appReveal]="'up'" [revealDelay]="80">
+        <div class="ecosystem-icon"><mat-icon aria-hidden="true">school</mat-icon></div>
+        <h3 class="ecosystem-title">{{ isTa() ? 'திறமை இணைப்பு' : 'Talent Connect' }}</h3>
+        <p class="ecosystem-description">
+          {{ isTa() ? 'மாணவர்கள் மற்றும் நிபுணர்களுக்கான திறன் பதிவேடு — வேலை, இன்டர்ன்ஷிப் வாய்ப்புகள்.' : 'A digital skill registry for students and professionals — jobs, internships and careers.' }}
+        </p>
+        <span class="ecosystem-cta">{{ isTa() ? 'திறமையாளர்களைக் காண்க' : 'Explore talent' }}<mat-icon aria-hidden="true">arrow_forward</mat-icon></span>
+      </a>
+
+      <a routerLink="/freelancers" class="ecosystem-card" [appReveal]="'up'" [revealDelay]="160">
+        <div class="ecosystem-icon"><mat-icon aria-hidden="true">badge</mat-icon></div>
+        <h3 class="ecosystem-title">{{ isTa() ? 'ஃப்ரீலான்ஸர் பதிவேடு' : 'Freelancer Registry' }}</h3>
+        <p class="ecosystem-description">
+          {{ isTa() ? 'சரிபார்க்கப்பட்ட ஃப்ரீலான்ஸர்களின் சுயவிவர அடிப்படையிலான கண்டுபிடிப்பு.' : 'Profile-based discoverability of verified freelancers by companies and stakeholders.' }}
+        </p>
+        <span class="ecosystem-cta">{{ isTa() ? 'ஃப்ரீலான்ஸர்களைக் காண்க' : 'Find freelancers' }}<mat-icon aria-hidden="true">arrow_forward</mat-icon></span>
       </a>
     </div>
   </div>
 </section>
 
 <!-- CTA -->
-<section class="section cta-section">
-  <div class="container cta-inner">
+<section class="cta-section">
+  <div class="container cta-inner" appReveal="scale">
     <h2 class="cta-title">{{ t('home.cta.title') }}</h2>
     <p class="cta-subtitle">{{ t('home.cta.subtitle') }}</p>
     <div class="cta-actions">
-      <a routerLink="/auth/register" class="btn btn-cta btn-lg">
+      <a routerLink="/auth/register" class="btn btn-hero-primary btn-lg">
         {{ t('home.cta.register') }}
-        <mat-icon>arrow_forward</mat-icon>
+        <mat-icon aria-hidden="true">arrow_forward</mat-icon>
       </a>
-      <a routerLink="/schemes" class="btn btn-outline-light btn-lg">
-        {{ t('home.cta.browse') }}
-      </a>
+      <a routerLink="/schemes" class="btn btn-outline-light btn-lg">{{ t('home.cta.browse') }}</a>
     </div>
   </div>
 </section>

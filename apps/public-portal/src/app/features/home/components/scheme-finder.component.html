@@ -1,0 +1,79 @@
+<!-- ============================================================ -->
+<!-- SCHEME FINDER — interactive eligibility wizard -->
+<!-- ============================================================ -->
+<div class="finder">
+  <div class="finder-head">
+    <span class="finder-eyebrow">
+      <span class="finder-eyebrow-dot" aria-hidden="true"></span>
+      {{ isTa() ? 'திட்டம் கண்டறிதல்' : 'Scheme Finder' }}
+    </span>
+    <h2 class="finder-title">
+      {{ isTa() ? 'உங்களுக்கான திட்டங்களைக் கண்டறியுங்கள்' : 'Find the schemes meant for you' }}
+    </h2>
+    <p class="finder-sub">
+      {{ isTa()
+        ? 'நீங்கள் யார் என்பதைத் தேர்ந்தெடுங்கள் — தகுதியான ஊக்கத்திட்டங்கள் உடனடியாகக் காட்டப்படும்.'
+        : 'Tell us who you are — eligible incentives filter instantly from the live policy.' }}
+    </p>
+  </div>
+
+  <!-- Profile chooser -->
+  <div class="finder-chips" role="group" [attr.aria-label]="isTa() ? 'விண்ணப்பதாரர் வகை' : 'Applicant type'">
+    @for (p of profiles; track p.key) {
+      <button
+        type="button"
+        class="finder-chip"
+        [class.is-active]="selected() === p.key"
+        [attr.aria-pressed]="selected() === p.key"
+        (click)="select(p.key)"
+      >
+        <mat-icon aria-hidden="true">{{ p.icon }}</mat-icon>
+        <span>{{ profileLabel(p) }}</span>
+      </button>
+    }
+  </div>
+
+  <!-- Live result bar -->
+  <div class="finder-result" aria-live="polite">
+    <p class="finder-count">
+      <span class="finder-count-num">{{ matchCount() }}</span>
+      <span class="finder-count-text">
+        @if (selected()) {
+          {{ isTa() ? 'திட்டங்கள் உங்களுக்குப் பொருந்துகின்றன' : (matchCount() === 1 ? 'scheme matches your profile' : 'schemes match your profile') }}
+        } @else {
+          {{ isTa() ? 'திட்டங்கள் கிடைக்கின்றன — வடிகட்ட உங்கள் வகையைத் தேர்ந்தெடுக்கவும்' : 'active schemes — pick a profile to filter' }}
+        }
+      </span>
+    </p>
+    @if (selected()) {
+      <button type="button" class="finder-reset" (click)="reset()">
+        <mat-icon aria-hidden="true">restart_alt</mat-icon>
+        {{ isTa() ? 'மீட்டமை' : 'Reset' }}
+      </button>
+    }
+  </div>
+
+  <!-- Matched schemes -->
+  <div class="finder-grid" [style.--count]="matched().length">
+    @for (s of matched(); track s.id; let i = $index) {
+      <a
+        class="finder-card"
+        [routerLink]="['/schemes', s.slug]"
+        [style.--i]="i"
+        [attr.aria-label]="schemeName(s)"
+      >
+        <span class="finder-card-cat">{{ categoryLabel(s) }}</span>
+        <span class="finder-card-name">{{ schemeName(s) }}</span>
+        <span class="finder-card-foot">
+          <span class="finder-card-amount">
+            <span class="finder-card-amount-label">{{ isTa() ? 'அதிகபட்சம்' : 'Up to' }}</span>
+            {{ formatAmount(s.maxAmount) }}
+          </span>
+          <span class="finder-card-go" aria-hidden="true">
+            <mat-icon>arrow_forward</mat-icon>
+          </span>
+        </span>
+      </a>
+    }
+  </div>
+</div>

@@ -1,0 +1,245 @@
+// ============================================================
+// SCHEME FINDER STYLES
+// ============================================================
+:host { display: block; }
+
+.finder {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-top: 3px solid var(--color-primary);
+  border-radius: var(--radius-lg);
+  padding: clamp(20px, 4vw, 40px);
+  box-shadow: var(--shadow-md);
+}
+
+.finder-head { max-width: 640px; margin-bottom: 24px; }
+
+.finder-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  margin-bottom: 12px;
+}
+.finder-eyebrow-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--color-secondary);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-secondary) 25%, transparent);
+}
+
+.finder-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--color-text-primary);
+  margin: 0 0 10px;
+}
+.finder-sub {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+  margin: 0;
+}
+
+// ---- Profile chips ----
+.finder-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.finder-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--color-text-primary);
+  background: var(--color-bg-subtle);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: transform var(--duration-fast) var(--easing-spring),
+              background-color var(--duration-fast) ease,
+              border-color var(--duration-fast) ease,
+              color var(--duration-fast) ease,
+              box-shadow var(--duration-fast) ease;
+}
+.finder-chip mat-icon {
+  font-size: 19px; width: 19px; height: 19px;
+  color: var(--color-primary);
+  transition: color var(--duration-fast) ease;
+}
+.finder-chip:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+}
+.finder-chip:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.finder-chip.is-active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--color-primary) 35%, transparent);
+}
+.finder-chip.is-active mat-icon { color: #fff; }
+
+// ---- Result bar ----
+.finder-result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 14px 18px;
+  background: var(--color-bg-subtle);
+  border-left: 3px solid var(--color-secondary);
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+}
+.finder-count {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+}
+.finder-count-num {
+  font-family: var(--font-serif);
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.finder-reset {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--color-primary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+}
+.finder-reset mat-icon { font-size: 18px; width: 18px; height: 18px; }
+.finder-reset:hover { text-decoration: underline; }
+.finder-reset:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
+
+// ---- Matched grid ----
+.finder-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.finder-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--color-text-primary);
+  transition: transform var(--duration-fast) var(--easing-standard),
+              border-color var(--duration-fast) ease,
+              box-shadow var(--duration-fast) ease;
+  animation: finderIn var(--duration-slow) var(--easing-decelerate) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+.finder-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+  text-decoration: none;
+}
+.finder-card:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
+
+.finder-card-cat {
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-primary);
+  background: var(--color-primary-50);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+}
+.finder-card-name {
+  font-size: var(--text-base);
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--color-text-primary);
+}
+.finder-card-foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 6px;
+}
+.finder-card-amount {
+  display: flex;
+  flex-direction: column;
+  font-size: var(--text-lg);
+  font-weight: 800;
+  color: var(--color-text-primary);
+  font-family: var(--font-serif);
+}
+.finder-card-amount-label {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-tertiary);
+}
+.finder-card-go {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--color-primary-50);
+  color: var(--color-primary);
+  transition: background-color var(--duration-fast) ease, transform var(--duration-fast) ease;
+}
+.finder-card-go mat-icon { font-size: 17px; width: 17px; height: 17px; }
+.finder-card:hover .finder-card-go {
+  background: var(--color-primary);
+  color: #fff;
+  transform: translateX(2px);
+}
+
+@keyframes finderIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .finder-chip, .finder-card, .finder-card-go { transition: none; }
+  .finder-card { animation: none; }
+}
+
+@media (max-width: 600px) {
+  .finder-grid { grid-template-columns: 1fr; }
+}
