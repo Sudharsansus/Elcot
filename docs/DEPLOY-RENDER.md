@@ -1,11 +1,22 @@
-# Deploying the AVGC-XR frontends on Render
+# Deploying the AVGC-XR Portal on Render
 
-This deploys the three Angular 19 portals (`public-portal`, `applicant-portal`,
-`admin-portal`) as **static sites** on Render's CDN. Static delivery means the
-frontend scales to very large audiences — the only concurrency ceiling is the
-backend API, never the SPA.
+The blueprint [`render.yaml`](../render.yaml) deploys the **full stack**:
 
-The blueprint is [`render.yaml`](../render.yaml) at the repo root.
+| Group | Services |
+|---|---|
+| **Datastores** | Postgres ×2 (API + CMS), Redis, RabbitMQ, Elasticsearch, MinIO |
+| **Backend** | API (Spring Boot), Worker (background), CMS (Strapi 5) |
+| **Frontends** | public / applicant / admin portals (Angular 19 static sites) |
+
+The three portals deploy as **static sites** on Render's CDN — they scale to very
+large audiences (the only concurrency ceiling is the API, never the SPA).
+
+**Verification status (honest):** the three portals build clean and are fully
+verified. The API / worker / CMS / datastores are wired with the **correct
+env-var names taken from the real config** (`apps/api/.../application.yml`,
+`apps/cms/config`, the Dockerfiles) — but they cannot be runtime-verified from
+the build machine. They need your secrets (auto-generated where possible) and a
+first-deploy pass. See **§6 Full-stack notes**.
 
 ---
 
@@ -82,8 +93,52 @@ deploy.
 
 ---
 
-## What is NOT in this blueprint
+## 6. Full-stack notes (API / worker / CMS / datastores)
 
-- **Backend API** (`apps/api`) and **CMS** (`apps/cms`) — deploy separately
-  (Docker web services). The frontends call them at the URLs from step 2.
-- A real lockfile — see §4.
+These services are now in the blueprint, wired from the **real config** (the
+env-var names are verified against `apps/api/.../application.yml`,
+`apps/cms/config/*.js`, and the Dockerfiles). What you must do / confirm:
+
+**Secrets** — auto-handled where possible:
+- Postgres / Redis credentials come from the managed resources (`fromDatabase` /
+  `fromService`).
+- RabbitMQ password and MinIO root user/password are **generated** and shared to
+  the API/worker via `fromService` (no literals anywhere).
+- `JWT_SECRET` (API) and the Strapi secrets (`APP_KEYS`, `ADMIN_JWT_SECRET`,
+  `API_TOKEN_SALT`, `TRANSFER_TOKEN_SALT`, `JWT_SECRET`) are **generated**.
+
+**You must set these by hand (marked `sync: false`):**
+- **`MINIO_ENDPOINT`** on the API + worker → the MinIO private service's internal
+  URL, e.g. `http://avgcxr-minio:9000` (confirm the internal host/port Render
+  assigns).
+- **`CORS_ALLOWED_ORIGINS`** on the API → comma-separated deployed portal URLs
+  (e.g. `https://avgcxr-public-portal.onrender.com,https://avgcxr-applicant-portal.onrender.com,https://avgcxr-admin-portal.onrender.com`).
+- **`EMAIL_HOST` / `EMAIL_USER` / `EMAIL_PASSWORD`** (optional SMTP).
+- Each portal's **`apiUrl` / `strapiUrl`** in `environment.prod.ts` → the
+  deployed API/CMS URLs, then redeploy that portal (static = baked at build).
+
+**One-time provisioning:**
+- **MinIO bucket** `application-documents` — create it once (MinIO console on
+  `:9001`, or `mc`). The API/worker upload here.
+- **Strapi admin** — open the CMS URL `/admin` and create the first admin user;
+  publish content for the public portal's News/Events.
+- Flyway runs the API DB migrations automatically on first boot.
+
+**Deliberate Render adaptations (verified, not copied from compose):**
+- **pgbouncer dropped** — the API connects straight to managed Postgres; the URL
+  template's `${PGBOUNCER_PORT}` is set to the managed Postgres port.
+- **nginx dropped** — every Render service has its own HTTPS URL.
+- **`RABBITMQ_VHOST=/`** — uses the always-present default vhost, so no
+  `/avgcxr` vhost provisioning is needed (Spring AMQP declares its own
+  queues/exchanges at runtime).
+
+**Could not verify from the build machine:** the API/worker/CMS Docker builds and
+their runtime startup (they depend on every datastore being reachable). Expect
+the first deploy to settle as the private services (RabbitMQ/Elasticsearch/MinIO)
+come up. **Plan names** (`basic-1gb`, `standard`, …) and Redis auth behaviour may
+need adjusting to current Render offerings.
+
+## Still required
+
+- A real `pnpm-lock.yaml` — see §4.
+- The manual values + provisioning in §6.
