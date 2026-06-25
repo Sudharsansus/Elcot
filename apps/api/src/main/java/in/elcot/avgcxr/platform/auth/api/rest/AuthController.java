@@ -21,9 +21,16 @@ import org.springframework.http.MediaType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.UUID;
 
+@Tag(
+    name = "Authentication & Account",
+    description =
+        "Registration, login, token refresh, password reset, profile, MFA (TOTP) and DPDP"
+            + " consent management")
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
@@ -34,6 +41,9 @@ public class AuthController {
     private final MfaService mfaService;
     private final in.elcot.avgcxr.platform.user.application.service.AccountSecurityService accountSecurityService;
 
+    @Operation(
+        summary = "Register a new user",
+        description = "Creates an account, captures DPDP consents, and returns auth tokens.")
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<AuthResponse>> register(
             @Valid @RequestBody CreateUserRequest request,
@@ -63,6 +73,7 @@ public class AuthController {
         return s.length() <= max ? s : s.substring(0, max);
     }
 
+    @Operation(summary = "Log in", description = "Authenticates by email + password and returns access/refresh tokens.")
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<AuthResponse>> login(
             @RequestBody CreateUserRequest.LoginRequest request) {
@@ -114,6 +125,7 @@ public class AuthController {
         return updateProfile(request);
     }
 
+    @Operation(summary = "Get current user", description = "Returns the authenticated user's profile.")
     @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser() {
