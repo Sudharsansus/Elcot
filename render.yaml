@@ -58,7 +58,7 @@ services:
     name: avgcxr-rabbitmq
     runtime: image
     image:
-      url: docker.io/rabbitmq:3.13-management-alpine
+      url: docker.io/library/rabbitmq:3.13-management-alpine
     plan: standard
     disk:
       name: rabbitmq-data
@@ -75,7 +75,7 @@ services:
     name: avgcxr-elasticsearch
     runtime: image
     image:
-      url: docker.io/elasticsearch:8.13.0
+      url: docker.elastic.co/elasticsearch/elasticsearch:8.13.0
     plan: standard            # needs >= 2 GB RAM
     disk:
       name: es-data
