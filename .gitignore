@@ -78,3 +78,11 @@ crash.log
 # One-off integration bundles (code already integrated into apps/)
 chat-models-bundle/
 chat-services-bundle/
+
+# Angular / Strapi build cache
+.angular/
+apps/cms/.strapi/
+apps/cms/.strapi-updater.json
+
+# Stray archives
+*.zip
