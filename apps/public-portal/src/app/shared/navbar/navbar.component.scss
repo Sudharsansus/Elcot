@@ -42,9 +42,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   flex-shrink: 0;
+  color: var(--color-primary); // emblem inherits TN red via currentColor
 }
 
 .brand-text { display: flex; flex-direction: column; line-height: 1.1; }

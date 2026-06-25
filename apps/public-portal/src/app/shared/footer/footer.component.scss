@@ -6,6 +6,11 @@
 
 :host { display: block; }
 
+// Brand lockup (emblem + government wordmark)
+.footer-brand { display: flex; flex-direction: row; align-items: center; gap: 14px; margin-bottom: 16px; }
+.footer-emblem { color: var(--color-primary); flex-shrink: 0; }
+.footer-brand-text { display: flex; flex-direction: column; gap: 2px; }
+
 // Legacy footer rules (kept in case something still references .footer class)
 .footer {
   background: var(--color-surface);

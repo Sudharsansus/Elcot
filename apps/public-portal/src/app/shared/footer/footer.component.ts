@@ -9,12 +9,13 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { I18nService } from '../../core/services/i18n.service';
+import { TnEmblemComponent } from '../brand/tn-emblem.component';
 
 @Component({
   selector: 'app-footer',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, MatIconModule],
+  imports: [CommonModule, RouterModule, MatIconModule, TnEmblemComponent],
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss']
 })
