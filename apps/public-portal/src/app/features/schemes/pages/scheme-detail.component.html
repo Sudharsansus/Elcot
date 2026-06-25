@@ -1,0 +1,132 @@
+@if (scheme(); as s) {
+  <app-page-header
+    [title]="name(s)"
+    [subtitle]="department(s)"
+    [icon]="s.icon"
+    [breadcrumb]="crumbs()"
+    [homeLabel]="isTa() ? 'முகப்பு' : 'Home'">
+  </app-page-header>
+
+  <div class="detail">
+    <div class="container detail-grid">
+      <!-- MAIN -->
+      <div class="detail-main">
+        <div class="detail-badges">
+          <span class="badge badge-cat">{{ categoryLabel(s) }}</span>
+          <span class="badge" [class.badge-active]="s.status === 'active'"
+                [class.badge-upcoming]="s.status === 'upcoming'"
+                [class.badge-closed]="s.status === 'closed'">
+            <span class="badge-dot" aria-hidden="true"></span>{{ statusLabel(s.status) }}
+          </span>
+        </div>
+
+        <section class="detail-block" appReveal="up">
+          <h2 class="detail-h2">{{ isTa() ? 'திட்டம் பற்றி' : 'About this scheme' }}</h2>
+          <p class="detail-lead">{{ description(s) }}</p>
+        </section>
+
+        @if (highlights(s).length) {
+          <section class="detail-block" appReveal="up">
+            <h2 class="detail-h2">{{ isTa() ? 'முக்கிய அம்சங்கள்' : 'Key highlights' }}</h2>
+            <ul class="highlight-list">
+              @for (h of highlights(s); track h) {
+                <li><mat-icon aria-hidden="true">check_circle</mat-icon><span>{{ h }}</span></li>
+              }
+            </ul>
+          </section>
+        }
+
+        <section class="detail-block" appReveal="up">
+          <h2 class="detail-h2">{{ isTa() ? 'தகுதி' : 'Eligibility' }}</h2>
+          <div class="detail-callout">
+            <mat-icon aria-hidden="true">how_to_reg</mat-icon>
+            <p>{{ eligibility(s) }}</p>
+          </div>
+        </section>
+
+        @if (documents(s).length) {
+          <section class="detail-block" appReveal="up">
+            <h2 class="detail-h2">{{ isTa() ? 'தேவையான ஆவணங்கள்' : 'Required documents' }}</h2>
+            <ul class="doc-list">
+              @for (d of documents(s); track d; let i = $index) {
+                <li><span class="doc-num">{{ i + 1 }}</span><span>{{ d }}</span></li>
+              }
+            </ul>
+          </section>
+        }
+
+        @if (benefits(s).length) {
+          <section class="detail-block" appReveal="up">
+            <h2 class="detail-h2">{{ isTa() ? 'பயன்கள்' : 'What you get' }}</h2>
+            <div class="benefit-grid">
+              @for (b of benefits(s); track b) {
+                <div class="benefit-card">
+                  <mat-icon aria-hidden="true">redeem</mat-icon>
+                  <span>{{ b }}</span>
+                </div>
+              }
+            </div>
+          </section>
+        }
+      </div>
+
+      <!-- SIDEBAR -->
+      <aside class="detail-aside">
+        <div class="facts-card">
+          <div class="facts-amount">
+            <span class="facts-amount-label">{{ isTa() ? 'அதிகபட்ச ஆதரவு' : 'Maximum support' }}</span>
+            <span class="facts-amount-value">{{ formatAmount(s.maxAmount) }}</span>
+          </div>
+
+          <dl class="facts-list">
+            <div class="fact">
+              <dt><mat-icon aria-hidden="true">event</mat-icon>{{ isTa() ? 'கடைசி தேதி' : 'Deadline' }}</dt>
+              <dd>{{ formatDate(s.deadline) }}</dd>
+            </div>
+            <div class="fact">
+              <dt><mat-icon aria-hidden="true">schedule</mat-icon>{{ isTa() ? 'செயலாக்க காலம்' : 'Processing time' }}</dt>
+              <dd>{{ processingTime(s) }}</dd>
+            </div>
+            <div class="fact">
+              <dt><mat-icon aria-hidden="true">category</mat-icon>{{ isTa() ? 'வகை' : 'Category' }}</dt>
+              <dd>{{ categoryLabel(s) }}</dd>
+            </div>
+            <div class="fact">
+              <dt><mat-icon aria-hidden="true">account_balance</mat-icon>{{ isTa() ? 'துறை' : 'Department' }}</dt>
+              <dd>{{ department(s) }}</dd>
+            </div>
+          </dl>
+
+          @if (s.status === 'active') {
+            <a [routerLink]="['/auth/register']" [queryParams]="{ scheme: s.id }" class="btn-apply">
+              <mat-icon aria-hidden="true">edit_document</mat-icon>
+              {{ isTa() ? 'இப்போது விண்ணப்பிக்கவும்' : 'Apply now' }}
+            </a>
+          } @else {
+            <div class="apply-closed">
+              {{ isTa() ? 'விண்ணப்பங்கள் தற்போது மூடப்பட்டுள்ளன' : 'Applications are currently closed' }}
+            </div>
+          }
+          <a routerLink="/schemes" class="back-link">
+            <mat-icon aria-hidden="true">arrow_back</mat-icon>
+            {{ isTa() ? 'அனைத்து திட்டங்கள்' : 'All schemes' }}
+          </a>
+        </div>
+      </aside>
+    </div>
+  </div>
+} @else {
+  <app-page-header
+    [title]="isTa() ? 'திட்டம் கிடைக்கவில்லை' : 'Scheme not found'"
+    [breadcrumb]="crumbs()"
+    [homeLabel]="isTa() ? 'முகப்பு' : 'Home'">
+  </app-page-header>
+  <div class="container not-found">
+    <mat-icon aria-hidden="true">search_off</mat-icon>
+    <p>{{ isTa() ? 'இந்த திட்டத்தை எங்களால் கண்டுபிடிக்க முடியவில்லை.' : 'We couldn’t find the scheme you were looking for.' }}</p>
+    <a routerLink="/schemes" class="btn-apply">
+      <mat-icon aria-hidden="true">arrow_back</mat-icon>
+      {{ isTa() ? 'அனைத்து திட்டங்களையும் பார்க்கவும்' : 'Browse all schemes' }}
+    </a>
+  </div>
+}
