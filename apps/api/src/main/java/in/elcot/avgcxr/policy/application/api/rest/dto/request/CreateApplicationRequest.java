@@ -5,13 +5,7 @@ import jakarta.validation.constraints.Size;
 import java.util.UUID;
 
 public record CreateApplicationRequest(
-    @NotNull(message = "Scheme ID is required")
-    UUID schemeId,
-
+    @NotNull(message = "Scheme ID is required") UUID schemeId,
     UUID applicantId,
-
-    @Size(max = 100)
-    String district,
-
-    String formData
-) {}
+    @Size(max = 100) String district,
+    String formData) {}

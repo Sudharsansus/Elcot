@@ -9,15 +9,15 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class WorkflowEventConsumer {
-    private static final Logger log = LoggerFactory.getLogger(WorkflowEventConsumer.class);
+  private static final Logger log = LoggerFactory.getLogger(WorkflowEventConsumer.class);
 
-    @RabbitListener(queues = "avgc.workflow.created")
-    public void onCreated(WorkflowCreatedEvent event) {
-        log.info("Workflow created event: id={}", event.workflowId());
-    }
+  @RabbitListener(queues = "avgc.workflow.created")
+  public void onCreated(WorkflowCreatedEvent event) {
+    log.info("Workflow created event: id={}", event.workflowId());
+  }
 
-    @RabbitListener(queues = "avgc.workflow.updated")
-    public void onUpdated(WorkflowUpdatedEvent event) {
-        log.info("Workflow updated event: id={}, field={}", event.workflowId(), event.field());
-    }
+  @RabbitListener(queues = "avgc.workflow.updated")
+  public void onUpdated(WorkflowUpdatedEvent event) {
+    log.info("Workflow updated event: id={}, field={}", event.workflowId(), event.field());
+  }
 }

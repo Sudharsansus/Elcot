@@ -19,50 +19,72 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+  private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    @Bean
-    @org.springframework.context.annotation.Lazy
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .cors(Customizer.withDefaults())
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        // Public endpoints (no auth)
-                        .requestMatchers(new AntPathRequestMatcher("/api/v1/auth/login")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/v1/auth/register")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/v1/auth/refresh-token")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/v1/auth/forgot-password")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/v1/auth/reset-password")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/v1/auth/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/v1/public/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/public/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/auth/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/actuator/health")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/actuator/info")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/v1/mira/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/v1/chat/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/v1/reports/export/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/v1/schemes/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/v1/public/schemes/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/v3/api-docs/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/swagger-ui.html")).permitAll()
-                        // Everything else requires authentication
-                        .requestMatchers(new AntPathRequestMatcher("/**")).authenticated()
-                )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .headers(headers -> headers
-                        .contentSecurityPolicy(csp -> csp.policyDirectives(
+  @Bean
+  @org.springframework.context.annotation.Lazy
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    return http.cors(Customizer.withDefaults())
+        .csrf(AbstractHttpConfigurer::disable)
+        .sessionManagement(
+            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(
+            auth ->
+                auth
+                    // Public endpoints (no auth)
+                    .requestMatchers(new AntPathRequestMatcher("/api/v1/auth/login"))
+                    .permitAll()
+                    .requestMatchers(new AntPathRequestMatcher("/api/v1/auth/register"))
+                    .permitAll()
+                    .requestMatchers(new AntPathRequestMatcher("/api/v1/auth/refresh-token"))
+                    .permitAll()
+                    .requestMatchers(new AntPathRequestMatcher("/api/v1/auth/forgot-password"))
+                    .permitAll()
+                    .requestMatchers(new AntPathRequestMatcher("/api/v1/auth/reset-password"))
+                    .permitAll()
+                    .requestMatchers(new AntPathRequestMatcher("/api/v1/auth/**"))
+                    .permitAll()
+                    .requestMatchers(new AntPathRequestMatcher("/api/v1/public/**"))
+                    .permitAll()
+                    .requestMatchers(new AntPathRequestMatcher("/api/public/**"))
+                    .permitAll()
+                    .requestMatchers(new AntPathRequestMatcher("/api/auth/**"))
+                    .permitAll()
+                    .requestMatchers(new AntPathRequestMatcher("/actuator/health"))
+                    .permitAll()
+                    .requestMatchers(new AntPathRequestMatcher("/actuator/info"))
+                    .permitAll()
+                    .requestMatchers(new AntPathRequestMatcher("/api/v1/mira/**"))
+                    .permitAll()
+                    .requestMatchers(new AntPathRequestMatcher("/api/v1/chat/**"))
+                    .permitAll()
+                    .requestMatchers(new AntPathRequestMatcher("/api/v1/reports/export/**"))
+                    .permitAll()
+                    .requestMatchers(new AntPathRequestMatcher("/api/v1/schemes/**"))
+                    .permitAll()
+                    .requestMatchers(new AntPathRequestMatcher("/api/v1/public/schemes/**"))
+                    .permitAll()
+                    .requestMatchers(new AntPathRequestMatcher("/v3/api-docs/**"))
+                    .permitAll()
+                    .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**"))
+                    .permitAll()
+                    .requestMatchers(new AntPathRequestMatcher("/swagger-ui.html"))
+                    .permitAll()
+                    // Everything else requires authentication
+                    .requestMatchers(new AntPathRequestMatcher("/**"))
+                    .authenticated())
+        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+        .headers(
+            headers ->
+                headers
+                    .contentSecurityPolicy(
+                        csp ->
+                            csp.policyDirectives(
                                 "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; "
-                              + "img-src 'self' data: blob:; font-src 'self' data:; "
-                              + "connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; "
-                              + "form-action 'self'"
-                        ))
-                        .frameOptions(fo -> fo.deny())
-                )
-                .build();
-    }
+                                    + "img-src 'self' data: blob:; font-src 'self' data:; "
+                                    + "connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; "
+                                    + "form-action 'self'"))
+                    .frameOptions(fo -> fo.deny()))
+        .build();
+  }
 }

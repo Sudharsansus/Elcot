@@ -4,5 +4,5 @@ import in.elcot.avgcxr.ecosystem.businessconnect.api.rest.dto.response.CompanyRe
 import in.elcot.avgcxr.ecosystem.businessconnect.application.command.CreateCompanyCommand;
 
 public interface CreateCompanyUseCase {
-    CompanyResponse create(CreateCompanyCommand command);
+  CompanyResponse create(CreateCompanyCommand command);
 }

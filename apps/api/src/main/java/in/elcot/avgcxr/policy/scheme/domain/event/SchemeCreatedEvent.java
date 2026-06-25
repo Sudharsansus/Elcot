@@ -6,8 +6,12 @@ import java.util.Map;
 import java.util.UUID;
 
 public class SchemeCreatedEvent extends DomainEvent {
-    public SchemeCreatedEvent(UUID schemeId, String name, String category) {
-        super(UUID.randomUUID(), "SCHEME_CREATED", LocalDateTime.now(), schemeId.toString(),
-                Map.of("schemeId", schemeId.toString(), "name", name, "category", category));
-    }
+  public SchemeCreatedEvent(UUID schemeId, String name, String category) {
+    super(
+        UUID.randomUUID(),
+        "SCHEME_CREATED",
+        LocalDateTime.now(),
+        schemeId.toString(),
+        Map.of("schemeId", schemeId.toString(), "name", name, "category", category));
+  }
 }

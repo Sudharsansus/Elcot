@@ -4,5 +4,5 @@ import in.elcot.avgcxr.support.helpdesk.application.command.CreateHelpdeskComman
 import in.elcot.avgcxr.support.helpdesk.domain.model.Helpdesk;
 
 public interface CreateHelpdeskUseCase {
-    Helpdesk create(CreateHelpdeskCommand command);
+  Helpdesk create(CreateHelpdeskCommand command);
 }

@@ -4,5 +4,5 @@ import in.elcot.avgcxr.platform.search.application.command.CreateSearchCommand;
 import in.elcot.avgcxr.platform.search.domain.model.Search;
 
 public interface CreateSearchUseCase {
-    Search create(CreateSearchCommand command);
+  Search create(CreateSearchCommand command);
 }

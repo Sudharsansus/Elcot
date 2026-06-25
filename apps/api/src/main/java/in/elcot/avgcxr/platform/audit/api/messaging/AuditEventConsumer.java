@@ -9,15 +9,15 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AuditEventConsumer {
-    private static final Logger log = LoggerFactory.getLogger(AuditEventConsumer.class);
+  private static final Logger log = LoggerFactory.getLogger(AuditEventConsumer.class);
 
-    @RabbitListener(queues = "avgc.audit.created")
-    public void onCreated(AuditCreatedEvent event) {
-        log.info("Audit created event: id={}", event.auditId());
-    }
+  @RabbitListener(queues = "avgc.audit.created")
+  public void onCreated(AuditCreatedEvent event) {
+    log.info("Audit created event: id={}", event.auditId());
+  }
 
-    @RabbitListener(queues = "avgc.audit.updated")
-    public void onUpdated(AuditUpdatedEvent event) {
-        log.info("Audit updated event: id={}, field={}", event.auditId(), event.field());
-    }
+  @RabbitListener(queues = "avgc.audit.updated")
+  public void onUpdated(AuditUpdatedEvent event) {
+    log.info("Audit updated event: id={}, field={}", event.auditId(), event.field());
+  }
 }

@@ -4,5 +4,5 @@ import in.elcot.avgcxr.ecosystem.businessconnect.application.command.CreateBusin
 import in.elcot.avgcxr.ecosystem.businessconnect.domain.model.Businessconnect;
 
 public interface CreateBusinessconnectUseCase {
-    Businessconnect create(CreateBusinessconnectCommand command);
+  Businessconnect create(CreateBusinessconnectCommand command);
 }

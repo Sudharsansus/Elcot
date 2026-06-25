@@ -6,8 +6,11 @@ import java.util.Optional;
 
 /** Output port for Audit persistence - implemented by infrastructure adapter */
 public interface AuditRepositoryPort {
-    Audit save(Audit entity);
-    Optional<Audit> findById(AuditId id);
-    void deleteById(AuditId id);
-    boolean existsById(AuditId id);
+  Audit save(Audit entity);
+
+  Optional<Audit> findById(AuditId id);
+
+  void deleteById(AuditId id);
+
+  boolean existsById(AuditId id);
 }

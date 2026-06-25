@@ -7,17 +7,18 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class WorkflowMapper {
-    public WorkflowEntity toEntity(Workflow domain) {
-        WorkflowEntity e = new WorkflowEntity();
-        e.setId(domain.getId().toString());
-        e.setName("name");
-        e.setDescription("description");
-        e.setCreatedAt(domain.getCreatedAt());
-        e.setUpdatedAt(domain.getUpdatedAt());
-        return e;
-    }
+  public WorkflowEntity toEntity(Workflow domain) {
+    WorkflowEntity e = new WorkflowEntity();
+    e.setId(domain.getId().toString());
+    e.setName("name");
+    e.setDescription("description");
+    e.setCreatedAt(domain.getCreatedAt());
+    e.setUpdatedAt(domain.getUpdatedAt());
+    return e;
+  }
 
-    public Workflow toDomain(WorkflowEntity entity) {
-        return new Workflow(WorkflowId.of(entity.getId()), entity.getName() != null ? entity.getName() : "");
-    }
+  public Workflow toDomain(WorkflowEntity entity) {
+    return new Workflow(
+        WorkflowId.of(entity.getId()), entity.getName() != null ? entity.getName() : "");
+  }
 }

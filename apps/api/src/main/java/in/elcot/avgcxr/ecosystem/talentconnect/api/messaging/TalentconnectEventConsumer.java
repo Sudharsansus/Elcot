@@ -9,15 +9,16 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TalentconnectEventConsumer {
-    private static final Logger log = LoggerFactory.getLogger(TalentconnectEventConsumer.class);
+  private static final Logger log = LoggerFactory.getLogger(TalentconnectEventConsumer.class);
 
-    @RabbitListener(queues = "avgc.talentconnect.created")
-    public void onCreated(TalentconnectCreatedEvent event) {
-        log.info("Talentconnect created event: id={}", event.talentconnectId());
-    }
+  @RabbitListener(queues = "avgc.talentconnect.created")
+  public void onCreated(TalentconnectCreatedEvent event) {
+    log.info("Talentconnect created event: id={}", event.talentconnectId());
+  }
 
-    @RabbitListener(queues = "avgc.talentconnect.updated")
-    public void onUpdated(TalentconnectUpdatedEvent event) {
-        log.info("Talentconnect updated event: id={}, field={}", event.talentconnectId(), event.field());
-    }
+  @RabbitListener(queues = "avgc.talentconnect.updated")
+  public void onUpdated(TalentconnectUpdatedEvent event) {
+    log.info(
+        "Talentconnect updated event: id={}, field={}", event.talentconnectId(), event.field());
+  }
 }

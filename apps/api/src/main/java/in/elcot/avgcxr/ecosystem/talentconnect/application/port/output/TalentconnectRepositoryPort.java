@@ -6,8 +6,11 @@ import java.util.Optional;
 
 /** Output port for Talentconnect persistence - implemented by infrastructure adapter */
 public interface TalentconnectRepositoryPort {
-    Talentconnect save(Talentconnect entity);
-    Optional<Talentconnect> findById(TalentconnectId id);
-    void deleteById(TalentconnectId id);
-    boolean existsById(TalentconnectId id);
+  Talentconnect save(Talentconnect entity);
+
+  Optional<Talentconnect> findById(TalentconnectId id);
+
+  void deleteById(TalentconnectId id);
+
+  boolean existsById(TalentconnectId id);
 }

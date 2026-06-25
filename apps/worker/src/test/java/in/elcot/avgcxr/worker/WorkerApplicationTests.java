@@ -7,6 +7,8 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 @ActiveProfiles("test")
 class WorkerApplicationTests {
-    @Test
-    void contextLoads() { /* Verify Spring context loads */ }
+  @Test
+  void contextLoads() {
+    /* Verify Spring context loads */
+  }
 }

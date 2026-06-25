@@ -9,15 +9,16 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class BusinessconnectEventConsumer {
-    private static final Logger log = LoggerFactory.getLogger(BusinessconnectEventConsumer.class);
+  private static final Logger log = LoggerFactory.getLogger(BusinessconnectEventConsumer.class);
 
-    @RabbitListener(queues = "avgc.businessconnect.created")
-    public void onCreated(BusinessconnectCreatedEvent event) {
-        log.info("Businessconnect created event: id={}", event.businessconnectId());
-    }
+  @RabbitListener(queues = "avgc.businessconnect.created")
+  public void onCreated(BusinessconnectCreatedEvent event) {
+    log.info("Businessconnect created event: id={}", event.businessconnectId());
+  }
 
-    @RabbitListener(queues = "avgc.businessconnect.updated")
-    public void onUpdated(BusinessconnectUpdatedEvent event) {
-        log.info("Businessconnect updated event: id={}, field={}", event.businessconnectId(), event.field());
-    }
+  @RabbitListener(queues = "avgc.businessconnect.updated")
+  public void onUpdated(BusinessconnectUpdatedEvent event) {
+    log.info(
+        "Businessconnect updated event: id={}, field={}", event.businessconnectId(), event.field());
+  }
 }

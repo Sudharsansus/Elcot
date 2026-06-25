@@ -6,8 +6,11 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public interface ProcessApplicationUseCase {
-    ApplicationResponse process(UUID id, ProcessApplicationCommand command);
-    ApplicationResponse submit(UUID id);
-    ApplicationResponse approve(UUID id, BigDecimal fundingApproved, String remarks);
-    ApplicationResponse reject(UUID id, String reason);
+  ApplicationResponse process(UUID id, ProcessApplicationCommand command);
+
+  ApplicationResponse submit(UUID id);
+
+  ApplicationResponse approve(UUID id, BigDecimal fundingApproved, String remarks);
+
+  ApplicationResponse reject(UUID id, String reason);
 }

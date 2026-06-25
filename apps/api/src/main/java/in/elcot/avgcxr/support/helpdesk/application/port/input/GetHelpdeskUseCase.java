@@ -5,6 +5,7 @@ import in.elcot.avgcxr.support.helpdesk.domain.model.HelpdeskId;
 import java.util.Optional;
 
 public interface GetHelpdeskUseCase {
-    Optional<Helpdesk> findById(HelpdeskId id);
-    Helpdesk getById(HelpdeskId id);
+  Optional<Helpdesk> findById(HelpdeskId id);
+
+  Helpdesk getById(HelpdeskId id);
 }

@@ -5,5 +5,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface JpaHelpdeskRepository extends JpaRepository<HelpdeskEntity, String> {
-}
+public interface JpaHelpdeskRepository extends JpaRepository<HelpdeskEntity, String> {}

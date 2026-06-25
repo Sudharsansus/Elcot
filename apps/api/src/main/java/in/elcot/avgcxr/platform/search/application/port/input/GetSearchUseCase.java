@@ -5,6 +5,7 @@ import in.elcot.avgcxr.platform.search.domain.model.SearchId;
 import java.util.Optional;
 
 public interface GetSearchUseCase {
-    Optional<Search> findById(SearchId id);
-    Search getById(SearchId id);
+  Optional<Search> findById(SearchId id);
+
+  Search getById(SearchId id);
 }

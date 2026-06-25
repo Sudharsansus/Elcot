@@ -6,8 +6,12 @@ import java.util.Map;
 import java.util.UUID;
 
 public class FileMetadataCreatedEvent extends DomainEvent {
-    public FileMetadataCreatedEvent(UUID entityId) {
-        super(UUID.randomUUID(), "FILEMETADATA_CREATED", LocalDateTime.now(), entityId.toString(),
-                Map.of("entityId", entityId.toString()));
-    }
+  public FileMetadataCreatedEvent(UUID entityId) {
+    super(
+        UUID.randomUUID(),
+        "FILEMETADATA_CREATED",
+        LocalDateTime.now(),
+        entityId.toString(),
+        Map.of("entityId", entityId.toString()));
+  }
 }

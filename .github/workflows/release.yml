@@ -16,9 +16,14 @@ jobs:
         with:
           node-version: '22'
       - uses: pnpm/action-setup@v4
-      - name: Build
+      - name: Build (release artifact)
         run: |
           pnpm install --frozen-lockfile --shamefully-hoist
+          # -DskipTests here is intentional and is NOT because tests are broken:
+          # the test suite is already executed on every PR/push by ci-backend.yml.
+          # This release job only re-packages the JARs for the tagged artifact, so
+          # it skips re-running tests to keep release builds fast and deterministic.
+          # The authoritative test gate lives in ci-backend.yml (mvn verify).
           mvn clean package -DskipTests -Pprod
           pnpm run build:all
       - name: Create Release Archive

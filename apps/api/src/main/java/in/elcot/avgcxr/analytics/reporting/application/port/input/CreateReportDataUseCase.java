@@ -4,5 +4,5 @@ import in.elcot.avgcxr.analytics.reporting.api.rest.dto.response.ReportDataRespo
 import in.elcot.avgcxr.analytics.reporting.application.command.CreateReportDataCommand;
 
 public interface CreateReportDataUseCase {
-    ReportDataResponse create(CreateReportDataCommand command);
+  ReportDataResponse create(CreateReportDataCommand command);
 }

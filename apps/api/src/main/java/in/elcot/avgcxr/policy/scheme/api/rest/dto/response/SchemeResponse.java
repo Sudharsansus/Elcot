@@ -23,5 +23,4 @@ public record SchemeResponse(
     String status,
     boolean isActive,
     String thumbnailUrl,
-    LocalDateTime createdAt
-) {}
+    LocalDateTime createdAt) {}

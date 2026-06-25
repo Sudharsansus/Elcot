@@ -4,5 +4,5 @@ import in.elcot.avgcxr.policy.workflow.api.rest.dto.response.WorkflowInstanceRes
 import in.elcot.avgcxr.policy.workflow.application.command.CreateWorkflowInstanceCommand;
 
 public interface CreateWorkflowInstanceUseCase {
-    WorkflowInstanceResponse create(CreateWorkflowInstanceCommand command);
+  WorkflowInstanceResponse create(CreateWorkflowInstanceCommand command);
 }

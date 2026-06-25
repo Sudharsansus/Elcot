@@ -16,5 +16,4 @@ public record ApplicationResponse(
     LocalDateTime submittedAt,
     LocalDateTime reviewedAt,
     BigDecimal fundingApproved,
-    String rejectionReason
-) {}
+    String rejectionReason) {}

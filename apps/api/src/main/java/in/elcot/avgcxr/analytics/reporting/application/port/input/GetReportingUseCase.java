@@ -4,7 +4,9 @@ import in.elcot.avgcxr.analytics.reporting.api.rest.dto.response.ReportingRespon
 import java.time.LocalDate;
 
 public interface GetReportingUseCase {
-    ReportingResponse generateApplicationReport(LocalDate from, LocalDate to, String district);
-    ReportingResponse generateDisbursementReport(LocalDate from, LocalDate to);
-    byte[] exportApplicationReportCsv(LocalDate from, LocalDate to);
+  ReportingResponse generateApplicationReport(LocalDate from, LocalDate to, String district);
+
+  ReportingResponse generateDisbursementReport(LocalDate from, LocalDate to);
+
+  byte[] exportApplicationReportCsv(LocalDate from, LocalDate to);
 }

@@ -15,13 +15,25 @@ public record AuditLogEntry(
     Map<String, Object> newValue,
     String ipAddress,
     String userAgent,
-    LocalDateTime createdAt
-) {
-    public static AuditLogEntry create(String action, String actorId, String entityType, String entityId,
-                                        Map<String, Object> newValue, String ipAddress) {
-        return new AuditLogEntry(
-                UUID.randomUUID(), actorId, "USER", action, entityType, entityId,
-                null, newValue, ipAddress, null, LocalDateTime.now()
-        );
-    }
+    LocalDateTime createdAt) {
+  public static AuditLogEntry create(
+      String action,
+      String actorId,
+      String entityType,
+      String entityId,
+      Map<String, Object> newValue,
+      String ipAddress) {
+    return new AuditLogEntry(
+        UUID.randomUUID(),
+        actorId,
+        "USER",
+        action,
+        entityType,
+        entityId,
+        null,
+        newValue,
+        ipAddress,
+        null,
+        LocalDateTime.now());
+  }
 }

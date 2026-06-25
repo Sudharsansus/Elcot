@@ -5,6 +5,7 @@ import in.elcot.avgcxr.ecosystem.talentconnect.domain.model.TalentconnectId;
 import java.util.Optional;
 
 public interface GetTalentconnectUseCase {
-    Optional<Talentconnect> findById(TalentconnectId id);
-    Talentconnect getById(TalentconnectId id);
+  Optional<Talentconnect> findById(TalentconnectId id);
+
+  Talentconnect getById(TalentconnectId id);
 }

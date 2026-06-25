@@ -5,6 +5,7 @@ import in.elcot.avgcxr.ecosystem.businessconnect.domain.model.BusinessconnectId;
 import java.util.Optional;
 
 public interface GetBusinessconnectUseCase {
-    Optional<Businessconnect> findById(BusinessconnectId id);
-    Businessconnect getById(BusinessconnectId id);
+  Optional<Businessconnect> findById(BusinessconnectId id);
+
+  Businessconnect getById(BusinessconnectId id);
 }

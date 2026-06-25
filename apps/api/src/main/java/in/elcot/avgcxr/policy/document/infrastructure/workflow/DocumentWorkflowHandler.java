@@ -6,11 +6,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DocumentWorkflowHandler {
-    private static final Logger log = LoggerFactory.getLogger(DocumentWorkflowHandler.class);
+  private static final Logger log = LoggerFactory.getLogger(DocumentWorkflowHandler.class);
 
-    public void initiateDocumentVerification(String documentId, String applicationId) {
-        log.info("Initiating document verification: doc={}, app={}", documentId, applicationId);
-        // In production: assign to reviewer queue via RabbitMQ
-    }
+  public void initiateDocumentVerification(String documentId, String applicationId) {
+    log.info("Initiating document verification: doc={}, app={}", documentId, applicationId);
+    // In production: assign to reviewer queue via RabbitMQ
+  }
 }
-

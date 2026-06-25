@@ -8,8 +8,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DocumentEventConsumer {
-    private static final Logger log = LoggerFactory.getLogger(DocumentEventConsumer.class);
-    @RabbitListener(queues = "avgc.document.submitted")
-    public void onSubmitted(DocumentSubmittedEvent e) { log.info("Document submitted: {} for app: {}", e.documentId(), e.applicationId()); }
-}
+  private static final Logger log = LoggerFactory.getLogger(DocumentEventConsumer.class);
 
+  @RabbitListener(queues = "avgc.document.submitted")
+  public void onSubmitted(DocumentSubmittedEvent e) {
+    log.info("Document submitted: {} for app: {}", e.documentId(), e.applicationId());
+  }
+}

@@ -9,15 +9,15 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SearchEventConsumer {
-    private static final Logger log = LoggerFactory.getLogger(SearchEventConsumer.class);
+  private static final Logger log = LoggerFactory.getLogger(SearchEventConsumer.class);
 
-    @RabbitListener(queues = "avgc.search.created")
-    public void onCreated(SearchCreatedEvent event) {
-        log.info("Search created event: id={}", event.searchId());
-    }
+  @RabbitListener(queues = "avgc.search.created")
+  public void onCreated(SearchCreatedEvent event) {
+    log.info("Search created event: id={}", event.searchId());
+  }
 
-    @RabbitListener(queues = "avgc.search.updated")
-    public void onUpdated(SearchUpdatedEvent event) {
-        log.info("Search updated event: id={}, field={}", event.searchId(), event.field());
-    }
+  @RabbitListener(queues = "avgc.search.updated")
+  public void onUpdated(SearchUpdatedEvent event) {
+    log.info("Search updated event: id={}, field={}", event.searchId(), event.field());
+  }
 }
