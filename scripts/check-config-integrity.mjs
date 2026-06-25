@@ -5,8 +5,9 @@
 // (see docs/REMEDIATION-ROADMAP.md) so they cannot silently drift back:
 //
 //   1. .npmrc carries no "override.*" keys (pnpm never reads them; dead config).
-//   2. package.json "pnpm.overrides" exactly matches the lockfile's overrides
-//      (the override config and the lockfile must agree).
+//   2. pnpm-workspace.yaml "overrides:" exactly matches the lockfile's overrides
+//      (the override config and the lockfile must agree). pnpm 9.15 reads
+//      overrides from pnpm-workspace.yaml, not package.json.
 //   3. No banned CI patterns in .github/workflows/*.yml:
 //      --no-frozen-lockfile, "|| true", continue-on-error, "set +e", ./mvnw.
 //   4. Every script referenced by a workflow actually exists on disk.
@@ -33,7 +34,7 @@ const read = (p) => fs.readFileSync(path.join(ROOT, p), 'utf8');
   }
 }
 
-// --- 2. package.json pnpm.overrides === lockfile overrides ------------------
+// --- 2. pnpm-workspace.yaml overrides === lockfile overrides ----------------
 function parseLockfileOverrides(text) {
   const lines = text.split(/\r?\n/);
   const start = lines.findIndex((l) => l.trimEnd() === 'overrides:');
@@ -53,13 +54,12 @@ function parseLockfileOverrides(text) {
   return out;
 }
 {
-  const pkg = JSON.parse(read('package.json'));
-  const pkgOv = (pkg.pnpm && pkg.pnpm.overrides) || {};
+  const wsOv = parseLockfileOverrides(read('pnpm-workspace.yaml'));
   const lockOv = parseLockfileOverrides(read('pnpm-lock.yaml'));
-  const keys = new Set([...Object.keys(pkgOv), ...Object.keys(lockOv)]);
+  const keys = new Set([...Object.keys(wsOv), ...Object.keys(lockOv)]);
   for (const k of keys) {
-    if (pkgOv[k] !== lockOv[k]) {
-      fail(`override mismatch for "${k}": package.json=${pkgOv[k] ?? '(absent)'} ` +
+    if (wsOv[k] !== lockOv[k]) {
+      fail(`override mismatch for "${k}": pnpm-workspace.yaml=${wsOv[k] ?? '(absent)'} ` +
         `vs lockfile=${lockOv[k] ?? '(absent)'}. Run pnpm install to reconcile.`);
     }
   }

@@ -1,154 +1,127 @@
 // ============================================================
-// PUBLIC PORTAL — HOME PAGE
+// PUBLIC PORTAL — HOME PAGE (innovative + interactive, TN-Gov)
 // ============================================================
-// Drop into: apps/public-portal/src/app/features/home/pages/
-// Files: home.component.ts (this) + home.component.html + home.component.scss
-// Replaces existing home component.
+// Showpiece landing page for the Tamil Nadu AVGC-XR Portal (ELCOT). Built on:
+//   • a real TN-Government emblem masthead (themeable inline SVG),
+//   • a perf-budgeted XR constellation canvas behind the hero,
+//   • count-up stats derived from REAL policy/scheme content (no fabricated
+//     operational metrics),
+//   • an interactive Scheme Finder backed by the real scheme catalogue,
+//   • a sector explorer, an honest application-journey explainer, and
+//   • varied, reduced-motion-gated scroll reveals.
 // ============================================================
 
 import { Component, ChangeDetectionStrategy, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
 import { I18nService } from '../../../core/services/i18n.service';
-import { SCHEMES_DATA, HOMEPAGE_STATS, HOMEPAGE_NEWS, Scheme } from '../../schemes/schemes.data';
-import { StateMessageComponent } from '../../../shared/state-message.component';
 import { StrapiContentService } from '../../../core/services/strapi-content.service';
+import { SCHEMES_DATA, SECTOR_CATEGORIES, HOMEPAGE_NEWS, Scheme } from '../../schemes/schemes.data';
+import { TnEmblemComponent } from '../../../shared/brand/tn-emblem.component';
+import { HeroCanvasComponent } from '../components/hero-canvas.component';
+import { SchemeFinderComponent } from '../components/scheme-finder.component';
+import { RevealDirective } from '../../../shared/directives/reveal.directive';
+import { CountUpDirective } from '../../../shared/directives/count-up.directive';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, MatIconModule, MatButtonModule, StateMessageComponent],
+  imports: [
+    CommonModule, RouterModule, MatIconModule,
+    TnEmblemComponent, HeroCanvasComponent, SchemeFinderComponent,
+    RevealDirective, CountUpDirective,
+  ],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
   private readonly i18n = inject(I18nService);
   private readonly strapi = inject(StrapiContentService);
 
   readonly lang = this.i18n.currentLanguage;
-  // Live CMS-driven content (Strapi 5), populated on init. The template still
-  // renders the static `news` signal as a fallback; bind to cmsNews()/cmsEvents()
-  // once the CMS is populated and the frontend build is verified.
+  readonly isTa = computed(() => this.lang() === 'ta');
+
+  // Live CMS content (fails soft). Static policy content renders immediately.
   readonly cmsNews = this.strapi.news;
   readonly cmsEvents = this.strapi.events;
-  readonly cmsError = this.strapi.error;
-  readonly featuredSchemes = signal<Scheme[]>(SCHEMES_DATA.filter((s: Scheme) => s.featured));
-  readonly stats = signal(HOMEPAGE_STATS);
-  readonly news = signal(HOMEPAGE_NEWS);
-  readonly loading = signal(false);  // Static data, no loading state
-  readonly error = signal<string | null>(null);
 
-  // Use computed for current language reactive text
-  readonly statsDisplay = computed(() => {
-    const lang = this.lang();
+  readonly featuredSchemes = signal<Scheme[]>(SCHEMES_DATA.filter((s) => s.featured));
+  readonly news = signal(HOMEPAGE_NEWS);
+  readonly sectors = SECTOR_CATEGORIES;
+
+  // ----------------------------------------------------------
+  // TRUTHFUL hero facts — derived from the real catalogue, NOT
+  // fabricated operational counters.
+  // ----------------------------------------------------------
+  readonly heroStats = computed(() => {
+    const ta = this.isTa();
+    const maxGrantCr = Math.max(...SCHEMES_DATA.map((s) => s.maxAmount)) / 10000000; // ₹1 Cr (XR infra)
     return [
-      {
-        icon: 'description',
-        value: this.stats().applications.toLocaleString('en-IN'),
-        label: lang === 'ta' ? 'விண்ணப்பங்கள் பெறப்பட்டன' : 'Applications Received',
-        color: 'var(--color-primary)'
-      },
-      {
-        icon: 'groups',
-        value: this.stats().beneficiaries.toLocaleString('en-IN'),
-        label: lang === 'ta' ? 'பயனாளிகள் ஆதரிக்கப்பட்டனர்' : 'Beneficiaries Supported',
-        color: 'var(--color-secondary)'
-      },
-      {
-        icon: 'business',
-        value: this.stats().studios.toLocaleString('en-IN'),
-        label: lang === 'ta' ? 'பதிவு செய்யப்பட்ட ஸ்டுடியோக்கள்' : 'Registered Studios',
-        color: 'var(--color-success)'
-      },
-      {
-        icon: 'person',
-        value: this.stats().freelancers.toLocaleString('en-IN'),
-        label: lang === 'ta' ? 'செயலில் உள்ள ஃப்ரீலான்ஸர்கள்' : 'Active Freelancers',
-        color: 'var(--color-info)'
-      }
+      { value: SCHEMES_DATA.length, pad: 2, prefix: '', suffix: '', label: ta ? 'ஊக்கத் திட்டங்கள்' : 'Incentive Schemes' },
+      { value: this.sectors.length, pad: 2, prefix: '', suffix: '', label: ta ? 'படைப்பாற்றல் துறைகள்' : 'Creative Verticals' },
+      { value: 500, pad: 0, prefix: '₹', suffix: ' Cr', label: ta ? 'கொள்கை நிதி (2024–29)' : 'Policy Outlay (2024–29)' },
+      { value: maxGrantCr, pad: 0, prefix: '₹', suffix: ' Cr', label: ta ? 'அதிகபட்ச மானியம் / திட்டம்' : 'Max Grant / Project' },
     ];
   });
 
-  readonly ecosystemCards = computed(() => {
-    const lang = this.lang();
-    return [
-      {
-        icon: 'business_center',
-        title: lang === 'ta' ? 'வணிக இணைப்பு' : 'Business Connect',
-        description: lang === 'ta'
-          ? 'தமிழ்நாடு முழுவதும் உள்ள AVGC-XR நிறுவனங்கள், ஸ்டுடியோக்கள் மற்றும் சேவை வழங்குநர்களின் தேடக்கூடிய அடைவு.'
-          : 'A searchable directory of AVGC-XR companies, studios, service providers, and ecosystem partners across Tamil Nadu.',
-        route: '/companies',
-        cta: lang === 'ta' ? 'நிறுவனங்களை உலாவு' : 'Browse companies'
-      },
-      {
-        icon: 'school',
-        title: lang === 'ta' ? 'திறமை இணைப்பு' : 'Talent Connect',
-        description: lang === 'ta'
-          ? 'மாணவர்கள் மற்றும் நிபுணர்களுக்கான டிஜிட்டல் திறன் பதிவேடு. வேலைவாய்ப்பு, இன்டர்ன்ஷிப் மற்றும் தொழில் வாய்ப்புகளைக் கண்டறியவும்.'
-          : 'A digital skill registry for students and professionals. Discover jobs, internships, and career opportunities.',
-        route: '/talent',
-        cta: lang === 'ta' ? 'திறமையாளர்களைக் காண்க' : 'Explore talent'
-      },
-      {
-        icon: 'badge',
-        title: lang === 'ta' ? 'ஃப்ரீலான்ஸர் பதிவேடு' : 'Freelancer Registry',
-        description: lang === 'ta'
-          ? 'நிறுவனங்கள் மற்றும் பங்குதாரர்களால் சரிபார்க்கப்பட்ட ஃப்ரீலான்ஸர்களின் சுயவிவர அடிப்படையிலான கண்டுபிடிப்பு.'
-          : 'A dedicated registry enabling profile-based discoverability of verified freelancers by companies and stakeholders.',
-        route: '/freelancers',
-        cta: lang === 'ta' ? 'ஃப்ரீலான்ஸர்களைக் காண்க' : 'Find freelancers'
-      }
+  // Sector explorer cards (real 5 verticals + a one-line role).
+  readonly sectorCards = computed(() => {
+    const ta = this.isTa();
+    const blurbs: Record<string, { en: string; ta: string }> = {
+      ANIMATION: { en: 'Studios, feature & series production, IP creation.', ta: 'ஸ்டுடியோக்கள், தொடர் தயாரிப்பு, IP உருவாக்கம்.' },
+      VFX: { en: 'Visual effects, post-production, virtual production.', ta: 'காட்சி விளைவுகள், போஸ்ட்-புரொடக்ஷன்.' },
+      GAMING: { en: 'Game studios, esports, interactive media.', ta: 'விளையாட்டு ஸ்டுடியோக்கள், இ-ஸ்போர்ட்ஸ்.' },
+      COMICS: { en: 'Comics, graphic novels, webtoons & publishing.', ta: 'காமிக்ஸ், கிராஃபிக் நாவல்கள், வெப்டூன்.' },
+      XR: { en: 'AR / VR / MR, immersive & spatial experiences.', ta: 'AR / VR / MR, இமெர்சிவ் அனுபவங்கள்.' },
+    };
+    return this.sectors.map((s) => ({
+      ...s,
+      label: ta ? s.labelTa : s.labelEn,
+      blurb: ta ? blurbs[s.key].ta : blurbs[s.key].en,
+    }));
+  });
+
+  // Honest "how applications work" — describes the REAL process flow, not
+  // fabricated live status data.
+  readonly journey = computed(() => {
+    const ta = this.isTa();
+    const steps = [
+      { icon: 'how_to_reg', en: 'Register', ta: 'பதிவு', dEn: 'Create your applicant profile (studio, individual or student).', dTa: 'உங்கள் விண்ணப்பதாரர் சுயவிவரத்தை உருவாக்குங்கள்.' },
+      { icon: 'fact_check', en: 'Check eligibility', ta: 'தகுதி சரிபார்ப்பு', dEn: 'Use the Scheme Finder to match schemes to your profile.', dTa: 'திட்டம் கண்டறிதல் மூலம் பொருத்துங்கள்.' },
+      { icon: 'upload_file', en: 'Apply & upload', ta: 'விண்ணப்பம் & பதிவேற்றம்', dEn: 'Submit the form and required documents online.', dTa: 'படிவம் மற்றும் ஆவணங்களைச் சமர்ப்பியுங்கள்.' },
+      { icon: 'reviews', en: 'Review', ta: 'மதிப்பாய்வு', dEn: 'Departmental verification and evaluation of your application.', dTa: 'துறை சரிபார்ப்பு மற்றும் மதிப்பீடு.' },
+      { icon: 'verified', en: 'Sanction & disbursal', ta: 'ஒப்புதல் & வழங்கல்', dEn: 'Approval and incentive disbursement to your account.', dTa: 'ஒப்புதல் மற்றும் ஊக்கத்தொகை வழங்கல்.' },
     ];
+    return steps.map((s, i) => ({ ...s, index: i + 1, label: ta ? s.ta : s.en, desc: ta ? s.dTa : s.dEn }));
   });
 
   ngOnInit(): void {
-    // Static data renders immediately. Additionally pull dynamic News/Events from
-    // the Strapi 5 CMS (fails soft — see StrapiContentService), so the portal is a
-    // real headless-CMS consumer. Bind the template to cmsNews()/cmsEvents() once
-    // the CMS has published content and the build is verified.
+    // Pull live News/Events from Strapi 5 (fails soft — see StrapiContentService).
     void this.strapi.fetchNews({ limit: 3 });
     void this.strapi.fetchEvents({ limit: 3 });
   }
 
+  // ---- helpers ----
+  schemeName(s: Scheme): string { return this.isTa() ? s.nameTa : s.name; }
+  schemeDescription(s: Scheme): string { return this.isTa() ? s.descriptionTa : s.description; }
+  categoryLabel(s: Scheme): string { return this.t(`schemes.categories.${s.category}`); }
+  newsTitle(n: typeof HOMEPAGE_NEWS[number]): string { return this.isTa() ? n.titleTa : n.titleEn; }
+  newsExcerpt(n: typeof HOMEPAGE_NEWS[number]): string { return this.isTa() ? n.excerptTa : n.excerptEn; }
+
   formatAmount(amount: number): string {
-    if (amount >= 10000000) {
-      return `₹${(amount / 10000000).toFixed(amount % 10000000 === 0 ? 0 : 1)} Crore`;
-    }
-    if (amount >= 100000) {
-      return `₹${(amount / 100000).toFixed(amount % 100000 === 0 ? 0 : 1)} Lakh`;
-    }
+    if (amount >= 10000000) return `₹${(amount / 10000000).toFixed(amount % 10000000 === 0 ? 0 : 1)} Cr`;
+    if (amount >= 100000) return `₹${(amount / 100000).toFixed(amount % 100000 === 0 ? 0 : 1)} L`;
     return `₹${amount.toLocaleString('en-IN')}`;
-  }
-
-  getSchemeName(s: Scheme): string {
-    return this.lang() === 'ta' ? s.nameTa : s.name;
-  }
-
-  getSchemeDescription(s: Scheme): string {
-    return this.lang() === 'ta' ? s.descriptionTa : s.description;
-  }
-
-  getCategoryLabel(s: Scheme): string {
-    return this.t(`schemes.categories.${s.category}`);
   }
 
   formatDate(dateStr: string): string {
     const d = new Date(dateStr);
-    return d.toLocaleDateString(this.lang() === 'ta' ? 'ta-IN' : 'en-IN', {
-      year: 'numeric', month: 'long', day: 'numeric'
-    });
+    return d.toLocaleDateString(this.isTa() ? 'ta-IN' : 'en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
   }
 
-  getNewsTitle(n: typeof HOMEPAGE_NEWS[number]): string {
-    return this.lang() === 'ta' ? n.titleTa : n.titleEn;
-  }
-  getNewsExcerpt(n: typeof HOMEPAGE_NEWS[number]): string {
-    return this.lang() === 'ta' ? n.excerptTa : n.excerptEn;
-  }
+  processingTime(s: Scheme): string { return this.isTa() ? s.processingTimeTa : s.processingTime; }
 
   t(key: string): string { return this.i18n.translate(key); }
 }

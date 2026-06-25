@@ -1,0 +1,346 @@
+# ============================================================
+# Render Blueprint — Tamil Nadu AVGC-XR Portal (FULL STACK)
+# ============================================================
+# Built from the repo's REAL config (apps/api application.yml, apps/cms config,
+# the Dockerfiles) — not a blind copy of infra/docker. Deliberate, verified
+# adaptations for Render:
+#   - pgbouncer DROPPED: connect the API straight to managed Postgres. The API
+#     URL template uses ${PGBOUNCER_PORT} as the port, so we set PGBOUNCER_PORT
+#     to the managed Postgres port (5432).
+#   - nginx DROPPED: every Render service gets its own HTTPS URL; no reverse
+#     proxy needed.
+#   - RABBITMQ_VHOST set to "/" (the always-present default) so no vhost has to
+#     be provisioned (compose seeded "/avgcxr" via definitions.json).
+#
+# VERIFICATION STATUS (honest):
+#   ✅ The 3 STATIC PORTALS build clean locally and are fully verified.
+#   ⚠️  The API / worker / CMS / datastores are wired with the correct env-var
+#       NAMES from the real config, but cannot be runtime-verified from here.
+#       They need your secrets (auto-generated below where possible) and a
+#       first-deploy pass. See docs/DEPLOY-RENDER.md §"Full-stack notes".
+#
+# Plan names + a few Render specifics (Redis auth, MinIO endpoint, ports) may
+# need confirming against current Render docs on first apply — flagged inline.
+# ============================================================
+
+databases:
+  # Primary Postgres for the API (Flowable + JPA, db "avgcxr_portal").
+  - name: avgcxr-postgres
+    databaseName: avgcxr_portal
+    user: avgcxr_user
+    plan: basic-1gb
+
+  # Separate Postgres for the Strapi CMS (db "avgc_xr_cms").
+  - name: avgcxr-cms-db
+    databaseName: avgc_xr_cms
+    user: avgc_user
+    plan: basic-256mb
+
+services:
+  # ============================================================
+  # DATASTORES
+  # ============================================================
+
+  # ---- Redis (managed) ----
+  - type: redis
+    name: avgcxr-redis
+    plan: starter
+    maxmemoryPolicy: noeviction
+    ipAllowList: []          # internal only (no public access)
+
+  # ---- RabbitMQ (private service, official image + disk) ----
+  - type: pserv
+    name: avgcxr-rabbitmq
+    runtime: image
+    image:
+      url: docker.io/rabbitmq:3.13-management-alpine
+    plan: standard
+    disk:
+      name: rabbitmq-data
+      mountPath: /var/lib/rabbitmq
+      sizeGB: 10
+    envVars:
+      - key: RABBITMQ_DEFAULT_USER
+        value: avgcxr_rmq_user
+      - key: RABBITMQ_DEFAULT_PASS
+        generateValue: true   # referenced by api + worker via fromService
+
+  # ---- Elasticsearch 8 (private service, official image + disk) ----
+  - type: pserv
+    name: avgcxr-elasticsearch
+    runtime: image
+    image:
+      url: docker.io/elasticsearch:8.13.0
+    plan: standard            # needs >= 2 GB RAM
+    disk:
+      name: es-data
+      mountPath: /usr/share/elasticsearch/data
+      sizeGB: 20
+    envVars:
+      - key: discovery.type
+        value: single-node
+      - key: xpack.security.enabled
+        value: "false"
+      - key: ES_JAVA_OPTS
+        value: "-Xms1g -Xmx1g"
+
+  # ---- MinIO (private service, official image + disk) ----
+  - type: pserv
+    name: avgcxr-minio
+    runtime: image
+    image:
+      url: docker.io/minio/minio:latest
+    dockerCommand: server /data --console-address ":9001"
+    plan: starter
+    disk:
+      name: minio-data
+      mountPath: /data
+      sizeGB: 20
+    envVars:
+      - key: MINIO_ROOT_USER
+        generateValue: true
+      - key: MINIO_ROOT_PASSWORD
+        generateValue: true
+
+  # ============================================================
+  # BACKEND (Java 21 / Spring Boot — built from repo-root context)
+  # ============================================================
+
+  # ---- API ----
+  - type: web
+    name: avgcxr-api
+    runtime: docker
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: .
+    plan: standard
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      # Postgres (direct — PGBOUNCER_PORT reused as the real PG port)
+      - key: DB_HOST
+        fromDatabase: { name: avgcxr-postgres, property: host }
+      - key: PGBOUNCER_PORT
+        fromDatabase: { name: avgcxr-postgres, property: port }
+      - key: DB_NAME
+        fromDatabase: { name: avgcxr-postgres, property: database }
+      - key: DB_USER
+        fromDatabase: { name: avgcxr-postgres, property: user }
+      - key: DB_PASSWORD
+        fromDatabase: { name: avgcxr-postgres, property: password }
+      # Redis (internal — passwordless; app default for REDIS_PASSWORD is empty)
+      - key: REDIS_HOST
+        fromService: { name: avgcxr-redis, type: redis, property: host }
+      - key: REDIS_PORT
+        fromService: { name: avgcxr-redis, type: redis, property: port }
+      # RabbitMQ
+      - key: RABBITMQ_HOST
+        fromService: { name: avgcxr-rabbitmq, type: pserv, property: host }
+      - key: RABBITMQ_PORT
+        value: "5672"
+      - key: RABBITMQ_USER
+        value: avgcxr_rmq_user
+      - key: RABBITMQ_PASSWORD
+        fromService: { name: avgcxr-rabbitmq, type: pserv, envVarKey: RABBITMQ_DEFAULT_PASS }
+      - key: RABBITMQ_VHOST
+        value: "/"
+      # Elasticsearch
+      - key: ELASTICSEARCH_HOST
+        fromService: { name: avgcxr-elasticsearch, type: pserv, property: host }
+      - key: ELASTICSEARCH_PORT
+        value: "9200"
+      # MinIO (endpoint must be the internal URL — set after first deploy, see docs)
+      - key: MINIO_ENDPOINT
+        sync: false
+      - key: MINIO_ACCESS_KEY
+        fromService: { name: avgcxr-minio, type: pserv, envVarKey: MINIO_ROOT_USER }
+      - key: MINIO_SECRET_KEY
+        fromService: { name: avgcxr-minio, type: pserv, envVarKey: MINIO_ROOT_PASSWORD }
+      - key: MINIO_BUCKET
+        value: application-documents
+      # JWT (generated; shared with worker)
+      - key: JWT_SECRET
+        generateValue: true
+      # CORS — fill with the deployed portal URLs (comma-separated) after deploy
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      # Email (optional — SMTP)
+      - key: EMAIL_HOST
+        sync: false
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASSWORD
+        sync: false
+
+  # ---- Worker (background; no inbound traffic) ----
+  - type: worker
+    name: avgcxr-worker
+    runtime: docker
+    dockerfilePath: ./apps/worker/Dockerfile
+    dockerContext: .
+    plan: starter
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: DB_HOST
+        fromDatabase: { name: avgcxr-postgres, property: host }
+      - key: PGBOUNCER_PORT
+        fromDatabase: { name: avgcxr-postgres, property: port }
+      - key: DB_NAME
+        fromDatabase: { name: avgcxr-postgres, property: database }
+      - key: DB_USER
+        fromDatabase: { name: avgcxr-postgres, property: user }
+      - key: DB_PASSWORD
+        fromDatabase: { name: avgcxr-postgres, property: password }
+      - key: REDIS_HOST
+        fromService: { name: avgcxr-redis, type: redis, property: host }
+      - key: REDIS_PORT
+        fromService: { name: avgcxr-redis, type: redis, property: port }
+      - key: RABBITMQ_HOST
+        fromService: { name: avgcxr-rabbitmq, type: pserv, property: host }
+      - key: RABBITMQ_PORT
+        value: "5672"
+      - key: RABBITMQ_USER
+        value: avgcxr_rmq_user
+      - key: RABBITMQ_PASSWORD
+        fromService: { name: avgcxr-rabbitmq, type: pserv, envVarKey: RABBITMQ_DEFAULT_PASS }
+      - key: RABBITMQ_VHOST
+        value: "/"
+      - key: ELASTICSEARCH_HOST
+        fromService: { name: avgcxr-elasticsearch, type: pserv, property: host }
+      - key: ELASTICSEARCH_PORT
+        value: "9200"
+      - key: MINIO_ENDPOINT
+        sync: false
+      - key: MINIO_ACCESS_KEY
+        fromService: { name: avgcxr-minio, type: pserv, envVarKey: MINIO_ROOT_USER }
+      - key: MINIO_SECRET_KEY
+        fromService: { name: avgcxr-minio, type: pserv, envVarKey: MINIO_ROOT_PASSWORD }
+      - key: MINIO_BUCKET
+        value: application-documents
+      - key: JWT_SECRET
+        fromService: { name: avgcxr-api, type: web, envVarKey: JWT_SECRET }
+
+  # ============================================================
+  # CMS (Strapi 5 — built from apps/cms context)
+  # ============================================================
+  - type: web
+    name: avgcxr-cms
+    runtime: docker
+    dockerfilePath: ./apps/cms/Dockerfile
+    dockerContext: ./apps/cms
+    plan: starter
+    healthCheckPath: /_health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_HOST
+        fromDatabase: { name: avgcxr-cms-db, property: host }
+      - key: DATABASE_PORT
+        fromDatabase: { name: avgcxr-cms-db, property: port }
+      - key: DATABASE_NAME
+        fromDatabase: { name: avgcxr-cms-db, property: database }
+      - key: DATABASE_USERNAME
+        fromDatabase: { name: avgcxr-cms-db, property: user }
+      - key: DATABASE_PASSWORD
+        fromDatabase: { name: avgcxr-cms-db, property: password }
+      - key: DATABASE_SSL
+        value: "false"
+      - key: APP_KEYS
+        generateValue: true
+      - key: ADMIN_JWT_SECRET
+        generateValue: true
+      - key: API_TOKEN_SALT
+        generateValue: true
+      - key: TRANSFER_TOKEN_SALT
+        generateValue: true
+      - key: JWT_SECRET
+        generateValue: true
+
+  # ============================================================
+  # FRONTENDS (Angular 19 static sites — fully build-verified)
+  # NOTE: set apiUrl/strapiUrl in each environment.prod.ts to the deployed
+  # API/CMS URLs BEFORE building (static = baked at build time). The
+  # --no-frozen-lockfile bootstrap regenerates the mock-registry lockfile on the
+  # first real-npm build — see docs/DEPLOY-RENDER.md.
+  # ============================================================
+  - type: web
+    name: avgcxr-public-portal
+    runtime: static
+    buildCommand: >-
+      corepack enable &&
+      pnpm install --no-frozen-lockfile &&
+      pnpm exec nx build public-portal --configuration=production
+    staticPublishPath: dist/public-portal/browser
+    pullRequestPreviewsEnabled: false
+    envVars:
+      - key: NODE_VERSION
+        value: "20.18.0"
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+
+  - type: web
+    name: avgcxr-applicant-portal
+    runtime: static
+    buildCommand: >-
+      corepack enable &&
+      pnpm install --no-frozen-lockfile &&
+      pnpm exec nx build applicant-portal --configuration=production
+    staticPublishPath: dist/applicant-portal/browser
+    pullRequestPreviewsEnabled: false
+    envVars:
+      - key: NODE_VERSION
+        value: "20.18.0"
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+
+  - type: web
+    name: avgcxr-admin-portal
+    runtime: static
+    buildCommand: >-
+      corepack enable &&
+      pnpm install --no-frozen-lockfile &&
+      pnpm exec nx build admin-portal --configuration=production
+    staticPublishPath: dist/admin-portal/browser
+    pullRequestPreviewsEnabled: false
+    envVars:
+      - key: NODE_VERSION
+        value: "20.18.0"
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin

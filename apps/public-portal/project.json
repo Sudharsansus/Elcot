@@ -20,6 +20,7 @@
           "apps/public-portal/src/favicon.ico",
           "apps/public-portal/src/assets/i18n",
           "apps/public-portal/src/assets/images",
+          "apps/public-portal/src/assets/brand",
           "apps/public-portal/src/assets/fonts"
         ],
         "styles": ["apps/public-portal/src/styles.scss"],

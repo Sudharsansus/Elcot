@@ -11,8 +11,11 @@
         <!-- Brand / Department info -->
         <div class="footer-col footer-brand-col">
           <div class="footer-brand">
-            <div class="brand-line">{{ t('footer.govtHi') }}</div>
-            <div class="brand-line">Government of Tamil Nadu</div>
+            <app-tn-emblem class="footer-emblem" [size]="56" [decorative]="true"></app-tn-emblem>
+            <div class="footer-brand-text">
+              <div class="brand-line">தமிழ்நாடு அரசு</div>
+              <div class="brand-line">Government of Tamil Nadu</div>
+            </div>
           </div>
           <p class="footer-tagline">
             Electronics Corporation of Tamil Nadu (ELCOT)<br>

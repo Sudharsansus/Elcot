@@ -75,10 +75,12 @@
 
           @if (submitted()) {
             <div class="form-success">
-              <mat-icon>check_circle</mat-icon>
-              <p>{{ t('contact.form.success') }}</p>
+              <mat-icon>mark_email_read</mat-icon>
+              <p>{{ lang() === 'ta'
+                ? 'உங்கள் மின்னஞ்சல் பயன்பாடு முன்-நிரப்பப்பட்ட செய்தியுடன் திறக்கப்பட்டது. அதை அனுப்பினால் எங்களை அடைவீர்கள். அல்லது நேரடியாக facilitation@elcot.in க்கு எழுதவும்.'
+                : 'Your email app has opened with a pre-filled message — send it to reach us. If it didn’t open, write to facilitation@elcot.in directly.' }}</p>
               <button type="button" class="btn-link" (click)="submitted.set(false)">
-                Send another message
+                {{ lang() === 'ta' ? 'மற்றொரு செய்தியை எழுது' : 'Write another message' }}
               </button>
             </div>
           } @else {

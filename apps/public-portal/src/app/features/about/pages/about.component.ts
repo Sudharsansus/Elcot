@@ -24,11 +24,12 @@ export class AboutComponent {
   private readonly i18n = inject(I18nService);
   readonly lang = this.i18n.currentLanguage;
 
+  // Truthful, content-derived facts (NOT fabricated operational counters).
   readonly stats = [
-    { icon: 'description', value: '7,800+', labelEn: 'Applications', labelTa: 'விண்ணப்பங்கள்', color: 'var(--color-primary)' },
-    { icon: 'groups', value: '12,400+', labelEn: 'Beneficiaries', labelTa: 'பயனாளிகள்', color: 'var(--color-secondary)' },
-    { icon: 'payments', value: '₹24.5 Cr', labelEn: 'Total Disbursed', labelTa: 'மொத்த வழங்கல்', color: 'var(--color-success)' },
-    { icon: 'location_on', value: '32', labelEn: 'Districts Active', labelTa: 'செயலில் மாவட்டங்கள்', color: 'var(--color-info)' }
+    { icon: 'workspace_premium', value: '6', labelEn: 'Incentive Schemes', labelTa: 'ஊக்கத் திட்டங்கள்', color: 'var(--color-primary)' },
+    { icon: 'category', value: '5', labelEn: 'Creative Verticals', labelTa: 'படைப்பாற்றல் துறைகள்', color: 'var(--color-secondary)' },
+    { icon: 'savings', value: '₹500 Cr', labelEn: 'Policy Outlay (2024–29)', labelTa: 'கொள்கை நிதி', color: 'var(--color-success)' },
+    { icon: 'payments', value: 'Up to ₹1 Cr', labelEn: 'Per Project', labelTa: 'ஒரு திட்டத்திற்கு', color: 'var(--color-info)' }
   ];
 
   readonly sectors = [

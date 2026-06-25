@@ -1,11 +1,11 @@
 <section class="schemes-page">
-  <!-- Page header -->
-  <div class="page-header">
-    <div class="container">
-      <h1 class="page-title">{{ t('schemes.title') }}</h1>
-      <p class="page-subtitle">{{ t('schemes.subtitle') }}</p>
-    </div>
-  </div>
+  <app-page-header
+    [icon]="'workspace_premium'"
+    [title]="t('schemes.title')"
+    [subtitle]="t('schemes.subtitle')"
+    [breadcrumb]="crumbs()"
+    [homeLabel]="isTa() ? 'முகப்பு' : 'Home'">
+  </app-page-header>
 
   <div class="container schemes-layout">
     <!-- Filters sidebar -->
@@ -132,12 +132,8 @@
                 </div>
                 <div class="scheme-meta">
                   <span class="meta-item">
-                    <mat-icon>group</mat-icon>
-                    {{ s.applicantsCount }}
-                  </span>
-                  <span class="meta-item">
-                    <mat-icon>check_circle</mat-icon>
-                    {{ s.sanctionedCount }}
+                    <mat-icon>schedule</mat-icon>
+                    {{ lang() === 'ta' ? s.processingTimeTa : s.processingTime }}
                   </span>
                 </div>
               </div>

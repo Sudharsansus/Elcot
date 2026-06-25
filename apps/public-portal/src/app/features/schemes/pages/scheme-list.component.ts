@@ -18,6 +18,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { I18nService } from '../../../core/services/i18n.service';
 import { SCHEMES_DATA, Scheme } from '../schemes.data';
 import { StateMessageComponent } from '../../../shared/state-message.component';
+import { PageHeaderComponent, Crumb } from '../../../shared/page-header/page-header.component';
 
 @Component({
   selector: 'app-scheme-list',
@@ -27,7 +28,7 @@ import { StateMessageComponent } from '../../../shared/state-message.component';
     CommonModule, RouterModule, ReactiveFormsModule,
     MatIconModule, MatButtonModule, MatSelectModule,
     MatFormFieldModule, MatInputModule, MatChipsModule,
-    StateMessageComponent
+    StateMessageComponent, PageHeaderComponent
   ],
   templateUrl: './scheme-list.component.html',
   styleUrls: ['./scheme-list.component.scss']
@@ -100,6 +101,9 @@ export class SchemeListComponent implements OnInit {
   readonly hasActiveFilters = computed(() =>
     !!(this.searchTerm() || this.selectedCategory() || this.selectedStatus() || this.selectedDepartment())
   );
+
+  readonly isTa = computed(() => this.lang() === 'ta');
+  readonly crumbs = computed<Crumb[]>(() => [{ label: this.t('schemes.title') }]);
 
   ngOnInit(): void {
     this.searchControl.valueChanges.subscribe(v => this.searchTerm.set(v || ''));
