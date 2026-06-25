@@ -230,9 +230,20 @@ Done with a **portable Maven 3.9.9 / JDK 21** against the **real Maven Central**
 - Angular 17→18→19, Nx aligned, vite 5→6, new control-flow + signals.
 - **Verify:** all 3 portals `nx build:production` green; bundle budget; Lighthouse≥90.
 
-### P5 — Strapi 4→5 (needs real registry; ~weeks, breaking)
-- Content backup → codemod → fix API-response wrapping in consumers → re-import → UAT.
-- **Verify:** CMS-driven public pages render; round-1 VAPT on Strapi 5.
+### P5 — Strapi 4→5 — ✅ CODE-COMPLETE (2026-06-25); runtime PENDING real CI
+
+Branch `phase-1/strapi-5-migration`. See `docs/PHASE-1-STRAPI-MIGRATION.md`.
+
+- ✅ package.json → Strapi ^5.37 + v5 admin peer deps + engines (`9dc4b2a`); config
+  migrated to v5 (`21aef02`); controllers → `factories.createCoreController` (`a3b986b`);
+  ci-cms Strapi-5 version gate (`662b214`).
+- **Smaller than expected:** the CMS is a schema-less skeleton and the frontend uses
+  static data (no Strapi consumers) — so no API-response-wrapper changes were needed
+  (none fabricated).
+- **Verified here:** JSON/JS `node --check`, YAML, config-integrity gate.
+- **PENDING real npm env:** `pnpm install` + **lockfile regen** (ci-cms frozen install
+  fails until then, by design), `pnpm audit`, `strapi build`, admin smoke test. Also a
+  functional gap: content-type **schemas must be authored** for the CMS to serve content.
 
 ### P6 — Remove the filter, flip the gates
 - Once P3–P5 genuinely clear the CVEs: **delete `check-audit.mjs`**, fail CI on real high/critical (Goal #4), turn JaCoCo + dependency-check thresholds **blocking**.
