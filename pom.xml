@@ -74,6 +74,8 @@
         <!-- Plugins -->
         <spotless.version>2.43.0</spotless.version>
         <flyway.version>10.17.0</flyway.version>
+        <jacoco.version>0.8.12</jacoco.version>
+        <dependency-check.version>10.0.4</dependency-check.version>
     </properties>
 
     <dependencyManagement>
@@ -220,7 +222,9 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.5.0</version>
                     <configuration>
-                        <argLine>--enable-preview</argLine>
+                        <!-- @{argLine} is set by the JaCoCo agent (prepare-agent) so
+                             coverage is collected; falls back cleanly when JaCoCo is off. -->
+                        <argLine>@{argLine} --enable-preview</argLine>
                         <includes>
                             <include>**/*Test.java</include>
                             <include>**/*Tests.java</include>
@@ -271,6 +275,32 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+
+        <!-- Active for every module: collect coverage and emit a JaCoCo report.
+             prepare-agent + report never fail the build; the 80% threshold is
+             opt-in via the "coverage-gate" profile (enable once coverage exists). -->
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>jacoco-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jacoco-report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
     <profiles>
@@ -303,6 +333,78 @@
                             <jvmArguments>--enable-preview</jvmArguments>
                             <optimized>true</optimized>
                         </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Coverage gate: `mvn -Pcoverage-gate verify` fails below 80% line
+             coverage. Opt-in so it does not block the build before the test
+             suite reaches the target (currently ~10 tests / 694 sources). -->
+        <profile>
+            <id>coverage-gate</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>${jacoco.version}</version>
+                        <executions>
+                            <execution>
+                                <id>jacoco-check</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <rule>
+                                            <element>BUNDLE</element>
+                                            <limits>
+                                                <limit>
+                                                    <counter>LINE</counter>
+                                                    <value>COVEREDRATIO</value>
+                                                    <minimum>0.80</minimum>
+                                                </limit>
+                                            </limits>
+                                        </rule>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Security scan: `mvn -Psecurity verify` runs OWASP Dependency-Check
+             and fails on CVSS >= 7. Kept in a profile (not the default build) so
+             ci-backend's `mvn verify` is not slowed by the NVD database download;
+             run it in the Security Scan workflow / nightly. An NVD API key
+             (nvdApiKey / NVD_API_KEY) is recommended to avoid rate limiting. -->
+        <profile>
+            <id>security</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.owasp</groupId>
+                        <artifactId>dependency-check-maven</artifactId>
+                        <version>${dependency-check.version}</version>
+                        <configuration>
+                            <failBuildOnCVSS>7</failBuildOnCVSS>
+                            <formats>
+                                <format>HTML</format>
+                                <format>JSON</format>
+                            </formats>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
