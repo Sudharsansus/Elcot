@@ -211,10 +211,20 @@ and tooling first (so later claims are trustworthy), then the heavy upgrades.
 - Validate/replace every `.npmrc` override against real npm.
 - **Verify:** baseline numbers are reproducible; overrides resolve under `--frozen-lockfile`.
 
-### P3 — Backend dependency upgrades (needs JDK/Maven)
-- SB 3.3.5→3.4.x, Flyway 10→11, Jackson/Hibernate via BOM, SpringDoc added.
-- One bump per PR, full `mvn verify` after each.
-- **Verify:** `mvn -B verify` green; OpenAPI spec generated (closes Goals 15/34).
+### P3 — Backend dependency upgrades — ✅ COMPILE-VERIFIED (2026-06-25)
+
+Done with a **portable Maven 3.9.9 / JDK 21** against the **real Maven Central**:
+
+- ✅ Spring Boot 3.3.5 → **3.4.13** + Spring Cloud 2024.0.0 → **2024.0.3** (`58a89a8`) —
+  fixes a latent Boot/Cloud mismatch (Cloud 2024.0.x requires Boot 3.4.x). BUILD SUCCESS.
+- ✅ Flyway 10.17.0 → **10.20.1** (Boot-managed; stale override removed) + Flowable
+  7.1.0 → **7.2.0** (`f269aec`). BUILD SUCCESS; dependency:tree confirms both.
+- ✅ Jackson/Hibernate/Tomcat updated transitively via the Boot 3.4 BOM; SpringDoc
+  added earlier (`8c88771`).
+- **Verified here:** `mvn -B -ntp -pl apps/api -am -DskipTests package` → BUILD SUCCESS
+  (all 10 modules), three times (baseline + each bump).
+- **Deferred (with reason):** Flyway 11 (needs Boot 3.5+ autoconfig); Spring Boot 4.x
+  (major). **Still needs Docker/CI:** unit + Testcontainers integration tests (`mvn verify`).
 
 ### P4 — Frontend major upgrade (needs real registry; ~weeks)
 - Angular 17→18→19, Nx aligned, vite 5→6, new control-flow + signals.
