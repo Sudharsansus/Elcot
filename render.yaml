@@ -218,7 +218,7 @@ services:
       - key: ELASTICSEARCH_PORT
         value: "9200"
       - key: MINIO_ENDPOINT
-        sync: false
+        value: http://avgcxr-minio:9000
       - key: MINIO_ACCESS_KEY
         fromService: { name: avgcxr-minio, type: pserv, envVarKey: MINIO_ROOT_USER }
       - key: MINIO_SECRET_KEY
