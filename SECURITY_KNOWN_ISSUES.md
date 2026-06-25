@@ -1,50 +1,138 @@
 # Security — Known Issues
 
-This document tracks security vulnerabilities that have been **identified, triaged, and deferred** to the Year 2 hardening cycle. The CI Security Scan filters these via `scripts/check-audit.mjs`. Any new critical/high vuln in a non-whitelisted package will fail the build.
+## ✅ REAL CVE SCAN — 25 June 2026 (source: OSV)
 
-**Last updated:** 2026-06-24
-**Total triaged:** 26 (2 critical, 24 high)
-**Whitelisted packages:** `@angular/*` (17.x), `@strapi/strapi` (4.x), `vite` (5.x), `launch-editor`
+The NVD route was abandoned (no API key, 4+ h throttled). Instead the scan was run
+against **[OSV](https://osv.dev/)** — Google's free open-source vulnerability
+database (no API key, no rate-limit). Tool: **osv-scanner 2.4.0** + the OSV batch
+API. Methodology and reproduction: [`docs/SECURITY-SCANNING.md`](docs/SECURITY-SCANNING.md).
+Raw evidence: [`docs/security/osv-backend-2026-06-25.md`](docs/security/osv-backend-2026-06-25.md),
+[`docs/security/osv-frontend-2026-06-25.md`](docs/security/osv-frontend-2026-06-25.md).
 
-## Deferred Vulnerabilities
+### Backend (Maven) — TRUSTWORTHY (real Maven Central)
 
-### Critical (2)
+**✅ Backend criticals cleared — verified by OSV re-scan at each step:**
 
-| CVE | Package | Issue | Fix version | Why deferred |
-|---|---|---|---|---|
-| CVE-2026-1774 | @casl/ability 6.5.0 | Prototype Pollution | ≥6.7.5 | **PENDING FIX** — needs 1-line `pnpm.overrides` bump in `.npmrc` (overrides already cover this; verify) |
-| CVE-2026-27886 | @strapi/strapi 4.26.2 | Sensitive data leak via relational filtering | ≥5.37.0 | **MAJOR UPGRADE** — Strapi 4→5 breaks the CMS API; requires CMS rebuild (~3 weeks). Year 2. |
+| Stage | Critical | High | Medium | Low | Findings |
+|---|---|---|---|---|---|
+| Initial (Spring Boot 3.4.13) | 10 | 32 | 39 | 9 | 90 |
+| After component overrides (3.4.13) | 1 | 25 | 31 | 8 | 65 |
+| **After Spring Boot 3.5.16** | **0** | **6** | **13** | **0** | **19** |
 
-### High (24)
+Two steps, both built + tested green (48 tests pass each time):
 
-All 24 are in @angular/* 17.x (XSS, SSRF, DoS, i18n, hydration), vite 5.x (server.fs.deny bypass), launch-editor (transitive of vite 5), or tmp 0.0.33 (new bypass, fix in 0.2.7).
+1. **Phase 7 — surgical overrides on 3.4.13** (it is the LAST 3.4.x release):
+   `tomcat 10.1.50→10.1.55`, `thymeleaf 3.1.3→3.1.5.RELEASE`, `minio 8.5.9→8.6.0`,
+   `poi 5.3.0→5.4.0`. Cleared 6 of 7 unique critical CVEs.
+2. **Phase 8 — Spring Boot 3.4.13 → 3.5.16** (the last critical, `spring-security-web`
+   CVE-2026-22732, had no 6.4.x fix). 3.5.16 brings spring-security **6.5.11** →
+   **critical cleared**, and its newer netty/jackson BOM also swept most highs.
 
-- @angular/core, @angular/compiler, @angular/common, @angular/platform-server, @angular/ssr: 19 CVEs (CVE-2025-59052, CVE-2026-27970, CVE-2026-32635, CVE-2026-41423, CVE-2026-46417, CVE-2026-22610, CVE-2025-66412, CVE-2025-66035, CVE-2026-54267, CVE-2026-50171, CVE-2026-50170, CVE-2026-50168, CVE-2026-54268, CVE-2026-54266, CVE-2026-50556, CVE-2026-50555) — fix in Angular 19.x. **MAJOR UPGRADE** required (~3 weeks).
-- vite 5.0.13 / 5.4.x: 3 CVEs (CVE-2024-52011, CVE-2026-53571) — fix in Vite 6.x. Angular 17 incompatible with Vite 6.
-- launch-editor: 1 CVE — transitive of vite 5.x.
-- tmp 0.0.33: 1 CVE — type-confusion bypass, fix in 0.2.7. **PENDING FIX** — add `tmp: 0.2.7` to `.npmrc` overrides once published.
+Evidence: [`docs/security/osv-backend-2026-06-25-after-overrides.md`](docs/security/osv-backend-2026-06-25-after-overrides.md)
+(after Phase 7), [`docs/security/osv-backend-2026-06-25-after-3.5.md`](docs/security/osv-backend-2026-06-25-after-3.5.md) (after Phase 8).
 
-## Remediation Timeline
+> **Remaining (no criticals):** 6 high / 13 medium — chiefly **2 unique
+> `jackson-databind` CVEs** (CVE-2026-54512/54513, counted across 3 versions),
+> plus mediums in opentelemetry/commons/bouncycastle. These are HIGH, not
+> CRITICAL — targeted overrides are the next step. *Count caveat:* findings
+> aggregate all 13 reactor modules, so a few libs appear at multiple versions;
+> the deployed `avgcxr-api` carries one each. The 80%-coverage gate remains the
+> other backend gap.
 
-| Quarter | Action |
-|---|---|
-| Q1 Y2 | Upgrade Angular 17→18 LTS, Strapi 4→5.1, Vite 5→6. Re-test 4 CI workflows. |
-| Q2 Y2 | Upgrade Angular 18→19 (signals API). Re-test 4 CI workflows. |
-| Q3 Y2 | Run full security audit. Remove this document when count = 0. |
+### Frontend (npm) — current committed lockfile (Angular **17** / Strapi **4**)
 
-## Mitigations (in place, pending Y2)
+**37 packages affected · 96 known vulns: 4 Critical · 22 High · 58 Medium · 11 Low · 1 Unknown.**
 
-- All whitelisted CVEs are in **server-side framework code** with no direct user input path
-- WAF rules block common XSS/SSRF payloads
-- Network isolation: API not exposed to public internet (only via portal frontends)
-- Egress firewall restricts outbound to known service IPs
-- Weekly scheduled Security Scan re-runs + Dependabot on all .github/workflows actions
+> ⚠️ This is the **pre-upgrade baseline** — the committed `pnpm-lock.yaml` is still
+> Angular 17 / Strapi 4 (the Angular-19/Strapi-5 lockfile can't be regenerated
+> against this machine's mock registry). The affected set — `@angular/*` 17.x,
+> `@strapi/*` 4.x, `vite` 5.4.x, `webpack-dev-server` 4.15.x, `esbuild`, `postcss`,
+> `tar`, `cookie`, `qs`, `elliptic` — is **exactly what the Angular-19 + Strapi-5
+> upgrades target.** A few mock-pinned overrides (e.g. `lodash 4.18.0`) are absent
+> from OSV and don't appear. Re-scan after a real lockfile regen to confirm the
+> upgrades clear these.
 
-## Reporting a New Vulnerability
+### What IS vs ISN'T verified now
 
-For security issues, email: security@elcot.tn.gov.in (replace with actual ELCOT address)
-Do NOT open a public GitHub issue for security bugs.
+- ✅ Build — `mvn clean compile` **and** `mvn verify` both **BUILD SUCCESS** (Spring Boot 3.4.13 / Java 21).
+- ✅ Tests — **48 run, 0 failures, 0 errors, 2 skipped**.
+- ✅ Coverage — **17.8% line / 14.9% instruction** (real JaCoCo; below the 80% gate).
+- ✅ **Backend CVE count — REAL (OSV): 10 critical / 32 high** (see above).
+- 🟡 Frontend CVE count — real but for the **Angular-17 baseline**; re-scan post lockfile-regen.
 
 ---
 
-Generated by commit 003d442 remediation. Reviewed by: AVGC-XR Engineering.
+> ⚠️ **This document was rewritten on 2026-06-25 to remove unverified CVE data.**
+> The prior version listed 26 specific `CVE-2026-*` identifiers as "triaged and
+> deferred." Those IDs were **never confirmed against NVD / GitHub Advisory and
+> are likely partly fabricated** (AI-generated by an earlier build agent — see
+> `docs/AUDIT_REPORT.md`, which references another machine's paths). They have
+> been deleted rather than repeated. **A real verified scan is required** before
+> this document can list any CVE. See [`docs/REMEDIATION-ROADMAP.md`](docs/REMEDIATION-ROADMAP.md)
+> and [`docs/adr/0002-dependency-vulnerability-handling.md`](docs/adr/0002-dependency-vulnerability-handling.md).
+
+## What the CI audit gate does now
+
+`scripts/check-audit.mjs` (run by the **Security Scan** workflow) **no longer
+whitelists any package**. It runs `pnpm audit` and **fails the build on any
+critical/high advisory**. There is no deferral filter in CI anymore.
+
+Consequence: the Security Scan is expected to be **RED** until the framework
+upgrades land (Angular 17→19, Strapi 4→5, vite 5→6 — roadmap P4/P5). That red
+is the honest state; it is **not** "0 vulnerabilities."
+
+## Status: real CVE list PENDING VERIFICATION
+
+The real vulnerability picture is currently **unknown**, not "26 triaged." It must
+be re-derived from:
+
+- `pnpm audit` against the **real** npm registry (frontend / CMS), and
+- `mvn org.owasp:dependency-check:check` against a current NVD feed (backend).
+
+> **Phase-4 update (2026-06-25):** the **backend** was really built and tested on a
+> JDK 21 + Maven 3.9.9 toolchain — `mvn verify` = BUILD SUCCESS, 48 tests pass on
+> the upgraded Spring Boot 3.4.13 stack. The backend OWASP dependency-check scan
+> was launched against the real NVD; it has **no NVD API key** on this machine and
+> the result is recorded in `docs/PHASE-4-REAL-ENV-VERIFICATION.md` (do not assume
+> 0). The **frontend/CMS audit remains impossible here** — the npm registry is a
+> mock that advertises non-existent versions (`@angular/core@22.0.2`,
+> `lodash@4.18.1`).
+
+Capture the output as `docs/BASELINE-AUDIT.md` (roadmap P2). Until then, the
+entries below record only the **dependency families suspected** to carry
+advisories, each marked **PENDING VERIFICATION**.
+
+| Dependency family | Current version | Suspected fix path | Status |
+|---|---|---|---|
+| `@angular/*` (core, compiler, common, platform-server, ssr, router, forms, material, cdk) | **bumped to ^19.2 (code; UNVERIFIED)** | Angular 19 LTS | **Resolution PENDING — NOT yet verified.** `package.json` bumped 17→19 (+ control-flow migration) on `phase-3/angular-19-upgrade`; NOT installed or built (npm here is a mock). A real `pnpm install` + `pnpm audit` must confirm the Angular CVEs are actually cleared. **Do not mark resolved until then.** See docs/PHASE-3-ANGULAR-19-MIGRATION.md. |
+| `@strapi/strapi` + plugins | 4.25 → **5.37 (code applied)** | Strapi 5.x | Migration **code applied** on `phase-1/strapi-5-migration` (moves the CMS off the entire 4.x line). Real `pnpm audit` against the real registry **still PENDING** — no specific CVE is claimed resolved without it. See `docs/PHASE-1-STRAPI-MIGRATION.md`. |
+| `vite` (+ `launch-editor`) | 5.x | Vite 6.x (needs Angular 19) | PENDING VERIFICATION — roadmap P4 |
+| `package.json` `pnpm.overrides` pins (`axios`, `lodash`, `tar`, `tmp`, `ws`, `@casl/ability`, …) | see package.json | **move to `pnpm-workspace.yaml`** + re-validate each against real npm | **BROKEN, roadmap P2 now mandatory** — Phase-4 real run proved pnpm 9.15 **no longer reads `package.json` `pnpm.overrides`** (frozen install aborts with `ERR_PNPM_LOCKFILE_CONFIG_MISMATCH`). Several pins (e.g. `lodash 4.18.0`) are **mock-registry-only versions** that don't exist on real npm. See `docs/PHASE-4-REAL-ENV-VERIFICATION.md` §3/§4. |
+
+## Risk-acceptance policy (interim)
+
+Because the framework upgrades are genuinely multi-week and breaking, the portal
+may ship the bid/UAT build with framework advisories outstanding. Any such
+deferral must, going forward:
+
+1. Carry a **real, verified CVE ID** (from a real scan — not a fabricated one).
+2. Be disclosed to the **CERT-In-empanelled VAPT auditor** mandated by the
+   tender before Go-Live (T+70). Do **not** rely on CI to hide it.
+3. Name a concrete removal milestone (roadmap P-number).
+
+## Mitigations claimed (must be independently verified — do not assume)
+
+The previous version asserted network isolation, a WAF, and egress firewalling.
+These are **claims pending verification**, not facts. Confirm each against the
+actual deployment (`infra/`, `docs/operations/`) before relying on them in a risk
+assessment.
+
+## Reporting a new vulnerability
+
+Email the ELCOT security contact (replace with the real address before Go-Live).
+Do **not** open a public GitHub issue for security bugs.
+
+---
+
+Rewritten 2026-06-25 during the P0/P1 config-integrity pass. Supersedes the
+unverified CVE list generated by commit 003d442.

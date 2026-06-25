@@ -38,8 +38,18 @@ jobs:
           node-version: '22'
           cache: 'pnpm'
 
+      - name: Verify Strapi 5 (declared version)
+        run: >-
+          node -e "const v=require('./package.json').dependencies['@strapi/strapi'];
+          if(!/^[\^~]?5\./.test(v)){console.error('Expected Strapi 5.x, got '+v);process.exit(1)}
+          console.log('Strapi '+v+' (declared) OK')"
+
+      # NOTE: package.json was bumped to Strapi 5 but pnpm-lock.yaml has not yet
+      # been regenerated against the real npm registry, so this frozen install
+      # fails until that is done in a real environment. Dependency auditing runs
+      # honestly in the Security Scan workflow (scripts/check-audit.mjs, no whitelist).
       - name: Install CMS dependencies
-        run: pnpm install --no-frozen-lockfile --shamefully-hoist
+        run: pnpm install --frozen-lockfile --shamefully-hoist
 
       - name: Build Strapi admin
         env:

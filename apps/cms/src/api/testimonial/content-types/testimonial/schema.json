@@ -1,0 +1,53 @@
+{
+  "kind": "collectionType",
+  "collectionName": "testimonials",
+  "info": {
+    "singularName": "testimonial",
+    "pluralName": "testimonials",
+    "displayName": "Testimonial",
+    "description": "Beneficiary and stakeholder testimonials for the AVGC-XR ecosystem"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 120,
+      "pluginOptions": { "i18n": { "localized": false } }
+    },
+    "role": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "organization": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "quote": {
+      "type": "text",
+      "required": true,
+      "maxLength": 1000,
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "photo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "pluginOptions": { "i18n": { "localized": false } }
+    },
+    "rating": {
+      "type": "integer",
+      "min": 1,
+      "max": 5,
+      "default": 5,
+      "pluginOptions": { "i18n": { "localized": false } }
+    }
+  }
+}

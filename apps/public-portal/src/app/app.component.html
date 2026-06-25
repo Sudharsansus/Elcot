@@ -5,8 +5,11 @@
         <span class="logo-emblem">TN</span>
         <div class="logo-text">
           <span class="logo-title">AVGC-XR</span>
-          <span class="logo-subtitle" *ngIf="isTamil()">தமிழ்நாடு</span>
-          <span class="logo-subtitle" *ngIf="!isTamil()">Tamil Nadu</span>
+          @if (isTamil()) {
+            <span class="logo-subtitle">தமிழ்நாடு</span>
+          } @else {
+            <span class="logo-subtitle">Tamil Nadu</span>
+          }
         </div>
       </div>
     </a>
@@ -58,8 +61,11 @@
     <div class="footer-grid">
       <div class="footer-section">
         <h4>AVGC-XR Portal</h4>
-        <p *ngIf="isTamil()">தமிழ்நாடு அரசின் அனிமேஷன், காட்சி விளைவுகள், கேமிங், காமிக்ஸ் மற்றும் நீட்டிக்கப்பட்ட யதார்த்தம் திட்டங்கள்</p>
-        <p *ngIf="!isTamil()">Tamil Nadu Government Schemes for Animation, VFX, Gaming, Comics & Extended Reality</p>
+        @if (isTamil()) {
+          <p>தமிழ்நாடு அரசின் அனிமேஷன், காட்சி விளைவுகள், கேமிங், காமிக்ஸ் மற்றும் நீட்டிக்கப்பட்ட யதார்த்தம் திட்டங்கள்</p>
+        } @else {
+          <p>Tamil Nadu Government Schemes for Animation, VFX, Gaming, Comics & Extended Reality</p>
+        }
       </div>
       <div class="footer-section">
         <h4>{{ isTamil() ? 'விரைவு இணைப்புகள்' : 'Quick Links' }}</h4>

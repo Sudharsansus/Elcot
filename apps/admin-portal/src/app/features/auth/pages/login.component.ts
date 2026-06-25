@@ -20,13 +20,19 @@ import { NotificationService } from '../../../core/services/notification.service
           <mat-form-field appearance="outline">
             <mat-label>Email</mat-label>
             <input matInput formControlName="email" type="email" autocomplete="email" />
-            <mat-error *ngIf="form.get('email')?.hasError('required')">Email is required</mat-error>
-            <mat-error *ngIf="form.get('email')?.hasError('email')">Enter a valid email</mat-error>
+            @if (form.get('email')?.hasError('required')) {
+              <mat-error>Email is required</mat-error>
+            }
+            @if (form.get('email')?.hasError('email')) {
+              <mat-error>Enter a valid email</mat-error>
+            }
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Password</mat-label>
             <input matInput formControlName="password" type="password" autocomplete="current-password" />
-            <mat-error *ngIf="form.get('password')?.hasError('required')">Password is required</mat-error>
+            @if (form.get('password')?.hasError('required')) {
+              <mat-error>Password is required</mat-error>
+            }
           </mat-form-field>
           <button mat-raised-button color="primary" type="submit" [disabled]="loading()" class="full-width">
             {{ loading() ? 'Signing in...' : 'Sign In' }}

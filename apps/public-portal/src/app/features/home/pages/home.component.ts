@@ -14,6 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { I18nService } from '../../../core/services/i18n.service';
 import { SCHEMES_DATA, HOMEPAGE_STATS, HOMEPAGE_NEWS, Scheme } from '../../schemes/schemes.data';
 import { StateMessageComponent } from '../../../shared/state-message.component';
+import { StrapiContentService } from '../../../core/services/strapi-content.service';
 
 @Component({
   selector: 'app-home',
@@ -25,8 +26,15 @@ import { StateMessageComponent } from '../../../shared/state-message.component';
 })
 export class HomeComponent implements OnInit {
   private readonly i18n = inject(I18nService);
+  private readonly strapi = inject(StrapiContentService);
 
   readonly lang = this.i18n.currentLanguage;
+  // Live CMS-driven content (Strapi 5), populated on init. The template still
+  // renders the static `news` signal as a fallback; bind to cmsNews()/cmsEvents()
+  // once the CMS is populated and the frontend build is verified.
+  readonly cmsNews = this.strapi.news;
+  readonly cmsEvents = this.strapi.events;
+  readonly cmsError = this.strapi.error;
   readonly featuredSchemes = signal<Scheme[]>(SCHEMES_DATA.filter((s: Scheme) => s.featured));
   readonly stats = signal(HOMEPAGE_STATS);
   readonly news = signal(HOMEPAGE_NEWS);
@@ -98,8 +106,12 @@ export class HomeComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    // Static data already loaded; no API calls
-    // When backend is ready: load /api/stats, /api/schemes/featured, /api/news
+    // Static data renders immediately. Additionally pull dynamic News/Events from
+    // the Strapi 5 CMS (fails soft — see StrapiContentService), so the portal is a
+    // real headless-CMS consumer. Bind the template to cmsNews()/cmsEvents() once
+    // the CMS has published content and the build is verified.
+    void this.strapi.fetchNews({ limit: 3 });
+    void this.strapi.fetchEvents({ limit: 3 });
   }
 
   formatAmount(amount: number): string {
