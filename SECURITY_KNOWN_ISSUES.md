@@ -33,7 +33,7 @@ advisories, each marked **PENDING VERIFICATION**.
 
 | Dependency family | Current version | Suspected fix path | Status |
 |---|---|---|---|
-| `@angular/*` (core, compiler, common, platform-server, ssr, router, forms, material, cdk) | 17.3.x | Angular 19 LTS | PENDING VERIFICATION — roadmap P4 |
+| `@angular/*` (core, compiler, common, platform-server, ssr, router, forms, material, cdk) | **17.3.x (NOT upgraded)** | Angular 19 LTS | **NOT resolved.** Angular remains 17.3.x — the 17→19 upgrade was deliberately NOT done (npm here is a simulated mock; a major migration is schematic-driven and must run in real CI). Do not mark resolved until a real `pnpm audit` confirms it. roadmap P4. |
 | `@strapi/strapi` + plugins | 4.25 → **5.37 (code applied)** | Strapi 5.x | Migration **code applied** on `phase-1/strapi-5-migration` (moves the CMS off the entire 4.x line). Real `pnpm audit` against the real registry **still PENDING** — no specific CVE is claimed resolved without it. See `docs/PHASE-1-STRAPI-MIGRATION.md`. |
 | `vite` (+ `launch-editor`) | 5.x | Vite 6.x (needs Angular 19) | PENDING VERIFICATION — roadmap P4 |
 | `package.json` `pnpm.overrides` pins (`axios`, `lodash`, `tar`, `tmp`, `ws`, `@casl/ability`, …) | see package.json | re-validate each against real npm | PENDING VERIFICATION — roadmap P2 (several pins may be versions that don't exist on public npm) |

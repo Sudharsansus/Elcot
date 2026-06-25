@@ -226,9 +226,18 @@ Done with a **portable Maven 3.9.9 / JDK 21** against the **real Maven Central**
 - **Deferred (with reason):** Flyway 11 (needs Boot 3.5+ autoconfig); Spring Boot 4.x
   (major). **Still needs Docker/CI:** unit + Testcontainers integration tests (`mvn verify`).
 
-### P4 — Frontend major upgrade (needs real registry; ~weeks)
+### P4 — Frontend major upgrade — ⏸️ DEFERRED (not attempted; npm-mock-blocked)
+
 - Angular 17→18→19, Nx aligned, vite 5→6, new control-flow + signals.
-- **Verify:** all 3 portals `nx build:production` green; bundle budget; Lighthouse≥90.
+- **Why not done:** npm here is a simulated mock; `nx migrate`/`ng update` need real
+  Angular 19 packages and are schematic-driven + build-verified. Hand-migrating 3 apps
+  blind would break the build undetectably. Must run in a real npm env.
+- **Verify (real CI):** all 3 portals `nx build:production` green; bundle budget; Lighthouse≥90.
+
+> **Phase 3 (2026-06-25)** addressed the three *findings* (not the Angular upgrade) —
+> see `docs/PHASE-3-COMPLETE-WORK.md`: #1 real Strapi content schemas (5 types, syntax-
+> verified), #2 `StrapiContentService` + home wiring + nginx proxy (syntax-verified),
+> #3 OpenAPI `@Tag`/`@Operation` on Scheme/Auth controllers (**`mvn compile` verified**).
 
 ### P5 — Strapi 4→5 — ✅ CODE-COMPLETE (2026-06-25); runtime PENDING real CI
 
