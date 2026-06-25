@@ -1,0 +1,100 @@
+# ============================================================
+# Render Blueprint — Tamil Nadu AVGC-XR Portal (frontends)
+# ============================================================
+# Deploys the three Angular 19 portals as static sites on Render's CDN.
+# Static delivery means the frontend scales to very large audiences (the only
+# concurrency ceiling is the API, never the SPA).
+#
+# NOTE on install: the committed pnpm-lock.yaml was generated against a mock
+# registry on the original dev machine and pins versions that do not exist on
+# real npm. The FIRST real-npm build must therefore regenerate it, so the build
+# command uses `--no-frozen-lockfile`. This file is NOT a GitHub workflow, so it
+# is outside the config-integrity gate. Once Render has produced a correct
+# pnpm-lock.yaml, commit it and switch these to `--frozen-lockfile` for
+# reproducible builds. (See docs/DEPLOY-RENDER.md.)
+# ============================================================
+
+services:
+  # ---------------- Public portal (citizen-facing) ----------------
+  - type: web
+    name: avgcxr-public-portal
+    runtime: static
+    buildCommand: >-
+      corepack enable &&
+      pnpm install --no-frozen-lockfile &&
+      pnpm exec nx build public-portal --configuration=production
+    staticPublishPath: dist/public-portal/browser
+    pullRequestPreviewsEnabled: false
+    envVars:
+      - key: NODE_VERSION
+        value: "20.18.0"
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+
+  # ---------------- Applicant portal ----------------
+  - type: web
+    name: avgcxr-applicant-portal
+    runtime: static
+    buildCommand: >-
+      corepack enable &&
+      pnpm install --no-frozen-lockfile &&
+      pnpm exec nx build applicant-portal --configuration=production
+    staticPublishPath: dist/applicant-portal/browser
+    pullRequestPreviewsEnabled: false
+    envVars:
+      - key: NODE_VERSION
+        value: "20.18.0"
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+
+  # ---------------- Admin portal ----------------
+  - type: web
+    name: avgcxr-admin-portal
+    runtime: static
+    buildCommand: >-
+      corepack enable &&
+      pnpm install --no-frozen-lockfile &&
+      pnpm exec nx build admin-portal --configuration=production
+    staticPublishPath: dist/admin-portal/browser
+    pullRequestPreviewsEnabled: false
+    envVars:
+      - key: NODE_VERSION
+        value: "20.18.0"
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
