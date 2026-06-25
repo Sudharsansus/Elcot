@@ -27,6 +27,15 @@ be re-derived from:
 - `pnpm audit` against the **real** npm registry (frontend / CMS), and
 - `mvn org.owasp:dependency-check:check` against a current NVD feed (backend).
 
+> **Phase-4 update (2026-06-25):** the **backend** was really built and tested on a
+> JDK 21 + Maven 3.9.9 toolchain — `mvn verify` = BUILD SUCCESS, 48 tests pass on
+> the upgraded Spring Boot 3.4.13 stack. The backend OWASP dependency-check scan
+> was launched against the real NVD; it has **no NVD API key** on this machine and
+> the result is recorded in `docs/PHASE-4-REAL-ENV-VERIFICATION.md` (do not assume
+> 0). The **frontend/CMS audit remains impossible here** — the npm registry is a
+> mock that advertises non-existent versions (`@angular/core@22.0.2`,
+> `lodash@4.18.1`).
+
 Capture the output as `docs/BASELINE-AUDIT.md` (roadmap P2). Until then, the
 entries below record only the **dependency families suspected** to carry
 advisories, each marked **PENDING VERIFICATION**.
@@ -36,7 +45,7 @@ advisories, each marked **PENDING VERIFICATION**.
 | `@angular/*` (core, compiler, common, platform-server, ssr, router, forms, material, cdk) | **bumped to ^19.2 (code; UNVERIFIED)** | Angular 19 LTS | **Resolution PENDING — NOT yet verified.** `package.json` bumped 17→19 (+ control-flow migration) on `phase-3/angular-19-upgrade`; NOT installed or built (npm here is a mock). A real `pnpm install` + `pnpm audit` must confirm the Angular CVEs are actually cleared. **Do not mark resolved until then.** See docs/PHASE-3-ANGULAR-19-MIGRATION.md. |
 | `@strapi/strapi` + plugins | 4.25 → **5.37 (code applied)** | Strapi 5.x | Migration **code applied** on `phase-1/strapi-5-migration` (moves the CMS off the entire 4.x line). Real `pnpm audit` against the real registry **still PENDING** — no specific CVE is claimed resolved without it. See `docs/PHASE-1-STRAPI-MIGRATION.md`. |
 | `vite` (+ `launch-editor`) | 5.x | Vite 6.x (needs Angular 19) | PENDING VERIFICATION — roadmap P4 |
-| `package.json` `pnpm.overrides` pins (`axios`, `lodash`, `tar`, `tmp`, `ws`, `@casl/ability`, …) | see package.json | re-validate each against real npm | PENDING VERIFICATION — roadmap P2 (several pins may be versions that don't exist on public npm) |
+| `package.json` `pnpm.overrides` pins (`axios`, `lodash`, `tar`, `tmp`, `ws`, `@casl/ability`, …) | see package.json | **move to `pnpm-workspace.yaml`** + re-validate each against real npm | **BROKEN, roadmap P2 now mandatory** — Phase-4 real run proved pnpm 9.15 **no longer reads `package.json` `pnpm.overrides`** (frozen install aborts with `ERR_PNPM_LOCKFILE_CONFIG_MISMATCH`). Several pins (e.g. `lodash 4.18.0`) are **mock-registry-only versions** that don't exist on real npm. See `docs/PHASE-4-REAL-ENV-VERIFICATION.md` §3/§4. |
 
 ## Risk-acceptance policy (interim)
 

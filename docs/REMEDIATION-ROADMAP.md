@@ -37,6 +37,19 @@ npm registry + the Docker service stack already defined in `ci-backend.yml`).
 P1 build proof). **npm-side** goals (audit, Strapi, Angular) remain unverifiable until a
 real registry is available; do not report them "done" from this sandbox.
 
+### Phase-4 real-run update (2026-06-25) — `phase-4/real-env-verification`
+
+The full backend pipeline was actually executed (not just compile): `mvn -B clean compile`
+and `mvn -B verify` both = **BUILD SUCCESS** on the upgraded stack (Spring Boot 3.4.13,
+Java 21). **48 tests pass** (0 failures/errors, 2 skipped). Real **JaCoCo** coverage is
+**~17.8% line / 14.9% instruction** across the 3 test-bearing modules — i.e. the
+`coverage-gate` (80% line) would **FAIL**; coverage is the real remaining backend gap (P7).
+The OWASP dependency-check scan was launched against the real NVD (no API key on this box).
+Two npm blockers were **re-proven**: (1) the registry is still a mock (`@angular/core@22.0.2`);
+(2) **pnpm 9.15 no longer reads `package.json` `pnpm.overrides`** → frozen install aborts →
+overrides MUST move to `pnpm-workspace.yaml` (P2 now mandatory). Full detail:
+[`PHASE-4-REAL-ENV-VERIFICATION.md`](PHASE-4-REAL-ENV-VERIFICATION.md).
+
 ---
 
 ## 2. Data-integrity warnings
