@@ -33,13 +33,13 @@ databases:
   - name: avgcxr-postgres
     databaseName: avgcxr_portal
     user: avgcxr_user
-    plan: basic-1gb
+    plan: basic_1gb
 
   # Separate Postgres for the Strapi CMS (db "avgc_xr_cms").
   - name: avgcxr-cms-db
     databaseName: avgc_xr_cms
     user: avgc_user
-    plan: basic-256mb
+    plan: basic_256mb
 
 services:
   # ============================================================
