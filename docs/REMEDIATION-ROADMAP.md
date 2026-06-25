@@ -226,7 +226,13 @@ Done with a **portable Maven 3.9.9 / JDK 21** against the **real Maven Central**
 - **Deferred (with reason):** Flyway 11 (needs Boot 3.5+ autoconfig); Spring Boot 4.x
   (major). **Still needs Docker/CI:** unit + Testcontainers integration tests (`mvn verify`).
 
-### P4 — Frontend major upgrade — ⏸️ DEFERRED (not attempted; npm-mock-blocked)
+### P4 — Frontend major upgrade — 🟡 CODE-BUMPED (2026-06-25); verification PENDING real CI
+
+Angular 17→19 + Nx 17→20 + TS 5.6 + control-flow migration applied on
+`phase-3/angular-19-upgrade` (see `docs/PHASE-3-ANGULAR-19-MIGRATION.md`). **Syntax-
+verified only** — NOT installed/built. Needs a real `pnpm install` + `nx migrate` +
+`nx build` + `pnpm audit`. The bump knowingly turns config-integrity/frozen-install RED
+until the lockfile is regenerated (honest, by design). Prior status below retained for context:
 
 - Angular 17→18→19, Nx aligned, vite 5→6, new control-flow + signals.
 - **Why not done:** npm here is a simulated mock; `nx migrate`/`ng update` need real
