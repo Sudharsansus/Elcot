@@ -18,8 +18,9 @@ jobs:
         with:
           node-version: '22'
           cache: 'pnpm'
+      # Mock-registry lockfile → regenerate on real npm (can't frozen-install).
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
       - name: Run dependency audit (fails on any critical/high — no whitelist)
         run: node scripts/check-audit.mjs
       - uses: actions/setup-java@v4

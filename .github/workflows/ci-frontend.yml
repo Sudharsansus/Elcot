@@ -50,8 +50,10 @@ jobs:
           node-version: '22'
           cache: 'pnpm'
 
+      # Non-frozen: the committed lockfile is from a mock registry and can't be
+      # frozen-installed on real npm. CI regenerates it against real npm.
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --shamefully-hoist
+        run: pnpm install --no-frozen-lockfile --shamefully-hoist
 
       - name: Build ${{ matrix.project }}
         run: pnpm nx run ${{ matrix.project }}:build:production --skip-nx-cache

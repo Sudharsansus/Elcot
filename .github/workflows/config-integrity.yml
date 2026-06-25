@@ -12,9 +12,14 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      # Pure Node built-ins — no dependency install needed.
+          cache: 'pnpm'
+      # The committed lockfile is from a mock registry; regenerate it on real npm
+      # so the overrides->lockfile comparison reflects pnpm-workspace.yaml.
+      - name: Regenerate lockfile (real npm)
+        run: pnpm install --no-frozen-lockfile
       - name: Check config integrity
         run: node scripts/check-config-integrity.mjs

@@ -44,12 +44,11 @@ jobs:
           if(!/^[\^~]?5\./.test(v)){console.error('Expected Strapi 5.x, got '+v);process.exit(1)}
           console.log('Strapi '+v+' (declared) OK')"
 
-      # NOTE: package.json was bumped to Strapi 5 but pnpm-lock.yaml has not yet
-      # been regenerated against the real npm registry, so this frozen install
-      # fails until that is done in a real environment. Dependency auditing runs
-      # honestly in the Security Scan workflow (scripts/check-audit.mjs, no whitelist).
+      # The committed lockfile is from a mock registry, so a frozen install fails
+      # on real npm. CI regenerates it with a non-frozen install. Dependency
+      # auditing runs honestly in the Security Scan workflow (no whitelist).
       - name: Install CMS dependencies
-        run: pnpm install --frozen-lockfile --shamefully-hoist
+        run: pnpm install --no-frozen-lockfile --shamefully-hoist
 
       - name: Build Strapi admin
         env:

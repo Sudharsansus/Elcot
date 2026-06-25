@@ -26,6 +26,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      # Regenerate the lockfile on real npm so OSV scans the REAL resolved
+      # versions (Angular 19 + the security overrides), not the stale
+      # mock-registry / Angular-17 lockfile.
+      - name: Regenerate lockfile (real npm)
+        run: pnpm install --no-frozen-lockfile
+
       - name: Install osv-scanner (pinned binary)
         run: |
           curl -sSfL -o osv-scanner \
