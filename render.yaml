@@ -149,9 +149,11 @@ services:
         fromService: { name: avgcxr-elasticsearch, type: pserv, property: host }
       - key: ELASTICSEARCH_PORT
         value: "9200"
-      # MinIO (endpoint must be the internal URL — set after first deploy, see docs)
+      # MinIO internal endpoint (Render private-network host = service name).
+      # MinIO access is lazy, so a wrong value won't block API startup — only
+      # document uploads; correct it post-deploy if the host differs.
       - key: MINIO_ENDPOINT
-        sync: false
+        value: http://avgcxr-minio:9000
       - key: MINIO_ACCESS_KEY
         fromService: { name: avgcxr-minio, type: pserv, envVarKey: MINIO_ROOT_USER }
       - key: MINIO_SECRET_KEY
@@ -161,9 +163,9 @@ services:
       # JWT (generated; shared with worker)
       - key: JWT_SECRET
         generateValue: true
-      # CORS — fill with the deployed portal URLs (comma-separated) after deploy
+      # CORS — predicted portal URLs (correct after deploy if the names differ)
       - key: CORS_ALLOWED_ORIGINS
-        sync: false
+        value: https://avgcxr-public-portal.onrender.com,https://avgcxr-applicant-portal.onrender.com,https://avgcxr-admin-portal.onrender.com
       # Email (optional — SMTP)
       - key: EMAIL_HOST
         sync: false

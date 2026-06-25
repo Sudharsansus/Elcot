@@ -1,8 +1,8 @@
 export const environment = {
   production: true,
-  apiUrl: '/api/v1',
-  cmsUrl: 'https://cms.avgcxr.tn.gov.in',
-  strapiUrl: 'https://cms.avgcxr.tn.gov.in/api',
+  apiUrl: 'https://avgcxr-api.onrender.com/api/v1',
+  cmsUrl: 'https://avgcxr-cms.onrender.com',
+  strapiUrl: 'https://avgcxr-cms.onrender.com/api',
   appName: 'AVGC-XR Admin Portal',
   version: '1.0.0',
   enableDevTools: false,
