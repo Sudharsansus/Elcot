@@ -1,20 +1,25 @@
 <!--
   AI Chat Widget (Mira) — bilingual floating chat panel
-  Used on every public-portal page
+  Used on every public-portal page. Phase-11: a11y + escalation + context.
 -->
+
+<!-- Screen-reader-only live region: announces open/close, typing and replies -->
+<p class="sr-only" aria-live="polite" role="status">{{ srStatus() }}</p>
+
 @if (!chat.isOpen()) {
   <button
+    #launcher
     class="chat-launcher"
     (click)="chat.toggle()"
-    aria-label="Open Mira AI assistant"
+    [attr.aria-label]="chat.language() === 'ta' ? 'மிரா AI உதவியாளரைத் திற' : 'Open Mira AI assistant'"
     data-testid="chat-launcher">
-    <span class="chat-launcher-icon">💬</span>
+    <span class="chat-launcher-icon" aria-hidden="true">💬</span>
     <span class="chat-launcher-label">{{ chat.language() === 'ta' ? 'மிரா' : 'Mira' }}</span>
   </button>
 }
 
 @if (chat.isOpen()) {
-  <div class="chat-panel" role="dialog" aria-labelledby="chat-title">
+  <div #panel class="chat-panel" role="dialog" aria-modal="true" aria-labelledby="chat-title">
     <header class="chat-header">
       <div class="chat-header-info">
         <div class="chat-avatar" aria-hidden="true">🌟</div>
@@ -32,7 +37,7 @@
         </button>
         <button class="chat-close"
                 (click)="chat.close()"
-                aria-label="Close chat"
+                [attr.aria-label]="chat.language() === 'ta' ? 'அரட்டையை மூடு' : 'Close chat'"
                 data-testid="chat-close">×</button>
       </div>
     </header>
@@ -41,7 +46,11 @@
       @if (chat.messages().length === 0 && !chat.isLoading()) {
         <div class="chat-empty">
           <p class="chat-empty-text">{{ emptyStateText() }}</p>
-          <div class="chat-suggestions">
+          @if (contextHint()) {
+            <p class="chat-context-hint" data-testid="chat-context-hint">💡 {{ contextHint() }}</p>
+          }
+          <div class="chat-suggestions" role="group"
+               [attr.aria-label]="chat.language() === 'ta' ? 'பரிந்துரைக்கப்பட்ட கேள்விகள்' : 'Suggested questions'">
             @for (s of suggestedQuestions; track $index) {
               <button class="chat-suggestion-chip"
                       (click)="sendSuggestion(chat.language() === 'ta' ? s.ta : s.en)"
@@ -75,10 +84,37 @@
       @if (chat.isLoading()) {
         <div class="chat-message chat-message-assistant" data-testid="chat-typing">
           <div class="chat-message-bubble">
-            <div class="typing-dots">
+            <div class="typing-dots" aria-hidden="true">
               <span></span><span></span><span></span>
             </div>
           </div>
+        </div>
+      }
+
+      @if (escalation()) {
+        <div class="chat-escalation" role="note" data-testid="chat-escalation">
+          <div class="chat-escalation-head">
+            <span class="chat-escalation-icon" aria-hidden="true">🧑‍💼</span>
+            <strong>{{ escalationTitle() }}</strong>
+            <button class="chat-escalation-dismiss"
+                    (click)="dismissEscalation()"
+                    [attr.aria-label]="chat.language() === 'ta' ? 'மூடு' : 'Dismiss'">×</button>
+          </div>
+          <p class="chat-escalation-hint">{{ escalationHint() }}</p>
+          <ul class="chat-escalation-list">
+            <li>
+              <span aria-hidden="true">📞</span>
+              <a [href]="'tel:' + contact.phone">{{ contact.phone }}</a>
+            </li>
+            <li>
+              <span aria-hidden="true">✉️</span>
+              <a [href]="'mailto:' + contact.email">{{ contact.email }}</a>
+            </li>
+            <li>
+              <span aria-hidden="true">🕒</span>
+              <span>{{ chat.language() === 'ta' ? contact.hoursTa : contact.hoursEn }}</span>
+            </li>
+          </ul>
         </div>
       }
 
@@ -91,6 +127,7 @@
 
     <footer class="chat-input-area">
       <textarea
+        #chatInput
         class="chat-input"
         rows="1"
         [placeholder]="placeholderText()"
@@ -99,7 +136,8 @@
         (keydown)="onKeydown($event)"
         [disabled]="chat.isLoading()"
         data-testid="chat-input"
-        aria-label="Type your message"></textarea>
+        [attr.aria-label]="chat.language() === 'ta' ? 'உங்கள் செய்தியை தட்டச்சு செய்யவும்' : 'Type your message'"
+        autocomplete="off"></textarea>
       <button class="chat-send"
               (click)="send()"
               [disabled]="!userInput().trim() || chat.isLoading()"
