@@ -688,3 +688,543 @@ img {
 .skip-link:focus {
   top: var(--space-4);
 }
+
+
+// ============================================================
+// TN GOVERNMENT VISUAL LANGUAGE — color overrides (commit phase 2)
+// Appended on top of existing token blocks. CSS cascade means these
+// overrides win for duplicate variable names; new variables
+// (--color-bg, --color-surface-elevated, etc.) are additive.
+// ============================================================
+
+:root {
+  // ---- Brand (overrides existing TN Blue to TN Red + Saffron) ----
+  --color-primary: #C8102E;            // TN red — primary actions, links
+  --color-primary-dark: #9B0C24;
+  --color-primary-light: #E84258;
+  --color-primary-darker: #6A0918;
+  --color-primary-lighter: #F7AAB2;
+  --color-primary-50: #FDECEE;
+  --color-primary-100: #FBD0D5;
+  --color-primary-200: #F7AAB2;
+  --color-primary-300: #F08592;
+  --color-primary-400: #E84258;
+  --color-primary-500: #D82646;
+  --color-primary-600: #C8102E;
+  --color-primary-700: #A50D26;
+  --color-primary-800: #8C0B20;
+  --color-primary-900: #6A0918;
+
+  --color-secondary: #FFD200;           // TN yellow — accents, badges
+  --color-secondary-dark: #E6BD00;
+  --color-secondary-light: #FFE45C;
+  --color-secondary-50: #FFF8DC;
+
+  // ---- Neutrals (warm cream, content-dense feel) ----
+  --color-background: #FAF7F2;
+  --color-bg: #FAF7F2;
+  --color-bg-elevated: #FFFFFF;
+  --color-bg-subtle: #F2EDE4;
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #F8F5EF;
+  --color-surface-elevated: #FFFFFF;
+  --color-overlay: rgba(26, 26, 46, 0.5);
+
+  --color-text-primary: #1A1A2E;        // near-black, warm
+  --color-text-secondary: #4A4A52;
+  --color-text-tertiary: #8A8A92;
+  --color-text-disabled: #B8B8C0;
+  --color-text-inverse: #FFFFFF;
+  --color-text-on-primary: #FFFFFF;
+  --color-text-link: #C8102E;
+
+  --color-border: #E5E0D6;
+  --color-border-strong: #C5C0B0;
+  --color-divider: #EDE8DD;
+
+  // ---- Semantic ----
+  --color-success: #2E7D32;
+  --color-success-light: #60AD5E;
+  --color-success-bg: #E8F5E9;
+  --color-warning: #ED6C02;
+  --color-warning-light: #FFB04C;
+  --color-warning-bg: #FFF3E0;
+  --color-error: #C62828;
+  --color-error-light: #FF5F52;
+  --color-error-bg: #FFEBEE;
+  --color-info: #0277BD;
+  --color-info-light: #58A5F0;
+  --color-info-bg: #E1F5FE;
+
+  // ---- Sector colors — muted institutional ----
+  --color-sector-animation: #6A4C93;
+  --color-sector-vfx: #C2185B;
+  --color-sector-gaming: #1565C0;
+  --color-sector-comics: #E65100;
+  --color-sector-xr: #2E7D32;
+
+  // ---- Typography stack ----
+  --font-primary: 'Noto Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Noto Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Noto Serif', Georgia, 'Times New Roman', serif;
+  --font-tamil: 'Noto Sans Tamil', 'Latha', 'Tamil Sangam MN', sans-serif;
+
+  // ---- Radii — sharper, more institutional ----
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
+  --radius-2xl: 12px;
+  --radius-full: 9999px;
+
+  // ---- Borders for institutional feel ----
+  --border-thin: 1px solid var(--color-border);
+  --border-medium: 2px solid var(--color-border);
+  --border-accent: 3px solid var(--color-secondary);
+  --border-primary: 3px solid var(--color-primary);
+
+  // ---- Reined-in gradients (only neutral / primary) ----
+  --gradient-hero: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  --gradient-cta: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  --gradient-card-hover: linear-gradient(180deg, rgba(200, 16, 46, 0.04) 0%, rgba(200, 16, 46, 0) 100%);
+  --gradient-subtle: linear-gradient(180deg, var(--color-bg) 0%, var(--color-surface) 100%);
+}
+
+// ============================================================
+// Government component classes (new, additive)
+// ============================================================
+
+// Government masthead (formal strip above hero)
+.gov-masthead {
+  background: #1A1A2E;
+  color: white;
+  padding: 12px 0;
+  border-bottom: 3px solid var(--color-secondary);
+  font-family: var(--font-sans);
+}
+.gov-masthead .container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.masthead-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+.emblem {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  background: white;
+  border-radius: 50%;
+  padding: 4px;
+}
+.masthead-text, .masthead-dept {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.masthead-dept {
+  margin-left: auto;
+  text-align: right;
+}
+.masthead-hi, .dept-hi {
+  font-family: var(--font-tamil);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: white;
+}
+.masthead-en, .dept-en {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 400;
+}
+
+// Hero override (replaces gradient hero)
+.hero {
+  background: var(--color-surface);
+  padding: 64px 0 56px;
+  border-bottom: var(--border-thin);
+  position: relative;
+  color: var(--color-text-primary);
+}
+.hero-content {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 48px;
+  align-items: center;
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-primary-50);
+  color: var(--color-primary);
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  margin-bottom: 20px;
+  border-left: 3px solid var(--color-primary);
+}
+.tag-bullet {
+  width: 8px;
+  height: 8px;
+  background: var(--color-primary);
+  border-radius: 50%;
+}
+.hero-title {
+  margin: 0 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.title-en {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.title-ta {
+  font-family: var(--font-tamil);
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  line-height: 1.3;
+}
+.hero-subtitle {
+  font-size: var(--text-lg);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 0 0 32px;
+  max-width: 560px;
+}
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+// Button (sober, government style)
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  font-size: var(--text-base);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+  font-family: inherit;
+  line-height: 1.2;
+}
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+}
+.btn-primary:hover {
+  background: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+  color: white;
+  text-decoration: none;
+}
+.btn-secondary {
+  background: transparent;
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+}
+.btn-secondary:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+.btn mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+// Hero stats block
+.hero-stats {
+  display: flex;
+  align-items: stretch;
+  gap: 24px;
+  padding: 32px;
+  background: var(--color-bg-subtle);
+  border-left: var(--border-accent);
+}
+.stat-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.stat-value {
+  font-family: var(--font-serif);
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1;
+}
+.stat-label {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+.stat-divider {
+  width: 1px;
+  background: var(--color-border);
+}
+
+// Quick info strip (government-portal pattern)
+.info-strip {
+  background: var(--color-bg);
+  padding: 32px 0;
+  border-bottom: var(--border-thin);
+}
+.info-strip .container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.info-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: var(--color-surface);
+  border: var(--border-thin);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--color-text-primary);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.info-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+  text-decoration: none;
+}
+.info-card mat-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+.info-card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.info-card-title {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.info-card-desc {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+// Sober scheme card overrides
+.scheme-card {
+  background: var(--color-surface) !important;
+  border-radius: var(--radius-md) !important;
+  padding: 24px !important;
+  border: var(--border-thin) !important;
+  border-top: var(--border-accent) !important;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 150ms ease, border-color 150ms ease !important;
+}
+.scheme-card:hover {
+  box-shadow: var(--shadow-md) !important;
+  border-color: var(--color-primary) !important;
+}
+.scheme-icon {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 40px !important;
+  height: 40px !important;
+  background: var(--color-primary-50) !important;
+  color: var(--color-primary) !important;
+  border-radius: var(--radius-sm) !important;
+  margin-bottom: 16px !important;
+}
+.scheme-icon mat-icon {
+  font-size: 20px !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+.scheme-category {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: var(--color-text-tertiary) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  margin-bottom: 8px !important;
+}
+
+// Government-style footer
+.site-footer {
+  margin-top: 64px;
+  background: var(--color-surface);
+  border-top: 3px solid var(--color-secondary);
+  font-family: var(--font-sans);
+}
+.footer-stripe {
+  height: 4px;
+  background: linear-gradient(90deg,
+    var(--color-primary) 0%, var(--color-primary) 33%,
+    var(--color-secondary) 33%, var(--color-secondary) 66%,
+    var(--color-primary) 66%, var(--color-primary) 100%);
+}
+.footer-main {
+  background: var(--color-bg-subtle);
+  padding: 48px 0 32px;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 32px;
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.brand-line {
+  font-family: var(--font-tamil);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.3;
+}
+.brand-line:last-child {
+  font-family: var(--font-serif);
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+.footer-tagline {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 8px 0 0;
+}
+.footer-heading {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--color-secondary);
+  display: inline-block;
+}
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.footer-links a {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+.footer-links a:hover {
+  color: var(--color-primary);
+}
+.footer-contact {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.footer-contact li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+.footer-contact mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: var(--color-primary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.footer-bottom {
+  background: #1A1A2E;
+  color: rgba(255, 255, 255, 0.85);
+  padding: 16px 0;
+}
+.footer-bottom .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+.copyright {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.85);
+}
+.bottom-links {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.bottom-links a {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+}
+.bottom-links a:hover {
+  color: var(--color-secondary);
+}
+.separator {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+@media (max-width: 1024px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .info-strip .container { grid-template-columns: repeat(2, 1fr); }
+  .hero-content { grid-template-columns: 1fr; }
+  .hero-stats { padding: 24px; }
+}
+@media (max-width: 640px) {
+  .masthead-content { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .masthead-dept { margin-left: 0; text-align: left; }
+  .hero { padding: 40px 0; }
+  .hero-stats { flex-direction: column; gap: 16px; padding: 20px; }
+  .stat-divider { width: 100%; height: 1px; }
+  .info-strip .container { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+  .footer-bottom .container { flex-direction: column; align-items: flex-start; }
+}

@@ -49,7 +49,6 @@
                 type="button"
                 class="category-chip"
                 [class.active]="selectedCategory() === cat.value"
-                [style.--chip-color]="cat.color"
                 (click)="categoryControl.setValue(cat.value)"
               >
                 <mat-icon>{{ cat.icon }}</mat-icon>
@@ -110,7 +109,7 @@
       } @else {
         <div class="schemes-grid">
           @for (s of filteredSchemes(); track s.id) {
-            <article class="scheme-card" [style.--accent]="s.color">
+            <article class="scheme-card">
               <div class="scheme-card-header">
                 <div class="scheme-icon">
                   <mat-icon>{{ s.icon }}</mat-icon>

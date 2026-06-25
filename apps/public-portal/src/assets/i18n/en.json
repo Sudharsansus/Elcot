@@ -33,10 +33,12 @@
   "home": {
     "hero": {
       "eyebrow": "Government of Tamil Nadu",
-      "title": "Empowering the AVGC-XR Future of Tamil Nadu",
-      "subtitle": "The official portal for Animation, Visual Effects, Gaming, Comics, and Extended Reality industry stakeholders, scheme applicants, and ecosystem partners.",
+      "title": "Animation, Visual Effects, Gaming, Comics & Extended Reality",
+      "subtitle": "Apply for government schemes, connect with industry, and access training programs for the Animation, VFX, Gaming, Comics, and Extended Reality sectors in Tamil Nadu.",
       "ctaPrimary": "Apply for a Scheme",
-      "ctaSecondary": "Explore the Ecosystem"
+      "ctaSecondary": "Explore the Ecosystem",
+      "tagline": "Official Portal — TN AVGC-XR Policy 2024",
+      "titleTa": "அனிமேஷன், காட்சி விளைவுகள், கேமிங், காமிக்ஸ் மற்றும் நீட்டிக்கப்பட்ட யதார்த்தம்"
     },
     "stats": {
       "title": "Tamil Nadu AVGC-XR at a Glance",
@@ -190,7 +192,8 @@
     "email": "facilitation@elcot.in",
     "copyright": "© 2026 Electronics Corporation of Tamil Nadu Limited. All rights reserved.",
     "disclaimer": "Designed for W3C WCAG 2.1 AA compliance. Built with open standards (W3C, BPMN 2.0, ISO 27001 alignment).",
-    "poweredBy": "Powered by ELCOT"
+    "poweredBy": "Powered by ELCOT",
+    "govtHi": "Tamil Nadu Government"
   },
   "states": {
     "loading": "Loading...",

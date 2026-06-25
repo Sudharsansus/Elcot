@@ -1,50 +1,105 @@
 <!-- ============================================================ -->
-<!-- HOME PAGE TEMPLATE -->
+<!-- HOME PAGE TEMPLATE — TN Government Visual Language -->
 <!-- ============================================================ -->
 
-<!-- HERO SECTION -->
-<section class="hero">
-  <div class="hero-bg" aria-hidden="true">
-    <div class="hero-blob hero-blob-1"></div>
-    <div class="hero-blob hero-blob-2"></div>
-    <div class="hero-blob hero-blob-3"></div>
-  </div>
-
-  <div class="container hero-inner">
-    <div class="hero-eyebrow">
-      <span class="hero-eyebrow-dot"></span>
-      <span>{{ t('home.hero.eyebrow') }}</span>
+<!-- GOVERNMENT MASTHEAD (formal strip above hero) -->
+<section class="gov-masthead">
+  <div class="masthead-content">
+    <div class="emblem" aria-label="Government of Tamil Nadu Emblem">🛡️</div>
+    <div class="masthead-text">
+      <div class="masthead-hi">தமிழ்நாடு அரசு</div>
+      <div class="masthead-en">Government of Tamil Nadu</div>
     </div>
-
-    <h1 class="hero-title">
-      <span class="hero-title-line">{{ t('home.hero.title') }}</span>
-    </h1>
-
-    <p class="hero-subtitle">{{ t('home.hero.subtitle') }}</p>
-
-    <div class="hero-actions">
-      <a routerLink="/schemes" class="btn btn-primary btn-lg">
-        <mat-icon>arrow_forward</mat-icon>
-        {{ t('home.hero.ctaPrimary') }}
-      </a>
-      <a routerLink="/companies" class="btn btn-outline-light btn-lg">
-        {{ t('home.hero.ctaSecondary') }}
-      </a>
-    </div>
-
-    <div class="hero-trust">
-      <span class="trust-label">Powered by</span>
-      <span class="trust-org">Electronics Corporation of Tamil Nadu (ELCOT)</span>
+    <div class="masthead-dept">
+      <div class="dept-hi">தமிழ்நாடு மின்னணுவியல் கழகம்</div>
+      <div class="dept-en">Electronics Corporation of Tamil Nadu (ELCOT)</div>
     </div>
   </div>
 </section>
 
-<!-- STATS BAR -->
+<!-- HERO SECTION — content-focused, no gradient/blobs -->
+<section class="hero">
+  <div class="container hero-content">
+    <div class="hero-text">
+      <div class="hero-tag">
+        <span class="tag-bullet"></span>
+        <span>{{ t('home.hero.tagline') }}</span>
+      </div>
+      <h1 class="hero-title">
+        <span class="title-en">{{ t('home.hero.title') }}</span>
+        <span class="title-ta">{{ t('home.hero.titleTa') }}</span>
+      </h1>
+      <p class="hero-subtitle">{{ t('home.hero.subtitle') }}</p>
+      <div class="hero-actions">
+        <a routerLink="/schemes" class="btn btn-primary">
+          <mat-icon>description</mat-icon>
+          View Schemes &amp; Incentives
+        </a>
+        <a routerLink="/companies" class="btn btn-secondary">
+          <mat-icon>business</mat-icon>
+          Explore the Industry
+        </a>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-value">7+</div>
+        <div class="stat-label">Active Schemes</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-value">₹244 Cr</div>
+        <div class="stat-label">Incentive Pool</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-value">5</div>
+        <div class="stat-label">Industry Verticals</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUICK INFO STRIP — government-portal pattern -->
+<section class="info-strip">
+  <div class="container">
+    <a routerLink="/schemes" class="info-card">
+      <mat-icon>how_to_reg</mat-icon>
+      <div class="info-card-text">
+        <div class="info-card-title">Apply for a Scheme</div>
+        <div class="info-card-desc">Scholarships, subsidies, training</div>
+      </div>
+    </a>
+    <a routerLink="/companies" class="info-card">
+      <mat-icon>business</mat-icon>
+      <div class="info-card-text">
+        <div class="info-card-title">Business Connect</div>
+        <div class="info-card-desc">Find AVGC-XR companies</div>
+      </div>
+    </a>
+    <a routerLink="/talent" class="info-card">
+      <mat-icon>groups</mat-icon>
+      <div class="info-card-text">
+        <div class="info-card-title">Talent Directory</div>
+        <div class="info-card-desc">Hire trained professionals</div>
+      </div>
+    </a>
+    <a routerLink="/events" class="info-card">
+      <mat-icon>event</mat-icon>
+      <div class="info-card-text">
+        <div class="info-card-title">News &amp; Events</div>
+        <div class="info-card-desc">Workshops, conferences, EOIs</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- STATS BAR (kept from previous, auto-picks-up new colors) -->
 <section class="stats-section">
   <div class="container">
     <div class="stats-grid">
       @for (stat of statsDisplay(); track stat.label) {
-        <div class="stat-card" [style.--accent]="stat.color">
+        <div class="stat-card">
           <div class="stat-icon">
             <mat-icon>{{ stat.icon }}</mat-icon>
           </div>
@@ -66,7 +121,7 @@
 
     <div class="schemes-grid">
       @for (s of featuredSchemes(); track s.id) {
-        <article class="scheme-card" [style.--accent]="s.color">
+        <article class="scheme-card">
           <div class="scheme-card-header">
             <div class="scheme-icon">
               <mat-icon>{{ s.icon }}</mat-icon>
