@@ -64,4 +64,4 @@ jobs:
           ADMIN_JWT_SECRET: 'ci-admin-jwt-not-secret-12345'
           TRANSFER_TOKEN_SALT: 'ci-transfer-salt-not-secret-12345'
           JWT_SECRET: 'ci-jwt-secret-not-secret-12345'
-        run: pnpm run build --no-install
+        run: pnpm run build
