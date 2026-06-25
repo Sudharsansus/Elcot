@@ -1,6 +1,6 @@
 import { Component, inject, signal, computed, OnInit, DestroyRef } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { DOCUMENT, NgIf } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -8,7 +8,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NgIf, RouterModule],
+  imports: [RouterOutlet, RouterModule],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })

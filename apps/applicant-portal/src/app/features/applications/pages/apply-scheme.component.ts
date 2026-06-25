@@ -2,10 +2,10 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { ApiClientService } from '@avgc-xr/data-access';
-import { ButtonComponent, SchemeCardComponent, Step, WorkflowStepperComponent } from '@avgc-xr/ui-kit';
+import { ButtonComponent, Step, WorkflowStepperComponent } from '@avgc-xr/ui-kit';
 
 @Component({
-  selector: 'app-apply-scheme', standalone: true, imports: [ButtonComponent, WorkflowStepperComponent, CommonModule, SchemeCardComponent],
+  selector: 'app-apply-scheme', standalone: true, imports: [ButtonComponent, WorkflowStepperComponent, CommonModule],
   templateUrl: './apply-scheme.component.html'
 })
 export class ApplySchemeComponent {
