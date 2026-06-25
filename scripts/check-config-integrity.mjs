@@ -1,0 +1,117 @@
+#!/usr/bin/env node
+// scripts/check-config-integrity.mjs
+//
+// Guards the config-integrity invariants established in the P0 hardening pass
+// (see docs/REMEDIATION-ROADMAP.md) so they cannot silently drift back:
+//
+//   1. .npmrc carries no "override.*" keys (pnpm never reads them; dead config).
+//   2. package.json "pnpm.overrides" exactly matches the lockfile's overrides
+//      (the override config and the lockfile must agree).
+//   3. No banned CI patterns in .github/workflows/*.yml:
+//      --no-frozen-lockfile, "|| true", continue-on-error, "set +e", ./mvnw.
+//   4. Every script referenced by a workflow actually exists on disk.
+//
+// Pure Node built-ins — no dependencies, so the workflow needs no install step.
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const failures = [];
+const fail = (msg) => failures.push(msg);
+const read = (p) => fs.readFileSync(path.join(ROOT, p), 'utf8');
+
+// --- 1. .npmrc has no override.* keys -------------------------------------
+{
+  const npmrc = read('.npmrc');
+  const bad = npmrc
+    .split(/\r?\n/)
+    .filter((l) => /^\s*override\./.test(l));
+  if (bad.length) {
+    fail(`.npmrc contains ${bad.length} "override.*" key(s) — pnpm does not read ` +
+      `overrides from .npmrc. Move them to package.json "pnpm.overrides".`);
+  }
+}
+
+// --- 2. package.json pnpm.overrides === lockfile overrides ------------------
+function parseLockfileOverrides(text) {
+  const lines = text.split(/\r?\n/);
+  const start = lines.findIndex((l) => l.trimEnd() === 'overrides:');
+  if (start === -1) return {};
+  const out = {};
+  for (let i = start + 1; i < lines.length; i++) {
+    const l = lines[i];
+    if (l.trim() === '') continue;
+    if (!/^\s/.test(l)) break; // dedent to a top-level key ends the block
+    const m = l.match(/^\s+(?:'([^']+)'|"([^"]+)"|([^:]+)):\s*(.+?)\s*$/);
+    if (m) {
+      const key = (m[1] || m[2] || m[3]).trim();
+      const val = m[4].replace(/^['"]|['"]$/g, '').trim();
+      out[key] = val;
+    }
+  }
+  return out;
+}
+{
+  const pkg = JSON.parse(read('package.json'));
+  const pkgOv = (pkg.pnpm && pkg.pnpm.overrides) || {};
+  const lockOv = parseLockfileOverrides(read('pnpm-lock.yaml'));
+  const keys = new Set([...Object.keys(pkgOv), ...Object.keys(lockOv)]);
+  for (const k of keys) {
+    if (pkgOv[k] !== lockOv[k]) {
+      fail(`override mismatch for "${k}": package.json=${pkgOv[k] ?? '(absent)'} ` +
+        `vs lockfile=${lockOv[k] ?? '(absent)'}. Run pnpm install to reconcile.`);
+    }
+  }
+}
+
+// --- 3. no banned patterns in workflows ------------------------------------
+const BANNED = [
+  { re: /--no-frozen-lockfile/, label: '--no-frozen-lockfile' },
+  { re: /\|\|\s*true\b/, label: '|| true' },
+  { re: /continue-on-error/, label: 'continue-on-error' },
+  { re: /set\s+\+e\b/, label: 'set +e' },
+  { re: /\.\/mvnw\b/, label: './mvnw (no wrapper in repo)' },
+];
+const wfDir = path.join(ROOT, '.github', 'workflows');
+const workflows = fs.existsSync(wfDir)
+  ? fs.readdirSync(wfDir).filter((f) => /\.ya?ml$/.test(f))
+  : [];
+for (const f of workflows) {
+  const text = fs.readFileSync(path.join(wfDir, f), 'utf8');
+  text.split(/\r?\n/).forEach((line, i) => {
+    for (const b of BANNED) {
+      if (b.re.test(line)) {
+        fail(`banned pattern "${b.label}" in .github/workflows/${f}:${i + 1}`);
+      }
+    }
+  });
+}
+
+// --- 4. scripts referenced by workflows exist ------------------------------
+{
+  const referenced = new Set();
+  for (const f of workflows) {
+    const text = fs.readFileSync(path.join(wfDir, f), 'utf8');
+    for (const m of text.matchAll(/\bscripts\/[\w.\-/]+\.(?:mjs|js|ts|sh)\b/g)) {
+      referenced.add(m[0]);
+    }
+  }
+  for (const ref of referenced) {
+    if (!fs.existsSync(path.join(ROOT, ref))) {
+      fail(`workflow references missing script: ${ref}`);
+    }
+  }
+}
+
+// --- report ----------------------------------------------------------------
+const line = '━'.repeat(64);
+console.log(`\n${line}\n  AVGC-XR Portal — Config Integrity\n${line}`);
+if (failures.length === 0) {
+  console.log('  ✅ All config-integrity checks passed.\n');
+  process.exit(0);
+}
+console.log(`  ❌ ${failures.length} issue(s):`);
+for (const m of failures) console.log(`    - ${m}`);
+console.log('');
+process.exit(1);
