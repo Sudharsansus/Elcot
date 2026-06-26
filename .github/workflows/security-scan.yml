@@ -23,7 +23,7 @@ jobs:
         run: pnpm install --no-frozen-lockfile
       - name: Run dependency audit (fails on any critical/high — no whitelist)
         run: node scripts/check-audit.mjs
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           java-version: '25'
           distribution: 'temurin'
