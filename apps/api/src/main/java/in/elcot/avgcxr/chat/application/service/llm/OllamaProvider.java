@@ -2,6 +2,7 @@ package in.elcot.avgcxr.chat.application.service.llm;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -37,9 +39,15 @@ public class OllamaProvider implements LlmProvider {
       @Value("${avgcxr.llm.ollama.model:llama3.1:8b}") String model) {
     this.baseUrl = baseUrl;
     this.model = model;
+    // Fail fast if the (self-hosted) Ollama host is unreachable or slow, so the
+    // request degrades to the ChatService fallback instead of hanging the thread.
+    SimpleClientHttpRequestFactory rf = new SimpleClientHttpRequestFactory();
+    rf.setConnectTimeout((int) Duration.ofSeconds(5).toMillis());
+    rf.setReadTimeout((int) Duration.ofSeconds(120).toMillis());
     this.http =
         RestClient.builder()
             .baseUrl(baseUrl)
+            .requestFactory(rf)
             .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json")
             .build();
   }
@@ -71,11 +79,14 @@ public class OllamaProvider implements LlmProvider {
         msgs.add(Map.of("role", "system", "content", systemPrompt));
       }
       messages.forEach(
-          m ->
-              msgs.add(
-                  Map.of(
-                      "role", m.get("role"),
-                      "content", m.get("content"))));
+          m -> {
+            String role = m.get("role");
+            String content = m.get("content");
+            msgs.add(
+                Map.of(
+                    "role", role == null ? "user" : role,
+                    "content", content == null ? "" : content));
+          });
       Map<String, Object> body =
           Map.of(
               "model",

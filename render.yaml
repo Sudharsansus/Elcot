@@ -182,6 +182,20 @@ services:
         sync: false
       - key: EMAIL_PASSWORD
         sync: false
+      # ── AI chatbot (Mira) LLM — self-hosted so user data stays in India ──
+      # Mira runs the safe rule-based fallback until a provider is configured. To
+      # go live with the LLM: stand up Ollama (qwen2.5) on an India-region GPU
+      # host, then set these in the Render dashboard —
+      #   AVGCXR_LLM_PROVIDER=ollama
+      #   AVGCXR_LLM_OLLAMA_BASE_URL=http://<that-host>:11434
+      # ChatSafetyGuard (exfil block + PII redaction) + hardened prompts already
+      # protect it. See docs/operations/ai-chatbot-llm.md.
+      - key: AVGCXR_LLM_PROVIDER
+        sync: false
+      - key: AVGCXR_LLM_OLLAMA_BASE_URL
+        sync: false
+      - key: AVGCXR_LLM_OLLAMA_MODEL
+        value: qwen2.5:7b
 
   # ---- Worker (background; no inbound traffic) ----
   - type: worker
