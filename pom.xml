@@ -72,7 +72,7 @@
         <minio.version>8.6.0</minio.version> <!-- 8.5.9 -> 8.6.0: clears CVE-2025-59952 (high) -->
 
         <!-- JWT -->
-        <jjwt.version>0.12.6</jjwt.version>
+        <jjwt.version>0.13.0</jjwt.version>
 
         <!-- MapStruct -->
         <mapstruct.version>1.5.5.Final</mapstruct.version>
