@@ -35,8 +35,10 @@
     </div>
 
     <h1 class="hero-title">
-      <span class="hero-title-en">Where Tamil Nadu <em class="text-gradient">imagines</em> worlds.</span>
-      <span class="hero-title-ta">அனிமேஷன் · VFX · கேமிங் · காமிக்ஸ் · நீட்டிக்கப்பட்ட யதார்த்தம்</span>
+      <span class="hero-line-static">{{ isTa() ? 'தமிழ்நாடு' : 'Where Tamil Nadu' }}</span>
+      <span class="hero-line-typed text-gradient">
+        <app-typewriter [phrases]="typedPhrases" [typeSpeed]="62" [backSpeed]="30" [holdTime]="1700"></app-typewriter>
+      </span>
     </h1>
 
     <p class="hero-subtitle">

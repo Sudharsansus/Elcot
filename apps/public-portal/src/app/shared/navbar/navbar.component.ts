@@ -11,6 +11,7 @@ import { RouterModule, RouterLink, RouterLinkActive } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { I18nService } from '../../core/services/i18n.service';
+import { ThemeService } from '../../core/services/theme.service';
 
 @Component({
   selector: 'app-navbar',
@@ -22,10 +23,16 @@ import { I18nService } from '../../core/services/i18n.service';
 })
 export class NavbarComponent {
   private readonly i18n = inject(I18nService);
+  private readonly themeService = inject(ThemeService);
 
   readonly mobileMenuOpen = signal(false);
   readonly scrolled = signal(false);
   readonly lang = this.i18n.currentLanguage;
+  readonly theme = this.themeService.currentAppliedTheme;
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
+  }
 
   readonly navLinks = [
     { route: '/', labelKey: 'nav.home', exact: true },

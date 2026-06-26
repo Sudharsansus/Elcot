@@ -19,6 +19,7 @@ import { I18nService } from '../../../core/services/i18n.service';
 import { StrapiContentService } from '../../../core/services/strapi-content.service';
 import { SCHEMES_DATA, SECTOR_CATEGORIES, HOMEPAGE_NEWS, Scheme } from '../../schemes/schemes.data';
 import { AuroraHeroComponent } from '../../../shared/motion/aurora-hero.component';
+import { TypewriterComponent } from '../../../shared/motion/typewriter.component';
 import { SchemeFinderComponent } from '../components/scheme-finder.component';
 import { RevealDirective } from '../../../shared/directives/reveal.directive';
 import { CountUpDirective } from '../../../shared/directives/count-up.directive';
@@ -29,7 +30,7 @@ import { CountUpDirective } from '../../../shared/directives/count-up.directive'
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule, RouterModule, MatIconModule,
-    AuroraHeroComponent, SchemeFinderComponent,
+    AuroraHeroComponent, TypewriterComponent, SchemeFinderComponent,
     RevealDirective, CountUpDirective,
   ],
   templateUrl: './home.component.html',
@@ -41,6 +42,14 @@ export class HomeComponent implements OnInit {
 
   readonly lang = this.i18n.currentLanguage;
   readonly isTa = computed(() => this.lang() === 'ta');
+
+  // Hero typewriter — Tamil first, then English, looped.
+  readonly typedPhrases = [
+    'உலகங்களைக் கற்பனை செய்கிறது',
+    'imagines new worlds',
+    'அனிமேஷன் · VFX · XR ஐ இயக்குகிறது',
+    "powers India's creative tech",
+  ];
 
   // Live CMS content (fails soft). Static policy content renders immediately.
   readonly cmsNews = this.strapi.news;

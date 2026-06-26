@@ -83,7 +83,9 @@ export class StrapiContentService {
       }
       const query = new URLSearchParams(params).toString();
       const res = await firstValueFrom(
-        this.http.get<StrapiListResponse<NewsItem>>(`${this.baseUrl}/news-items?${query}`),
+        this.http.get<StrapiListResponse<NewsItem>>(`${this.baseUrl}/news-items?${query}`, {
+          headers: { 'X-Silent-Error': '1' },
+        }),
       );
       const items = res?.data ?? [];
       this.news.set(items);
@@ -108,7 +110,9 @@ export class StrapiContentService {
       };
       const query = new URLSearchParams(params).toString();
       const res = await firstValueFrom(
-        this.http.get<StrapiListResponse<EventItem>>(`${this.baseUrl}/events?${query}`),
+        this.http.get<StrapiListResponse<EventItem>>(`${this.baseUrl}/events?${query}`, {
+          headers: { 'X-Silent-Error': '1' },
+        }),
       );
       const items = res?.data ?? [];
       this.events.set(items);

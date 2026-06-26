@@ -23,6 +23,8 @@
   --glass-border: rgba(20, 18, 22, 0.10);
   --glass-border-strong: rgba(20, 18, 22, 0.20);
   --line: rgba(20, 18, 22, 0.10);
+  --header-bg: rgba(255, 255, 255, 0.72);
+  --header-bg-scrolled: rgba(255, 255, 255, 0.90);
 
   // ---- Ink ----
   --ink: #14161d;
@@ -120,6 +122,43 @@
   --color-bg: var(--bg);
   --color-border: var(--line);
   --spacing-md: 1rem;
+}
+
+// ------------------------------------------------------------
+// DARK MODE — toggled via ThemeService -> body[data-theme="dark"]
+// (keeps the crimson/coral/gold brand accents; flips surfaces + ink)
+// ------------------------------------------------------------
+body[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #14110d;
+  --bg-1: #1c1813;
+  --bg-2: #221d16;
+  --surface: rgba(255, 255, 255, 0.05);
+  --surface-2: rgba(255, 255, 255, 0.03);
+  --surface-strong: rgba(28, 24, 19, 0.9);
+  --glass: rgba(28, 24, 19, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.10);
+  --glass-border-strong: rgba(255, 255, 255, 0.20);
+  --line: rgba(255, 255, 255, 0.10);
+  --header-bg: rgba(26, 22, 17, 0.62);
+  --header-bg-scrolled: rgba(26, 22, 17, 0.86);
+
+  --ink: #f6f1e9;
+  --ink-dim: #c9c2b6;
+  --ink-mut: #968d7f;
+  --ink-faint: #5f594e;
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 14px 34px -18px rgba(0, 0, 0, 0.7);
+  --shadow-lift: 0 1px 2px rgba(0, 0, 0, 0.5), 0 26px 52px -22px rgba(0, 0, 0, 0.85);
+  --glow-soft: 0 18px 50px -22px rgba(0, 0, 0, 0.7);
+}
+body[data-theme="dark"]::before {
+  background:
+    radial-gradient(55vw 45vw at 8% -10%, rgba(255, 106, 61, 0.16), transparent 60%),
+    radial-gradient(45vw 40vw at 98% 0%, rgba(255, 193, 77, 0.13), transparent 60%),
+    radial-gradient(50vw 45vw at 85% 105%, rgba(200, 16, 46, 0.13), transparent 60%);
 }
 
 // ------------------------------------------------------------
