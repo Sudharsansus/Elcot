@@ -78,6 +78,10 @@ public class SecurityConfig {
                     .requestMatchers(
                         new AntPathRequestMatcher("/api/v1/notifications/push", "POST"))
                     .permitAll()
+                    // Payment checkout init (publishable key only); orders/verify stay
+                    // authenticated
+                    .requestMatchers(new AntPathRequestMatcher("/api/v1/payments/config", "GET"))
+                    .permitAll()
                     .requestMatchers(new AntPathRequestMatcher("/v3/api-docs/**"))
                     .permitAll()
                     .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**"))

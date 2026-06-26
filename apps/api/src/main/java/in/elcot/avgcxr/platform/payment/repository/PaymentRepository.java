@@ -1,0 +1,10 @@
+package in.elcot.avgcxr.platform.payment.repository;
+
+import in.elcot.avgcxr.platform.payment.entity.PaymentEntity;
+import java.util.Optional;
+import java.util.UUID;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface PaymentRepository extends JpaRepository<PaymentEntity, UUID> {
+  Optional<PaymentEntity> findByOrderId(String orderId);
+}
