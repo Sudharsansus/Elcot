@@ -1,5 +1,6 @@
 package in.elcot.avgcxr.ecosystem.businessconnect.infrastructure.persistence.entity;
 
+import in.elcot.avgcxr.common.infrastructure.security.EncryptedStringConverter;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -22,10 +23,12 @@ public class CompanyEntity {
   @Column(name = "description", columnDefinition = "TEXT")
   private String description;
 
-  @Column(name = "cin", length = 50)
+  @Convert(converter = EncryptedStringConverter.class)
+  @Column(name = "cin", columnDefinition = "TEXT")
   private String cin;
 
-  @Column(name = "gstin", length = 50)
+  @Convert(converter = EncryptedStringConverter.class)
+  @Column(name = "gstin", columnDefinition = "TEXT")
   private String gstin;
 
   @Column(name = "district", length = 100)
@@ -34,10 +37,12 @@ public class CompanyEntity {
   @Column(name = "state", length = 100)
   private String state;
 
-  @Column(name = "contact_email", length = 255)
+  @Convert(converter = EncryptedStringConverter.class)
+  @Column(name = "contact_email", columnDefinition = "TEXT")
   private String contactEmail;
 
-  @Column(name = "contact_phone", length = 20)
+  @Convert(converter = EncryptedStringConverter.class)
+  @Column(name = "contact_phone", columnDefinition = "TEXT")
   private String contactPhone;
 
   @Column(name = "website", length = 500)

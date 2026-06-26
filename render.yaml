@@ -196,6 +196,12 @@ services:
         sync: false
       - key: AVGCXR_LLM_OLLAMA_MODEL
         value: qwen2.5:7b
+      # Field-level encryption of sensitive PII at rest (tender §IV.8): address,
+      # pincode, company CIN/GSTIN/contact. Generate a 256-bit key ONCE and keep it
+      # safe (losing it makes encrypted rows unrecoverable):  openssl rand -base64 32
+      # Until set, those columns store plaintext (dev); setting it encrypts on write.
+      - key: APP_ENCRYPTION_KEY
+        sync: false
 
   # ---- Worker (background; no inbound traffic) ----
   - type: worker

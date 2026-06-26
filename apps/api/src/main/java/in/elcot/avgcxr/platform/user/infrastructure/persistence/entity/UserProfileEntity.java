@@ -1,5 +1,6 @@
 package in.elcot.avgcxr.platform.user.infrastructure.persistence.entity;
 
+import in.elcot.avgcxr.common.infrastructure.security.EncryptedStringConverter;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,6 +27,7 @@ public class UserProfileEntity {
   @Column(name = "gender", length = 10)
   private String gender;
 
+  @Convert(converter = EncryptedStringConverter.class)
   @Column(name = "address", columnDefinition = "TEXT")
   private String address;
 
@@ -35,7 +37,8 @@ public class UserProfileEntity {
   @Column(name = "state", length = 100)
   private String state;
 
-  @Column(name = "pincode", length = 10)
+  @Convert(converter = EncryptedStringConverter.class)
+  @Column(name = "pincode", columnDefinition = "TEXT")
   private String pincode;
 
   @Column(name = "created_at", nullable = false)
