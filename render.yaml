@@ -202,6 +202,54 @@ services:
       # Until set, those columns store plaintext (dev); setting it encrypts on write.
       - key: APP_ENCRYPTION_KEY
         sync: false
+      # Blind-index key for email/phone exact-match lookup once those columns are
+      # encrypted (tender §IV.8). Use a value DISTINCT from APP_ENCRYPTION_KEY.
+      # Inert until set + the cutover in docs/security/pii-blind-index.md is run.
+      - key: APP_BLIND_INDEX_KEY
+        sync: false
+      # ── Internal notification delivery (worker → API callback) ──
+      # Shared secret protecting POST /api/v1/notifications/{email,sms,push}. Must
+      # match the worker's AVGCXR_API_INTERNAL_TOKEN. Until set, those endpoints
+      # are closed (503).  Generate:  openssl rand -hex 32
+      - key: AVGCXR_API_INTERNAL_TOKEN
+        sync: false
+      # ── Email gateway (SMTP) ── set all to deliver real email; else logs only.
+      - key: AVGCXR_MAIL_ENABLED
+        value: "false"
+      - key: AVGCXR_MAIL_FROM
+        sync: false
+      - key: SPRING_MAIL_HOST
+        sync: false
+      - key: SPRING_MAIL_PORT
+        value: "587"
+      - key: SPRING_MAIL_USERNAME
+        sync: false
+      - key: SPRING_MAIL_PASSWORD
+        sync: false
+      # ── SMS gateway (MSG91) ── set auth-key (DLT-approved) to deliver real SMS.
+      - key: AVGCXR_SMS_MSG91_AUTH_KEY
+        sync: false
+      - key: AVGCXR_SMS_MSG91_SENDER_ID
+        value: ELCOTN
+      # ── Payment gateway (Razorpay) ── set test/live keys to enable; else /orders
+      # returns 503 and GET /payments/config reports enabled:false.
+      - key: AVGCXR_PAYMENT_RAZORPAY_KEY_ID
+        sync: false
+      - key: AVGCXR_PAYMENT_RAZORPAY_KEY_SECRET
+        sync: false
+      - key: AVGCXR_PAYMENT_CURRENCY
+        value: INR
+      # ── SSO / OIDC federation (ELCOT IdP or Keycloak) ── set the client id+secret
+      # and the IdP issuer-uri to activate federated SSO (see SsoSecurityConfig).
+      # Inert until the client-id is set; the email/password JWT login is unaffected.
+      - key: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KEYCLOAK_CLIENT_ID
+        sync: false
+      - key: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KEYCLOAK_CLIENT_SECRET
+        sync: false
+      - key: SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI
+        sync: false
+      - key: AVGCXR_SSO_SUCCESS_REDIRECT
+        sync: false
 
   # ---- Worker (background; no inbound traffic) ----
   - type: worker
@@ -251,6 +299,12 @@ services:
         value: application-documents
       - key: JWT_SECRET
         fromService: { name: avgcxr-api, type: web, envVarKey: JWT_SECRET }
+      # Notification delivery callback into the API. Internal token MUST match the
+      # API's AVGCXR_API_INTERNAL_TOKEN; base-url is the API's internal address.
+      - key: AVGCXR_API_INTERNAL_TOKEN
+        sync: false
+      - key: AVGCXR_API_BASE_URL
+        value: http://avgcxr-api:10000
 
   # ============================================================
   # CMS (Strapi 5 — built from apps/cms context)
