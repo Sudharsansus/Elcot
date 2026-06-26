@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.6
 
 # Stage 1: Build
-FROM eclipse-temurin:21-jdk-alpine AS build
+FROM eclipse-temurin:25-jdk-alpine AS build
 WORKDIR /workspace
 RUN apk add --no-cache maven bash
 COPY pom.xml .
@@ -11,7 +11,7 @@ COPY apps apps
 RUN mvn -B -ntp -pl apps/api -am package -DskipTests
 
 # Stage 2: Runtime
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:25-jre-alpine
 WORKDIR /app
 RUN addgroup -S avgcxr 2>/dev/null; adduser -S avgcxr -G avgcxr 2>/dev/null; true
 USER avgcxr

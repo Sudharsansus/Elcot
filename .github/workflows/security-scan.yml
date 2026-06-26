@@ -25,7 +25,7 @@ jobs:
         run: node scripts/check-audit.mjs
       - uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: '25'
           distribution: 'temurin'
           cache: maven
       - name: Build & test API module

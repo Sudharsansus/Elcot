@@ -35,9 +35,9 @@
     </modules>
 
     <properties>
-        <java.version>21</java.version>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <java.version>25</java.version>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
         <maven.compiler.parameters>true</maven.compiler.parameters>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -77,7 +77,10 @@
         <!-- MapStruct -->
         <mapstruct.version>1.5.5.Final</mapstruct.version>
 
-        <!-- Lombok (managed by Spring Boot parent) -->
+        <!-- Lombok: override the Spring-Boot-managed version. JDK 25 requires
+             Lombok >= 1.18.40 (older releases fail with "Unable to load javac
+             processor" on JDK 25). -->
+        <lombok.version>1.18.40</lombok.version>
 
         <!-- Test -->
         <testcontainers.version>1.20.1</testcontainers.version>
@@ -274,7 +277,9 @@
                     <configuration>
                         <java>
                             <googleJavaFormat>
-                                <version>1.17.0</version>
+                                <!-- 1.28.0: first google-java-format that runs on JDK 25
+                                     (1.17 cannot parse/format under a JDK 25 toolchain). -->
+                                <version>1.28.0</version>
                                 <style>GOOGLE</style>
                             </googleJavaFormat>
                             <removeUnusedImports/>
