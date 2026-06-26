@@ -21,7 +21,14 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
 
   @Override
   public User save(User u) {
-    return mapper.toDomain(jpaRepo.save(mapper.toEntity(u, null)));
+    // Updates (login bookkeeping, profile edits, lockout) go through here. The
+    // domain User does NOT carry the password hash, so we must preserve the
+    // stored one — otherwise the mapper would write password_hash = NULL and
+    // violate the NOT NULL constraint. New users are created via
+    // saveWithCredentials(), which supplies the hash explicitly.
+    String existingHash =
+        jpaRepo.findById(u.getId().value()).map(UserEntity::getPasswordHash).orElse(null);
+    return mapper.toDomain(jpaRepo.save(mapper.toEntity(u, existingHash)));
   }
 
   @Override

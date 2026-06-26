@@ -93,16 +93,20 @@ public class DashboardController {
 
   // ---- helpers ----
   private UUID currentUserId(UserDetails principal) {
-    // Spring Security sets the principal name to the username; the UUID is the stable user id.
-    // We resolve it via a quick lookup. For now we return a stable placeholder derived from the
-    // username.
-    // (If you have a UserRepositoryPort, swap this for a real fetch.)
-    return UUID.nameUUIDFromBytes(principal.getUsername().getBytes());
+    // The JWT subject is the user's UUID (see JwtTokenProvider.generateAccessToken),
+    // and the JwtAuthenticationFilter sets it as the principal username.
+    try {
+      return UUID.fromString(principal.getUsername());
+    } catch (IllegalArgumentException ex) {
+      // Fallback for non-UUID principals (e.g. username-based tokens).
+      return UUID.nameUUIDFromBytes(principal.getUsername().getBytes());
+    }
   }
 
   private long countWhereUser(String table, UUID userId, String status) {
+    // applications link to the user via applicant_id (not user_id).
     StringBuilder sql =
-        new StringBuilder("SELECT COUNT(*) FROM ").append(table).append(" WHERE user_id = :uid");
+        new StringBuilder("SELECT COUNT(*) FROM ").append(table).append(" WHERE applicant_id = :uid");
     if (status != null) sql.append(" AND status = :status");
     var q = em.createNativeQuery(sql.toString()).setParameter("uid", userId);
     if (status != null) q.setParameter("status", status);
