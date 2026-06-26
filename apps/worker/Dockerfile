@@ -5,6 +5,7 @@ FROM eclipse-temurin:21-jdk-alpine AS build
 WORKDIR /workspace
 RUN apk add --no-cache maven bash
 COPY pom.xml .
+COPY checkstyle.xml .
 COPY packages packages
 COPY apps apps
 RUN mvn -B -ntp -pl apps/worker -am package -DskipTests
