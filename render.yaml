@@ -1,10 +1,9 @@
 # ============================================================
-# Render Blueprint — Tamil Nadu AVGC-XR Portal (BACKEND INFRASTRUCTURE)
+# Render Blueprint — Tamil Nadu AVGC-XR Portal (FULL STACK)
 # ============================================================
-# The 3 Angular portals are deployed as standalone Render static sites (created
-# directly, not via this Blueprint). This Blueprint provisions the backend
-# infrastructure only: Postgres x2, Redis, RabbitMQ, Elasticsearch, MinIO, API,
-# worker, CMS. Apply from the Render dashboard: New > Blueprint > this repo.
+# One Blueprint creates everything: Postgres x2, Redis, RabbitMQ, Elasticsearch,
+# MinIO, API, worker, CMS, and the 3 Angular static-site portals.
+# Apply from the Render dashboard: New > Blueprint > this repo.
 # ============================================================
 # Built from the repo's REAL config (apps/api application.yml, apps/cms config,
 # the Dockerfiles) — not a blind copy of infra/docker. Deliberate, verified
@@ -263,3 +262,90 @@ services:
         generateValue: true
       - key: JWT_SECRET
         generateValue: true
+
+  # ============================================================
+  # FRONTENDS (Angular 19 static sites — Render CDN)
+  # apiUrl/strapiUrl are baked into environment.prod.ts at build time and
+  # already point at avgcxr-api / avgcxr-cms. .npmrc sets frozen-lockfile=false
+  # so the mock-registry lockfile regenerates on Render's real npm.
+  # ============================================================
+  - type: web
+    name: avgcxr-public-portal
+    runtime: static
+    buildCommand: >-
+      corepack enable &&
+      pnpm install --no-frozen-lockfile &&
+      pnpm exec nx build public-portal --configuration=production
+    staticPublishPath: dist/public-portal/browser
+    pullRequestPreviewsEnabled: false
+    envVars:
+      - key: NODE_VERSION
+        value: "20.18.0"
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+
+  - type: web
+    name: avgcxr-applicant-portal
+    runtime: static
+    buildCommand: >-
+      corepack enable &&
+      pnpm install --no-frozen-lockfile &&
+      pnpm exec nx build applicant-portal --configuration=production
+    staticPublishPath: dist/applicant-portal/browser
+    pullRequestPreviewsEnabled: false
+    envVars:
+      - key: NODE_VERSION
+        value: "20.18.0"
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+
+  - type: web
+    name: avgcxr-admin-portal
+    runtime: static
+    buildCommand: >-
+      corepack enable &&
+      pnpm install --no-frozen-lockfile &&
+      pnpm exec nx build admin-portal --configuration=production
+    staticPublishPath: dist/admin-portal/browser
+    pullRequestPreviewsEnabled: false
+    envVars:
+      - key: NODE_VERSION
+        value: "20.18.0"
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
