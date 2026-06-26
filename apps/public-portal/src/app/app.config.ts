@@ -9,11 +9,17 @@ import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { languageInterceptor } from './core/interceptors/language.interceptor';
 import { tracingInterceptor } from './core/interceptors/tracing.interceptor';
+import { unwrapInterceptor } from './core/interceptors/unwrap.interceptor';
+import { API_BASE_URL } from './core/tokens/api-base-url.token';
+import { environment } from '../environments/environment';
 import { I18nService } from './core/services/i18n.service';
 import { GlobalErrorHandler } from './core/global-error-handler';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    // Point the API client at the real backend (the token otherwise defaults
+    // to the same-origin "/api", which has no backend on the static host).
+    { provide: API_BASE_URL, useValue: environment.apiUrl },
     provideRouter(
       routes,
       withComponentInputBinding(),
@@ -27,7 +33,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     provideHttpClient(
       withFetch(),
-      withInterceptors([tracingInterceptor, authInterceptor, languageInterceptor, errorInterceptor])
+      withInterceptors([tracingInterceptor, authInterceptor, languageInterceptor, unwrapInterceptor, errorInterceptor])
     ),
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
     TranslateModule.forRoot({
