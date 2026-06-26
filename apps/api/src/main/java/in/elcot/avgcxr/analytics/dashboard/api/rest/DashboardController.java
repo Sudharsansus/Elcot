@@ -106,7 +106,9 @@ public class DashboardController {
   private long countWhereUser(String table, UUID userId, String status) {
     // applications link to the user via applicant_id (not user_id).
     StringBuilder sql =
-        new StringBuilder("SELECT COUNT(*) FROM ").append(table).append(" WHERE applicant_id = :uid");
+        new StringBuilder("SELECT COUNT(*) FROM ")
+            .append(table)
+            .append(" WHERE applicant_id = :uid");
     if (status != null) sql.append(" AND status = :status");
     var q = em.createNativeQuery(sql.toString()).setParameter("uid", userId);
     if (status != null) q.setParameter("status", status);
