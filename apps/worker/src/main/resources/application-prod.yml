@@ -3,7 +3,9 @@ spring:
     host: ${RABBITMQ_HOST}
     port: 5672
     username: ${RABBITMQ_USER}
-    password: ${RABBITMQ_PASS}
+    # render.yaml provides RABBITMQ_PASSWORD (matches the API + broker); the old
+    # ${RABBITMQ_PASS} was unset and fell back to a wrong default -> ACCESS_REFUSED.
+    password: ${RABBITMQ_PASSWORD}
     listener:
       simple:
         prefetch: 50

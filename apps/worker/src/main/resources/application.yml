@@ -8,7 +8,7 @@ spring:
     host: ${RABBITMQ_HOST:localhost}
     port: ${RABBITMQ_PORT:5672}
     username: ${RABBITMQ_USER:avgcxr_rmq_user}
-    password: ${RABBITMQ_PASS:avgcxr_rmq_password}
+    password: ${RABBITMQ_PASSWORD:avgcxr_rmq_password}
     virtual-host: ${RABBITMQ_VHOST:/avgcxr}
     listener:
       simple:
