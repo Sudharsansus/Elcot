@@ -56,7 +56,24 @@
 .mira-id-text { display: flex; flex-direction: column; line-height: 1.15; }
 .mira-id-text strong { font-family: var(--font-display); font-size: 1rem; }
 .mira-status { font-size: 0.72rem; color: rgba(255, 255, 255, 0.85); }
-.mira-head-actions { display: inline-flex; gap: 0.25rem; }
+.mira-head-actions { display: inline-flex; align-items: center; gap: 0.3rem; }
+
+// EN / தமிழ் voice-language chooser
+.mira-lang {
+  display: inline-flex; align-items: center;
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: var(--radius-full);
+  padding: 2px;
+}
+.mira-lang button {
+  min-width: 30px; height: 26px; padding: 0 0.5rem;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display); font-size: 0.74rem; font-weight: 700; line-height: 1;
+  color: rgba(255, 255, 255, 0.82);
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.mira-lang button[lang="ta"] { font-family: var(--font-tamil); font-size: 0.9rem; }
+.mira-lang button.on { background: #fff; color: var(--violet); }
 .mira-icon { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; color: #fff; opacity: 0.85; transition: background var(--dur-fast), opacity var(--dur-fast); }
 .mira-icon:hover { background: rgba(255, 255, 255, 0.16); opacity: 1; }
 .mira-icon.on { background: rgba(255, 255, 255, 0.22); opacity: 1; }

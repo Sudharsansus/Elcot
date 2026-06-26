@@ -22,6 +22,12 @@
         </span>
       </div>
       <div class="mira-head-actions">
+        <div class="mira-lang" role="group" [attr.aria-label]="lang()==='ta' ? 'Mira மொழி' : 'Mira language'">
+          <button type="button" [class.on]="lang()==='en'" (click)="setVoiceLang('en')"
+                  [attr.aria-pressed]="lang()==='en'" aria-label="English voice">EN</button>
+          <button type="button" [class.on]="lang()==='ta'" (click)="setVoiceLang('ta')"
+                  [attr.aria-pressed]="lang()==='ta'" aria-label="Tamil voice" lang="ta">த</button>
+        </div>
         <button type="button" class="mira-icon" [class.on]="speakOn()" (click)="toggleSpeak()"
                 [attr.aria-pressed]="speakOn()" aria-label="Toggle voice replies">
           @if (speakOn()) {

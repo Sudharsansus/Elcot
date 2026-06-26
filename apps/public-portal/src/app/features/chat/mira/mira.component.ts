@@ -60,6 +60,7 @@ export class MiraComponent implements OnDestroy {
     afterNextRender(() => {
       const w = window as unknown as Record<string, unknown>;
       this.voiceSupported.set(!!(w['webkitSpeechRecognition'] || w['SpeechRecognition']));
+      this.loadVoices();
     });
     effect(() => { this.messages(); queueMicrotask(() => this.scrollToEnd()); });
   }
@@ -210,7 +211,45 @@ export class MiraComponent implements OnDestroy {
     try { this.recognition?.stop(); } catch { /* ignore */ }
   }
 
-  // ---- voice output ----
+  // ---- voice output (female voice, EN/TA selectable) ----
+  private voices: SpeechSynthesisVoice[] = [];
+  // name fragments that identify a female/girl voice across OSes & languages
+  private static readonly FEMALE_HINTS = [
+    'female', 'samantha', 'zira', 'veena', 'raveena', 'heera', 'pallavi',
+    'kalpana', 'asha', 'swara', 'neerja', 'aditi', 'sangeeta', 'tessa',
+    'fiona', 'karen', 'serena', 'moira', 'google uk english female', 'google தமிழ்',
+  ];
+
+  private loadVoices(): void {
+    if (typeof speechSynthesis === 'undefined') return;
+    const grab = () => { this.voices = speechSynthesis.getVoices() ?? []; };
+    grab();
+    try { speechSynthesis.onvoiceschanged = grab; } catch { /* ignore */ }
+  }
+
+  /** Pick a female voice for the language, preferring an Indian-region match. */
+  private pickVoice(lang: 'en' | 'ta'): SpeechSynthesisVoice | null {
+    if (!this.voices.length) return null;
+    const pref = lang === 'ta' ? 'ta' : 'en';
+    const pool = this.voices.filter((v) => v.lang?.toLowerCase().startsWith(pref));
+    const list = pool.length ? pool : this.voices;
+    const region = lang === 'ta' ? 'ta-in' : 'en-in';
+    const isFemale = (v: SpeechSynthesisVoice) =>
+      MiraComponent.FEMALE_HINTS.some((h) => v.name.toLowerCase().includes(h));
+    return (
+      list.find((v) => isFemale(v) && v.lang?.toLowerCase() === region) ||
+      list.find((v) => isFemale(v)) ||
+      list.find((v) => v.lang?.toLowerCase() === region) ||
+      list[0] || null
+    );
+  }
+
+  /** Choose Mira's language — switches her text replies AND her voice together. */
+  setVoiceLang(lang: 'en' | 'ta'): void {
+    if (this.lang() === lang) return;
+    void this.i18n.setLanguage(lang);
+  }
+
   toggleSpeak(): void {
     this.speakOn.update((v) => !v);
     if (!this.speakOn()) this.stopSpeaking();
@@ -220,8 +259,11 @@ export class MiraComponent implements OnDestroy {
     try {
       speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(text.replace(/[•*_#` ]/g, ' ').slice(0, 420));
+      const voice = this.pickVoice(this.lang() === 'ta' ? 'ta' : 'en');
+      if (voice) u.voice = voice;
       u.lang = this.lang() === 'ta' ? 'ta-IN' : 'en-IN';
-      u.rate = 1.03;
+      u.rate = 1.0;
+      u.pitch = 1.18; // brighter, younger female timbre
       speechSynthesis.speak(u);
     } catch { /* ignore */ }
   }
