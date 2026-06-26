@@ -9,6 +9,9 @@ import in.elcot.avgcxr.platform.user.application.service.UserService;
 import in.elcot.avgcxr.platform.user.domain.model.UserId;
 import jakarta.validation.Valid;
 import java.net.URI;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +41,12 @@ public class UserController {
     var user = userService.create(cmd);
     return ResponseEntity.created(URI.create("/api/v1/users/" + user.getId()))
         .body(UserResponse.from(user));
+  }
+
+  @PreAuthorize("hasAnyRole('ADMIN','NODAL_OFFICER','DISTRICT_OFFICER')")
+  @GetMapping
+  public ResponseEntity<Page<UserResponse>> list(@PageableDefault(size = 20) Pageable pageable) {
+    return ResponseEntity.ok(userService.list(pageable).map(UserResponse::from));
   }
 
   @GetMapping("/{id}")

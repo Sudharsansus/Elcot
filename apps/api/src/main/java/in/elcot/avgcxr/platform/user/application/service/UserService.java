@@ -70,6 +70,12 @@ public class UserService
     return userRepo.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
   }
 
+  /** Admin: paginated list of all users. */
+  public org.springframework.data.domain.Page<User> list(
+      org.springframework.data.domain.Pageable pageable) {
+    return userRepo.findAll(pageable);
+  }
+
   @Transactional
   public User update(
       UserId id, in.elcot.avgcxr.platform.user.application.command.UpdateUserCommand cmd) {

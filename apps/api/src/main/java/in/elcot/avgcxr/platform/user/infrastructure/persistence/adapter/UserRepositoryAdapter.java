@@ -7,6 +7,8 @@ import in.elcot.avgcxr.platform.user.infrastructure.persistence.entity.UserEntit
 import in.elcot.avgcxr.platform.user.infrastructure.persistence.mapper.UserMapper;
 import in.elcot.avgcxr.platform.user.infrastructure.persistence.repository.JpaUserRepository;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -36,6 +38,11 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     UserEntity entity = mapper.toEntity(u, passwordHash);
     UserEntity saved = jpaRepo.save(entity);
     return mapper.toDomain(saved);
+  }
+
+  @Override
+  public Page<User> findAll(Pageable pageable) {
+    return jpaRepo.findAll(pageable).map(mapper::toDomain);
   }
 
   @Override
