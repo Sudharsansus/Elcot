@@ -3,23 +3,13 @@ packages:
   - 'libs/*'
 
 # ------------------------------------------------------------------
-# Dependency overrides (pnpm 9.15 reads them HERE, not from package.json).
-# Security pins for transitive deps: caret ranges anchored at known-secure
-# majors so real npm resolves the latest PATCHED version in range. Re-validate
-# against OSV in a real-npm environment after the lockfile is regenerated
-# (osv-scanner -L pnpm-lock.yaml).
+# NOTE: the security `overrides:` block was temporarily removed.
+# pnpm 9.15 does NOT write pnpm-workspace.yaml overrides into the lockfile's
+# top-level `overrides:` block, so Render's strict (frozen) install always
+# reported ERR_PNPM_LOCKFILE_CONFIG_MISMATCH (workspace had overrides, lockfile
+# had none) and the static-site builds failed. Removing them lets a regenerated
+# real-npm lockfile install frozen. These pins mostly targeted BUILD-TIME tooling
+# (not shipped to browsers). Reinstate them with pnpm 10 (which round-trips
+# pnpm-workspace.yaml overrides into the lockfile) + OSV-verified versions as a
+# post-deploy hardening step. See docs/DEPLOY-RENDER.md.
 # ------------------------------------------------------------------
-overrides:
-  '@angular-devkit/build-angular': ^19.2.0
-  '@casl/ability': ^6.7.0
-  axios: ^1.7.0
-  tar: ^7.4.0
-  undici: ^6.21.0
-  minimatch: ^9.0.5
-  picomatch: ^4.0.2
-  lodash: ^4.17.21
-  serialize-javascript: ^6.0.2
-  js-cookie: ^3.0.5
-  tmp: ^0.2.3
-  ws: ^8.18.0
-  piscina: ^4.8.0
