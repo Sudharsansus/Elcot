@@ -111,15 +111,44 @@
   --z-bg: 0; --z-base: 1; --z-sticky: 100; --z-header: 200;
   --z-overlay: 800; --z-modal: 900; --z-toast: 1000; --z-cursor: 9999;
 
-  // legacy aliases
+  // legacy aliases — older component SCSS across all pages references these names
   --color-primary: var(--violet);
   --color-primary-dark: var(--violet-dark);
+  --color-primary-light: var(--violet-light);
+  --color-secondary: var(--magenta);
+  --color-secondary-dark: #be185d;
+  --color-secondary-light: #f472b6;
   --color-text-primary: var(--ink);
   --color-text-secondary: var(--ink-dim);
   --color-text-tertiary: var(--ink-mut);
+  --color-text-disabled: var(--ink-faint);
+  --color-text-inverse: #ffffff;
   --color-surface: var(--surface);
   --color-bg: var(--bg);
+  --color-bg-subtle: var(--bg-2);
+  --color-bg-elevated: var(--bg-1);
   --color-border: var(--line);
+  --color-divider: var(--line);
+  --color-success: var(--success);
+  --color-success-bg: #e7f6ed;
+  --color-warning: var(--warning);
+  --color-warning-bg: #fdf2e3;
+  --color-error: var(--magenta);
+  --color-error-bg: #fdeaf3;
+  --color-info: var(--blue);
+  --color-info-bg: #e8effd;
+  --color-sector-animation: var(--sector-animation);
+  --color-sector-vfx: var(--sector-vfx);
+  --color-sector-gaming: var(--sector-gaming);
+  --color-sector-comics: var(--sector-comics);
+  --color-sector-xr: var(--sector-xr);
+  --gradient-hero: var(--grad-aurora);
+  --shadow-focus: 0 0 0 4px rgba(124, 58, 237, 0.18);
+  --shadow-md: var(--shadow-card);
+  --font-serif: var(--font-display);
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
   --spacing-md: 1rem;
 }
 
@@ -361,6 +390,30 @@ main { position: relative; z-index: var(--z-base); }
 // ------------------------------------------------------------
 @keyframes shimmer { 0% { background-position: -800px 0; } 100% { background-position: 800px 0; } }
 .skeleton { background: linear-gradient(90deg, var(--bg-2) 25%, #ece6fb 50%, var(--bg-2) 75%); background-size: 1600px 100%; animation: shimmer 1.8s infinite linear; border-radius: var(--radius-md); }
+
+// ------------------------------------------------------------
+// AUTH FORMS — projected into <app-auth-shell>, so must be global
+// ------------------------------------------------------------
+.auth-heading { font-family: var(--font-display); font-size: var(--text-2xl); font-weight: 700; color: var(--ink); margin: 0 0 6px; }
+.auth-subheading { font-size: var(--text-base); color: var(--ink-dim); margin: 0 0 24px; line-height: 1.5; }
+.auth-form { display: flex; flex-direction: column; gap: 14px; }
+.auth-form .mat-mdc-form-field { width: 100%; }
+.auth-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.auth-submit {
+  width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 13px 20px; background: var(--grad-warm); color: #fff;
+  border: none; border-radius: var(--radius-full);
+  font-family: inherit; font-size: var(--text-base); font-weight: 700; cursor: pointer;
+  box-shadow: var(--glow-crimson);
+  transition: transform var(--dur-fast) ease, box-shadow var(--dur-normal) ease;
+}
+.auth-submit:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 18px 40px -14px rgba(124, 58, 237, 0.5); }
+.auth-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+.auth-submit:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
+.auth-links { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-top: 18px; font-size: var(--text-sm); }
+.auth-links a { color: var(--violet); font-weight: 600; }
+.auth-links a:hover { text-decoration: underline; }
+@media (max-width: 480px) { .auth-grid-2 { grid-template-columns: 1fr; } }
 
 // ------------------------------------------------------------
 // REDUCED MOTION
