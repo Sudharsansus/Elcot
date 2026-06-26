@@ -18,3 +18,14 @@ management:
   endpoint:
     health:
       show-details: never
+
+# Do not publish the internal API surface in production. With these disabled,
+# /v3/api-docs/** and /swagger-ui/** return 404, so there is no public catalog of
+# every endpoint/parameter. (Dev keeps them via the default profile for tooling.)
+# Note: this is obscurity, not access control — every data endpoint is still
+# protected by JWT + @PreAuthorize regardless of whether its URL is known.
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
