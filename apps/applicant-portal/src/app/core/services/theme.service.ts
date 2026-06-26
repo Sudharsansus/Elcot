@@ -40,7 +40,7 @@ export class ThemeService {
     this.document.body.setAttribute('data-theme', resolved);
     const metaTheme = this.document.querySelector('meta[name="theme-color"]');
     if (metaTheme) {
-      metaTheme.setAttribute('content', resolved === 'dark' ? '#121212' : '#1a237e');
+      metaTheme.setAttribute('content', resolved === 'dark' ? '#120f1c' : '#7c3aed');
     }
   }
 

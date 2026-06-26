@@ -1,10 +1,14 @@
+// ============================================================
+// PORTAL SHELL — glass violet header + deep-purple footer
+// ============================================================
 .app-header {
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
-  box-shadow: var(--shadow-sm);
+  background: var(--header-bg);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border-bottom: 1px solid var(--glass-border);
   height: var(--header-height);
 
   .header-content {
@@ -30,19 +34,19 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 40px;
-      height: 40px;
-      background: var(--color-primary);
+      width: 42px;
+      height: 42px;
+      background: var(--grad-warm);
       color: var(--color-text-inverse);
-      border-radius: var(--radius-sm);
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
       font-weight: var(--font-bold);
       font-size: var(--text-sm);
       letter-spacing: 0.5px;
+      box-shadow: 0 8px 20px -8px rgba(124, 58, 237, 0.6);
     }
 
-    .logo-emblem.admin {
-      background: var(--color-secondary);
-    }
+    .logo-emblem.admin { background: linear-gradient(120deg, #db2777 0%, #7c3aed 100%); }
 
     .logo-text {
       display: flex;
@@ -51,17 +55,21 @@
     }
 
     .logo-title {
+      font-family: var(--font-display);
       font-weight: var(--font-bold);
       font-size: var(--text-lg);
-      color: var(--color-primary);
+      letter-spacing: -0.01em;
+      background: var(--grad-aurora);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
     }
 
     .logo-subtitle {
       font-size: var(--text-xs);
-      color: var(--color-text-secondary);
-      font-weight: var(--font-medium);
+      color: var(--color-text-tertiary);
+      font-weight: var(--font-semibold);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.12em;
     }
   }
 
@@ -72,12 +80,14 @@
     flex: 1;
 
     a {
+      position: relative;
       padding: var(--spacing-sm) var(--spacing-md);
-      border-radius: var(--radius-md);
+      border-radius: var(--radius-full);
       font-size: var(--text-sm);
       font-weight: var(--font-medium);
       color: var(--color-text-secondary);
-      transition: all var(--duration-fast) var(--easing-standard);
+      transition: color var(--duration-fast) var(--easing-standard),
+                  background var(--duration-fast) var(--easing-standard);
       text-decoration: none;
 
       &:hover {
@@ -107,7 +117,7 @@
       font-weight: var(--font-medium);
       color: var(--color-text-primary);
       background: var(--color-surface);
-      transition: all var(--duration-fast);
+      transition: border-color var(--duration-fast), color var(--duration-fast);
       cursor: pointer;
 
       &:hover {
@@ -118,17 +128,20 @@
 
     .btn-login {
       padding: var(--spacing-sm) var(--spacing-lg);
-      background: var(--color-primary);
+      background: var(--grad-warm);
       color: var(--color-text-inverse);
-      border-radius: var(--radius-md);
+      border-radius: var(--radius-full);
       font-size: var(--text-sm);
       font-weight: var(--font-semibold);
       text-decoration: none;
-      transition: background var(--duration-fast);
+      box-shadow: 0 8px 20px -10px rgba(124, 58, 237, 0.6);
+      transition: transform var(--duration-fast), box-shadow var(--duration-normal);
 
       &:hover {
-        background: var(--color-primary-light);
+        transform: translateY(-1px);
+        box-shadow: 0 14px 28px -12px rgba(124, 58, 237, 0.7);
         text-decoration: none;
+        color: var(--color-text-inverse);
       }
     }
   }
@@ -137,10 +150,12 @@
     display: none;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
     border-radius: var(--radius-md);
     color: var(--color-text-primary);
+
+    &:hover { background: var(--color-primary-50); color: var(--color-primary); }
   }
 }
 
@@ -149,57 +164,25 @@
 }
 
 .app-footer {
-  background: var(--color-primary-900);
+  position: relative;
+  background: var(--purple-deep);
   color: var(--color-text-inverse);
-  padding: var(--spacing-xxl) 0 var(--spacing-lg);
+  padding: var(--spacing-xl) 0 var(--spacing-lg);
   margin-top: auto;
 
-  .footer-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    gap: var(--spacing-xl);
-    padding-bottom: var(--spacing-lg);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .footer-section {
-    h4 {
-      color: var(--color-text-inverse);
-      font-size: var(--text-base);
-      margin-bottom: var(--spacing-md);
-      font-weight: var(--font-semibold);
-    }
-
-    p {
-      font-size: var(--text-sm);
-      color: rgba(255, 255, 255, 0.7);
-      line-height: var(--leading-relaxed);
-    }
-
-    ul {
-      li {
-        margin-bottom: var(--spacing-sm);
-
-        a {
-          color: rgba(255, 255, 255, 0.7);
-          font-size: var(--text-sm);
-          transition: color var(--duration-fast);
-
-          &:hover {
-            color: var(--color-text-inverse);
-          }
-        }
-      }
-    }
+  // signature gradient hairline along the top
+  &::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--grad-aurora);
   }
 
   .footer-bottom {
-    padding-top: var(--spacing-md);
     text-align: center;
 
     p {
-      font-size: var(--text-xs);
-      color: rgba(255, 255, 255, 0.5);
+      font-size: var(--text-sm);
+      color: rgba(255, 255, 255, 0.72);
       margin-bottom: var(--spacing-xs);
     }
   }
@@ -207,15 +190,7 @@
 
 @media (max-width: 991px) {
   .app-header {
-    .main-nav {
-      display: none;
-    }
-    .mobile-menu-btn {
-      display: flex;
-    }
-  }
-
-  .app-footer .footer-grid {
-    grid-template-columns: 1fr;
+    .main-nav { display: none; }
+    .mobile-menu-btn { display: flex; }
   }
 }
