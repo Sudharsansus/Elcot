@@ -32,7 +32,7 @@ export class AuroraHeroComponent implements OnDestroy {
   private particles: P[] = [];
   private w = 0; private h = 0; private dpr = 1;
   private mx = -9999; private my = -9999; private tmx = -9999; private tmy = -9999;
-  private readonly palette = ['#8b5cf6', '#22d3ee', '#ff3d8b', '#2dd4bf', '#6366f1'];
+  private readonly palette = ['#c8102e', '#ff6a3d', '#ffc14d', '#0e9e8e', '#1e66f5'];
 
   constructor() {
     afterNextRender(() => this.zone.runOutsideAngular(() => this.boot()));
@@ -106,32 +106,32 @@ export class AuroraHeroComponent implements OnDestroy {
 
   private draw(ctx: CanvasRenderingContext2D): void {
     ctx.clearRect(0, 0, this.w, this.h);
-    ctx.globalCompositeOperation = 'lighter';
     const ps = this.particles;
 
-    // constellation links
+    // constellation links (soft warm, source-over for a light ground)
     for (let i = 0; i < ps.length; i++) {
       for (let j = i + 1; j < ps.length; j++) {
         const a = ps[i], b = ps[j];
         const dx = a.x - b.x, dy = a.y - b.y; const d2 = dx * dx + dy * dy;
         if (d2 < 15000) {
-          const alpha = (1 - d2 / 15000) * 0.14;
-          ctx.strokeStyle = `rgba(150,170,255,${alpha})`;
+          const alpha = (1 - d2 / 15000) * 0.10;
+          ctx.strokeStyle = `rgba(150, 60, 50, ${alpha})`;
           ctx.lineWidth = 0.6;
           ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
         }
       }
     }
-    // glowing nodes
+    // soft glowing warm nodes
     for (const p of ps) {
-      const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 6);
-      g.addColorStop(0, p.c); g.addColorStop(0.4, this.hexA(p.c, 0.35)); g.addColorStop(1, 'rgba(0,0,0,0)');
+      const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 7);
+      g.addColorStop(0, this.hexA(p.c, 0.55));
+      g.addColorStop(0.5, this.hexA(p.c, 0.16));
+      g.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = g;
-      ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 6, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = p.c;
-      ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 0.7, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 7, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = this.hexA(p.c, 0.9);
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 0.8, 0, Math.PI * 2); ctx.fill();
     }
-    ctx.globalCompositeOperation = 'source-over';
   }
 
   private hexA(hex: string, a: number): string {

@@ -38,8 +38,8 @@
 .hero-vignette {
   position: absolute; inset: 0; z-index: 1; pointer-events: none;
   background:
-    radial-gradient(80% 60% at 50% 40%, transparent 0%, rgba(5,5,7,0.4) 70%, rgba(5,5,7,0.92) 100%),
-    linear-gradient(180deg, transparent 55%, var(--bg) 100%);
+    radial-gradient(75% 60% at 50% 38%, rgba(251,248,243,0) 0%, rgba(251,248,243,0.30) 70%, rgba(251,248,243,0.82) 100%),
+    linear-gradient(180deg, rgba(251,248,243,0.25) 0%, transparent 28%, transparent 62%, var(--bg) 100%);
 }
 .hero-content { position: relative; z-index: 2; max-width: 940px; }
 
@@ -78,11 +78,11 @@
 
 // button variants (global `.btn` provides the base via the template's `btn` class)
 .btn-hero-primary {
-  border: none; color: #0a0a12;
+  border: none; color: #fff;
   background: var(--grad-aurora); background-size: 180% 180%;
-  box-shadow: 0 8px 30px -10px rgba(139, 92, 246, 0.7);
+  box-shadow: 0 10px 34px -10px rgba(200, 16, 46, 0.5);
 }
-.btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 44px -10px rgba(139, 92, 246, 0.85); }
+.btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 18px 46px -12px rgba(200, 16, 46, 0.6); }
 .btn-hero-ghost, .btn-outline, .btn-outline-light { background: transparent; }
 .btn-hero-ghost:hover, .btn-outline:hover, .btn-outline-light:hover { border-color: var(--glass-border-strong); background: var(--surface); }
 .btn-lg { padding: 1.05rem 2rem; font-size: 1rem; }
@@ -100,7 +100,7 @@ mat-icon { font-size: 1.1rem; width: 1.1rem; height: 1.1rem; }
   max-width: 760px;
   backdrop-filter: blur(12px);
 }
-.hero-stat { padding: 1.4rem 1.5rem; background: rgba(10,10,18,0.5); }
+.hero-stat { padding: 1.4rem 1.5rem; background: rgba(255,255,255,0.72); }
 .hero-stat-value {
   display: block;
   font-family: var(--font-display);
@@ -167,7 +167,7 @@ mat-icon { font-size: 1.1rem; width: 1.1rem; height: 1.1rem; }
 .scheme-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; }
 .scheme-icon {
   display: grid; place-items: center; width: 46px; height: 46px; border-radius: 12px;
-  color: var(--violet); background: rgba(139,92,246,0.14); border: 1px solid rgba(139,92,246,0.3);
+  color: var(--crimson); background: rgba(200,16,46,0.10); border: 1px solid rgba(200,16,46,0.22);
 }
 .scheme-category { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-mut); }
 .scheme-name { font-size: 1.2rem; margin-bottom: 0.6rem; }
@@ -199,8 +199,8 @@ mat-icon { font-size: 1.1rem; width: 1.1rem; height: 1.1rem; }
   position: absolute; top: -10px; left: -10px;
   width: 26px; height: 26px; border-radius: 50%;
   display: grid; place-items: center;
-  font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; color: #06060c;
-  background: var(--grad-aurora);
+  font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; color: #fff;
+  background: var(--crimson);
 }
 .journey-label { font-size: 1.05rem; margin-bottom: 0.4rem; }
 .journey-desc { color: var(--ink-dim); font-size: 0.86rem; line-height: 1.5; }
@@ -210,7 +210,7 @@ mat-icon { font-size: 1.1rem; width: 1.1rem; height: 1.1rem; }
 // ------------------------------------------------------------
 .news-card { @include card-base; }
 .news-card:hover { @include card-hover; }
-.news-icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; margin-bottom: 1rem; color: var(--cyan); background: rgba(34,211,238,0.12); border: 1px solid rgba(34,211,238,0.3); }
+.news-icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; margin-bottom: 1rem; color: var(--teal); background: rgba(14,158,142,0.10); border: 1px solid rgba(14,158,142,0.25); }
 .news-meta { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.08em; color: var(--ink-mut); margin-bottom: 0.6rem; }
 .news-title { font-size: 1.1rem; margin-bottom: 0.5rem; }
 .news-excerpt { color: var(--ink-dim); font-size: 0.9rem; line-height: 1.55; }
@@ -220,7 +220,7 @@ mat-icon { font-size: 1.1rem; width: 1.1rem; height: 1.1rem; }
 // ------------------------------------------------------------
 .ecosystem-card { @include card-base; display: block; }
 .ecosystem-card:hover { @include card-hover; }
-.ecosystem-icon { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px; margin-bottom: 1.2rem; color: var(--magenta); background: rgba(255,61,139,0.12); border: 1px solid rgba(255,61,139,0.3); }
+.ecosystem-icon { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px; margin-bottom: 1.2rem; color: var(--coral); background: rgba(255,106,61,0.12); border: 1px solid rgba(255,106,61,0.3); }
 .ecosystem-icon mat-icon { font-size: 1.6rem; width: 1.6rem; height: 1.6rem; }
 .ecosystem-title { font-size: 1.3rem; margin-bottom: 0.7rem; }
 .ecosystem-description { color: var(--ink-dim); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.3rem; }
@@ -238,8 +238,9 @@ mat-icon { font-size: 1.1rem; width: 1.1rem; height: 1.1rem; }
   border-radius: var(--radius-2xl);
   border: 1px solid var(--glass-border);
   background:
-    radial-gradient(60% 120% at 50% 0%, rgba(139,92,246,0.22), transparent 70%),
+    radial-gradient(70% 130% at 50% 0%, rgba(200,16,46,0.10), transparent 70%),
     var(--surface);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
 }
 .cta-title { font-size: clamp(2rem, 5vw, 3.6rem); letter-spacing: -0.03em; margin-bottom: 1rem; }
