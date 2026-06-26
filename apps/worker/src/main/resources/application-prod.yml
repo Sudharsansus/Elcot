@@ -9,10 +9,12 @@ spring:
         prefetch: 50
         concurrency: 10
   mail:
-    host: ${SMTP_HOST}
+    # Email is optional; default so the worker doesn't crash when SMTP_* is unset
+    # (Could not resolve placeholder 'SMTP_HOST' aborted Spring's mail auto-config).
+    host: ${SMTP_HOST:smtp.gmail.com}
     port: ${SMTP_PORT:587}
-    username: ${SMTP_USER}
-    password: ${SMTP_PASS}
+    username: ${SMTP_USER:}
+    password: ${SMTP_PASS:}
 elasticsearch:
   uris: ${ES_URIS}
 logging:
