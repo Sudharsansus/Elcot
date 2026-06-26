@@ -68,6 +68,16 @@ public class SecurityConfig {
                     // AVGC-XR Bridge directory: public to browse (GET), auth to register (POST)
                     .requestMatchers(new AntPathRequestMatcher("/api/v1/bridge/**", "GET"))
                     .permitAll()
+                    // Internal notification delivery (worker callback) — self-validates
+                    // X-Internal-Token; closed (503) until the token is configured
+                    .requestMatchers(
+                        new AntPathRequestMatcher("/api/v1/notifications/email", "POST"))
+                    .permitAll()
+                    .requestMatchers(new AntPathRequestMatcher("/api/v1/notifications/sms", "POST"))
+                    .permitAll()
+                    .requestMatchers(
+                        new AntPathRequestMatcher("/api/v1/notifications/push", "POST"))
+                    .permitAll()
                     .requestMatchers(new AntPathRequestMatcher("/v3/api-docs/**"))
                     .permitAll()
                     .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**"))
