@@ -6,6 +6,17 @@ CREATE TABLE IF NOT EXISTS workflow_instances (
     started_at TIMESTAMPTZ DEFAULT NOW(), completed_at TIMESTAMPTZ,
     variables JSONB DEFAULT '{}', created_at TIMESTAMPTZ DEFAULT NOW(), updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+-- workflow_instances already exists from V5 with a different (application-tracking)
+-- shape, so the CREATE above is a no-op on existing databases. Ensure the columns
+-- the indexes below reference exist on both fresh installs and V5-origin databases.
+ALTER TABLE workflow_instances ADD COLUMN IF NOT EXISTS process_definition_id VARCHAR(255);
+ALTER TABLE workflow_instances ADD COLUMN IF NOT EXISTS process_definition_key VARCHAR(100);
+ALTER TABLE workflow_instances ADD COLUMN IF NOT EXISTS business_key VARCHAR(255);
+ALTER TABLE workflow_instances ADD COLUMN IF NOT EXISTS status VARCHAR(30) DEFAULT 'RUNNING';
+ALTER TABLE workflow_instances ADD COLUMN IF NOT EXISTS started_by UUID;
+ALTER TABLE workflow_instances ADD COLUMN IF NOT EXISTS started_at TIMESTAMPTZ DEFAULT NOW();
+ALTER TABLE workflow_instances ADD COLUMN IF NOT EXISTS completed_at TIMESTAMPTZ;
+ALTER TABLE workflow_instances ADD COLUMN IF NOT EXISTS variables JSONB DEFAULT '{}';
 CREATE INDEX IF NOT EXISTS idx_wi_business_key ON workflow_instances(business_key);
 CREATE INDEX IF NOT EXISTS idx_wi_status ON workflow_instances(status);
 CREATE INDEX IF NOT EXISTS idx_wi_process_key ON workflow_instances(process_definition_key);
