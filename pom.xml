@@ -99,6 +99,18 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Pin Jackson reactor-wide to the Spring Boot 3.5.16 managed 2.21.4,
+                 overriding older transitive pulls (2.12.x / 2.19.x) that still carry the
+                 PolymorphicTypeValidator-bypass advisories GHSA-j3rv-43j4-c7qm and
+                 GHSA-rmj7-2vxq-3g9f. 2.21.4 is the version the live API already runs.
+                 Declared first so it wins over any BOM imported below. -->
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>2.21.4</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -125,9 +137,12 @@
                 <artifactId>elasticsearch-java</artifactId>
                 <version>${co-elastic-clients.version}</version>
             </dependency>
+            <!-- Force a patched Apache Commons Compress: 1.24.0 (pulled transitively by
+                 Apache POI) carries GHSA-4265-ccf5-phj5 / GHSA-4g9r-vxhx-9pgx. -->
             <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>1.27.1</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.json</groupId>
