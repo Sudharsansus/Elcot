@@ -24,6 +24,30 @@
 }
 
 // ------------------------------------------------------------
+// GOVERNMENT MASTHEAD
+// ------------------------------------------------------------
+.gov-strip {
+  position: relative; z-index: 3;
+  background: var(--surface);
+  border-bottom: 1px solid var(--glass-border);
+}
+.gov-strip-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; padding: 0.55rem 0;
+}
+.gov-id { display: inline-flex; align-items: center; gap: 0.8rem; }
+.gov-emblem { width: 46px; height: 46px; object-fit: contain; }
+.gov-id-text { display: flex; flex-direction: column; line-height: 1.15; }
+.gov-id-ta { font-family: var(--font-tamil); font-weight: 600; font-size: 0.98rem; color: var(--ink); }
+.gov-id-en { font-size: 0.72rem; letter-spacing: 0.04em; color: var(--ink-mut); }
+.gov-elcot-logo { height: 36px; width: auto; object-fit: contain; }
+@media (max-width: 560px) {
+  .gov-id-en { display: none; }
+  .gov-emblem { width: 38px; height: 38px; }
+  .gov-elcot-logo { height: 28px; }
+}
+
+// ------------------------------------------------------------
 // HERO
 // ------------------------------------------------------------
 .hero {

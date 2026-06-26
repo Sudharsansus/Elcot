@@ -1,7 +1,7 @@
 <header class="nav" [class.is-scrolled]="scrolled()" [class.menu-open]="mobileMenuOpen()">
   <div class="nav-inner container">
     <a routerLink="/" class="brand" (click)="closeMobileMenu()" aria-label="Tamil Nadu AVGC-XR Portal home">
-      <span class="brand-mark"><app-tn-emblem [size]="34" [decorative]="true"></app-tn-emblem></span>
+      <span class="brand-mark"><img src="assets/brand/tn-emblem.png" alt="Government of Tamil Nadu" width="32" height="32" /></span>
       <span class="brand-word">
         <span class="brand-title">AVGC<span class="dot">·</span>XR</span>
         <span class="brand-sub">{{ lang() === 'ta' ? 'தமிழ்நாடு அரசு' : 'Government of Tamil Nadu' }}</span>

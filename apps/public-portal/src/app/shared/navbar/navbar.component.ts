@@ -11,13 +11,12 @@ import { RouterModule, RouterLink, RouterLinkActive } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { I18nService } from '../../core/services/i18n.service';
-import { TnEmblemComponent } from '../brand/tn-emblem.component';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, RouterLink, RouterLinkActive, MatIconModule, MatButtonModule, TnEmblemComponent],
+  imports: [CommonModule, RouterModule, RouterLink, RouterLinkActive, MatIconModule, MatButtonModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
