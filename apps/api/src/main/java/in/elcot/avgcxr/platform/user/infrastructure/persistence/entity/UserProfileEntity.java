@@ -1,5 +1,6 @@
 package in.elcot.avgcxr.platform.user.infrastructure.persistence.entity;
 
+import in.elcot.avgcxr.common.infrastructure.security.EncryptedLocalDateConverter;
 import in.elcot.avgcxr.common.infrastructure.security.EncryptedStringConverter;
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -21,7 +22,8 @@ public class UserProfileEntity {
   @Column(name = "user_id")
   private UUID userId;
 
-  @Column(name = "date_of_birth")
+  @Convert(converter = EncryptedLocalDateConverter.class)
+  @Column(name = "date_of_birth", columnDefinition = "text")
   private LocalDate dateOfBirth;
 
   @Column(name = "gender", length = 10)

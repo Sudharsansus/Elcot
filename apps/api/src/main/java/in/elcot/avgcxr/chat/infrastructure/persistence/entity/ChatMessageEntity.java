@@ -1,5 +1,6 @@
 package in.elcot.avgcxr.chat.infrastructure.persistence.entity;
 
+import in.elcot.avgcxr.common.infrastructure.security.EncryptedStringConverter;
 import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.UUID;
@@ -22,9 +23,11 @@ public class ChatMessageEntity {
   @Column(name = "role", length = 20, nullable = false)
   private String role;
 
+  @Convert(converter = EncryptedStringConverter.class)
   @Column(name = "content", columnDefinition = "TEXT", nullable = false)
   private String content;
 
+  @Convert(converter = EncryptedStringConverter.class)
   @Column(name = "content_tamil", columnDefinition = "TEXT")
   private String contentTamil;
 
