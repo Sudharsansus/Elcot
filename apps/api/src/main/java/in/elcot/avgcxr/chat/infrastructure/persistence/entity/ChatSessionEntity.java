@@ -34,7 +34,7 @@ public class ChatSessionEntity {
   @Column(name = "is_active", nullable = false)
   private boolean isActive;
 
-  @Column(name = "metadata", columnDefinition = "jsonb")
+  @Column(name = "metadata", columnDefinition = "text")
   private String metadata;
 
   @Column(name = "created_at", nullable = false)

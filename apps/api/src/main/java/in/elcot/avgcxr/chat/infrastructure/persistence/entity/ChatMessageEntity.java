@@ -40,10 +40,10 @@ public class ChatMessageEntity {
   @Column(name = "latency_ms")
   private Integer latencyMs;
 
-  @Column(name = "rag_context_ids", columnDefinition = "jsonb")
+  @Column(name = "rag_context_ids", columnDefinition = "text")
   private String ragContextIds;
 
-  @Column(name = "metadata", columnDefinition = "jsonb")
+  @Column(name = "metadata", columnDefinition = "text")
   private String metadata;
 
   @Column(name = "created_at", nullable = false)
