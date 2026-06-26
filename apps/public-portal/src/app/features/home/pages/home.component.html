@@ -2,38 +2,23 @@
 <!-- HOME — Tamil Nadu AVGC-XR Portal (ELCOT) -->
 <!-- ============================================================ -->
 
-<!-- GOVERNMENT MASTHEAD -->
-<section class="gov-masthead">
-  <div class="container masthead-content">
-    <app-tn-emblem class="masthead-emblem" [size]="52" [ring]="false" [decorative]="true"></app-tn-emblem>
-    <div class="masthead-text">
-      <div class="masthead-hi">{{ isTa() ? 'தமிழ்நாடு அரசு' : 'தமிழ்நாடு அரசு' }}</div>
-      <div class="masthead-en">Government of Tamil Nadu</div>
-    </div>
-    <div class="masthead-dept">
-      <div class="dept-hi">தமிழ்நாடு மின்னணுவியல் கழகம் (ELCOT)</div>
-      <div class="dept-en">Electronics Corporation of Tamil Nadu</div>
-    </div>
-  </div>
-</section>
-
 <!-- HERO -->
 <section class="hero">
   @defer (on idle) {
-    <app-hero-canvas class="hero-canvas-layer" dot="255,255,255" line="255,210,0"></app-hero-canvas>
+    <app-aurora-hero class="hero-canvas-layer" [density]="1"></app-aurora-hero>
   } @placeholder {
     <div class="hero-canvas-layer" aria-hidden="true"></div>
   }
-  <div class="hero-overlay" aria-hidden="true"></div>
+  <div class="hero-vignette" aria-hidden="true"></div>
 
   <div class="container hero-content">
-    <div class="hero-eyebrow">
-      <span class="hero-eyebrow-dot" aria-hidden="true"></span>
-      {{ isTa() ? 'அதிகாரப்பூர்வ இணையதளம் — TN AVGC-XR கொள்கை' : 'Official Portal — TN AVGC-XR Policy' }}
+    <div class="hero-eyebrow pill">
+      <span class="dot" aria-hidden="true"></span>
+      {{ isTa() ? 'அதிகாரப்பூர்வ இணையதளம் — TN AVGC-XR கொள்கை' : 'Official Portal · TN AVGC-XR Policy' }}
     </div>
 
     <h1 class="hero-title">
-      <span class="hero-title-en">Animation · VFX · Gaming · Comics · Extended Reality</span>
+      <span class="hero-title-en">Where Tamil Nadu <em class="text-gradient">imagines</em> worlds.</span>
       <span class="hero-title-ta">அனிமேஷன் · VFX · கேமிங் · காமிக்ஸ் · நீட்டிக்கப்பட்ட யதார்த்தம்</span>
     </h1>
 

@@ -18,8 +18,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { I18nService } from '../../../core/services/i18n.service';
 import { StrapiContentService } from '../../../core/services/strapi-content.service';
 import { SCHEMES_DATA, SECTOR_CATEGORIES, HOMEPAGE_NEWS, Scheme } from '../../schemes/schemes.data';
-import { TnEmblemComponent } from '../../../shared/brand/tn-emblem.component';
-import { HeroCanvasComponent } from '../components/hero-canvas.component';
+import { AuroraHeroComponent } from '../../../shared/motion/aurora-hero.component';
 import { SchemeFinderComponent } from '../components/scheme-finder.component';
 import { RevealDirective } from '../../../shared/directives/reveal.directive';
 import { CountUpDirective } from '../../../shared/directives/count-up.directive';
@@ -30,7 +29,7 @@ import { CountUpDirective } from '../../../shared/directives/count-up.directive'
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule, RouterModule, MatIconModule,
-    TnEmblemComponent, HeroCanvasComponent, SchemeFinderComponent,
+    AuroraHeroComponent, SchemeFinderComponent,
     RevealDirective, CountUpDirective,
   ],
   templateUrl: './home.component.html',
