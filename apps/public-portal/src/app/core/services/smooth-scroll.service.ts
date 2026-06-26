@@ -5,20 +5,25 @@
 import { Injectable, inject, PLATFORM_ID, NgZone } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import Lenis from 'lenis';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 @Injectable({ providedIn: 'root' })
 export class SmoothScrollService {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly zone = inject(NgZone);
   private lenis: Lenis | null = null;
-  private rafId = 0;
+  private ticker?: (time: number) => void;
 
-  /** Initialise once (no-op on server or when the user prefers reduced motion). */
+  /** Initialise once (no-op on server or when the user prefers reduced motion).
+   *  Drives Lenis from the GSAP ticker and syncs ScrollTrigger so scroll
+   *  animations stay in lock-step with the smooth scroll. */
   init(): void {
     if (!isPlatformBrowser(this.platformId) || this.lenis) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     this.zone.runOutsideAngular(() => {
+      gsap.registerPlugin(ScrollTrigger);
       this.lenis = new Lenis({
         duration: 1.15,
         easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -27,11 +32,10 @@ export class SmoothScrollService {
         wheelMultiplier: 1,
         touchMultiplier: 1.6,
       });
-      const raf = (time: number) => {
-        this.lenis?.raf(time);
-        this.rafId = requestAnimationFrame(raf);
-      };
-      this.rafId = requestAnimationFrame(raf);
+      this.lenis.on('scroll', ScrollTrigger.update);
+      this.ticker = (time: number) => this.lenis?.raf(time * 1000);
+      gsap.ticker.add(this.ticker);
+      gsap.ticker.lagSmoothing(0);
     });
   }
 
@@ -47,7 +51,8 @@ export class SmoothScrollService {
   start(): void { this.lenis?.start(); }
 
   destroy(): void {
-    cancelAnimationFrame(this.rafId);
+    if (this.ticker) gsap.ticker.remove(this.ticker);
+    ScrollTrigger.getAll().forEach((t) => t.kill());
     this.lenis?.destroy();
     this.lenis = null;
   }

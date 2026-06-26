@@ -5,29 +5,25 @@
 <!-- HERO -->
 <section class="hero">
   @defer (on idle) {
-    <app-aurora-hero class="hero-canvas-layer" [density]="1"></app-aurora-hero>
+    <app-aurora-hero class="hero-canvas-layer" [density]="1" [appParallax]="160"></app-aurora-hero>
   } @placeholder {
     <div class="hero-canvas-layer" aria-hidden="true"></div>
   }
   <div class="hero-vignette" aria-hidden="true"></div>
 
-  <div class="container hero-content">
-    <div class="hero-eyebrow pill">
-      <span class="dot" aria-hidden="true"></span>
-      {{ isTa() ? 'அதிகாரப்பூர்வ இணையதளம் — TN AVGC-XR கொள்கை' : 'Official Portal · TN AVGC-XR Policy' }}
-    </div>
-
-    <h1 class="hero-title">
-      <span class="hero-line-static">{{ isTa() ? 'தமிழ்நாடு' : 'Where Tamil Nadu' }}</span>
-      <span class="hero-line-typed text-gradient">
+  <div class="container hero-content" aria-labelledby="hero-heading">
+    <h1 class="hero-title" id="hero-heading">
+      <span class="hero-line-static">{{ isTa() ? 'தமிழ்நாட்டின் அதிகாரப்பூர்வ நுழைவாயில்' : "Tamil Nadu's official gateway to" }}</span>
+      <span class="hero-line-typed text-gradient" aria-hidden="true">
         <app-typewriter [phrases]="typedPhrases" [typeSpeed]="62" [backSpeed]="30" [holdTime]="1700"></app-typewriter>
       </span>
+      <span class="sr-only">Animation, VFX, Gaming, Comics and Extended Reality</span>
     </h1>
 
     <p class="hero-subtitle">
       {{ isTa()
-        ? 'தமிழ்நாட்டின் படைப்பாற்றல் தொழில்துறைக்கான அரசு ஊக்கத்திட்டங்கள், பயிற்சி மற்றும் சந்தை அணுகலுக்கான ஒற்றை சாளரம்.'
-        : 'A single window to Government of Tamil Nadu incentives, training and market access for the state’s creative-tech industry.' }}
+        ? 'ELCOT, தமிழ்நாடு அரசின் அதிகாரப்பூர்வ AVGC-XR இணையதளம் — அரசு ஊக்கத்திட்டங்களைக் கண்டறியுங்கள், ஆன்லைனில் விண்ணப்பியுங்கள், ஸ்டுடியோக்கள், திறமையாளர்கள் மற்றும் ஃப்ரீலான்ஸர்களுடன் இணையுங்கள்.'
+        : 'The official ELCOT portal of the Government of Tamil Nadu for Animation, VFX, Gaming, Comics & Extended Reality — discover incentive schemes, apply online, and connect with studios, talent and freelancers.' }}
     </p>
 
     <div class="hero-actions">
@@ -54,6 +50,22 @@
         </div>
       }
     </dl>
+  </div>
+</section>
+
+<!-- VFX MARQUEE BAND -->
+<section class="vfx-marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span class="mq-item">Animation</span><span class="mq-dot">✦</span>
+    <span class="mq-item">Visual&nbsp;Effects</span><span class="mq-dot">✦</span>
+    <span class="mq-item">Gaming</span><span class="mq-dot">✦</span>
+    <span class="mq-item">Comics</span><span class="mq-dot">✦</span>
+    <span class="mq-item">Extended&nbsp;Reality</span><span class="mq-dot">✦</span>
+    <span class="mq-item">Animation</span><span class="mq-dot">✦</span>
+    <span class="mq-item">Visual&nbsp;Effects</span><span class="mq-dot">✦</span>
+    <span class="mq-item">Gaming</span><span class="mq-dot">✦</span>
+    <span class="mq-item">Comics</span><span class="mq-dot">✦</span>
+    <span class="mq-item">Extended&nbsp;Reality</span><span class="mq-dot">✦</span>
   </div>
 </section>
 
