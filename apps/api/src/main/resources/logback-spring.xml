@@ -13,9 +13,9 @@
 
     <springProfile name="prod|staging">
         <appender name="JSON_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <file>/var/log/avgcxr/api/application.json.log</file>
+            <file>${LOG_PATH:-/tmp/avgcxr}/api/application.json.log</file>
             <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-                <fileNamePattern>/var/log/avgcxr/api/application.%d{yyyy-MM-dd}.%i.json.log</fileNamePattern>
+                <fileNamePattern>${LOG_PATH:-/tmp/avgcxr}/api/application.%d{yyyy-MM-dd}.%i.json.log</fileNamePattern>
                 <maxFileSize>100MB</maxFileSize>
                 <maxHistory>30</maxHistory>
                 <totalSizeCap>3GB</totalSizeCap>
