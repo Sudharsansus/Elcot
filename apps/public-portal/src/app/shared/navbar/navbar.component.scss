@@ -55,6 +55,7 @@
   position: relative;
   padding: 0.5rem 0.85rem;
   font-size: 0.9rem; font-weight: 600;
+  white-space: nowrap;
   color: var(--ink);
   opacity: 0.78;
   border-radius: var(--radius-full);
@@ -147,3 +148,24 @@ body[data-theme="dark"] .nav-elcot { background: rgba(255, 255, 255, 0.92); }
   .nav-cta { display: none; }
 }
 @media (min-width: 981px) { .mobile-sheet { display: none; } }
+
+// ------------------------------------------------------------
+// TAMIL — labels are wider; compact the row, give the pill more
+// room on wide screens, and fall back to the burger a bit earlier
+// so it never overflows or wraps.
+// ------------------------------------------------------------
+:host-context(html[lang="ta"]) {
+  .nav-inner { max-width: 1480px; gap: var(--space-3); }
+  .nav-links { gap: 0.05rem; }
+  .nav-link { font-size: 0.82rem; padding: 0.45rem 0.55rem; }
+  .nav-signin { font-size: 0.82rem; padding: 0.45rem 0.3rem; }
+  .nav-cta { font-size: 0.8rem; padding: 0.55rem 0.95rem; }
+  .brand-sub { font-size: 0.58rem; }
+}
+@media (max-width: 1366px) {
+  :host-context(html[lang="ta"]) {
+    .nav-links, .nav-signin, .nav-cta { display: none; }
+    .burger { display: block; }
+    .mobile-sheet { display: block; }
+  }
+}

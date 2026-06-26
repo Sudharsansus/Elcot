@@ -88,6 +88,24 @@
   line-height: 1.08;
   min-height: 1.14em;
 }
+
+// Tamil headline: Space Grotesk has no Tamil glyphs, and line-height 0.98
+// clips the taller Tamil letters — use the Tamil font, a smaller size and
+// roomier line-height so nothing is cut off.
+html[lang="ta"] {
+  .hero-title { line-height: 1.18; letter-spacing: -0.01em; }
+  .hero-line-static {
+    font-family: var(--font-tamil);
+    font-size: clamp(1.9rem, 5.2vw, 3.9rem);
+  }
+  .hero-line-typed {
+    font-family: 'Noto Sans Tamil', sans-serif;
+    font-size: clamp(1.9rem, 5.2vw, 3.9rem);
+    line-height: 1.32;
+    min-height: 1.5em;
+  }
+  .hero-subtitle { line-height: 1.8; }
+}
 .hero-subtitle {
   max-width: 620px;
   font-size: clamp(1rem, 1.4vw, 1.2rem);
