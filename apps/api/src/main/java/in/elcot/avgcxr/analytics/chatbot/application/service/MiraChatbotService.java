@@ -1,5 +1,6 @@
 package in.elcot.avgcxr.analytics.chatbot.application.service;
 
+import in.elcot.avgcxr.common.infrastructure.security.ChatSafetyGuard;
 import in.elcot.avgcxr.platform.search.application.port.output.SearchRepositoryPort;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,15 @@ public class MiraChatbotService {
    * search repository (when available) and passes them to the LLM as context.
    */
   public Map<String, Object> answer(String userMessage, String preferredLanguage) {
+    // Public/unauthenticated endpoint: refuse attempts to pull other people's, bulk, or
+    // administrative data before any retrieval or model call.
+    if (ChatSafetyGuard.looksLikeDataExfil(userMessage)) {
+      java.util.Map<String, Object> out = new java.util.LinkedHashMap<>();
+      out.put("reply", ChatSafetyGuard.refusalMessage(preferredLanguage));
+      out.put("model", "policy-guard");
+      out.put("lang", preferredLanguage);
+      return out;
+    }
     List<Map<String, Object>> context = retrieveContext(userMessage);
     return llm.generate(userMessage, context, preferredLanguage);
   }
@@ -78,8 +88,12 @@ public class MiraChatbotService {
             r -> {
               Map<String, Object> ctx = new java.util.LinkedHashMap<>();
               ctx.put("id", r.getId());
-              ctx.put("name", r.getName() != null ? r.getName() : "");
-              ctx.put("description", r.getDescription() != null ? r.getDescription() : "");
+              // PII safety net: the rule-based assistant echoes this context verbatim, so redact
+              // any personal record that may have been indexed before it can reach the user.
+              ctx.put("name", ChatSafetyGuard.redact(r.getName() != null ? r.getName() : ""));
+              ctx.put(
+                  "description",
+                  ChatSafetyGuard.redact(r.getDescription() != null ? r.getDescription() : ""));
               context.add(ctx);
             });
       }

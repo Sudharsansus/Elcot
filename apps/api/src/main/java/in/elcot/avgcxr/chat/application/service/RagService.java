@@ -1,6 +1,7 @@
 package in.elcot.avgcxr.chat.application.service;
 
 import in.elcot.avgcxr.chat.application.service.PromptBuilder.RagDocument;
+import in.elcot.avgcxr.common.infrastructure.security.ChatSafetyGuard;
 import in.elcot.avgcxr.platformsearchclient.ElasticsearchClientWrapper;
 import in.elcot.avgcxr.platformsearchclient.model.SearchResult;
 import java.util.ArrayList;
@@ -59,7 +60,14 @@ public class RagService {
               Object bodyObj = m.get("body");
               if (bodyObj == null) bodyObj = m.get("description");
               String body = bodyObj == null ? "" : bodyObj.toString();
-              docs.add(new RagDocument(id, title, body, hit.getScore()));
+              // PII safety net: never let a personal record retrieved from the index reach the
+              // model or the user, regardless of what was indexed.
+              docs.add(
+                  new RagDocument(
+                      id,
+                      ChatSafetyGuard.redact(title),
+                      ChatSafetyGuard.redact(body),
+                      hit.getScore()));
             }
           }
         }
@@ -86,7 +94,12 @@ public class RagService {
               + "FROM schemes WHERE status = 'PUBLISHED' "
               + "  AND (LOWER(name) LIKE LOWER(?) OR LOWER(COALESCE(description, '')) LIKE LOWER(?)) "
               + "ORDER BY updated_at DESC NULLS LAST LIMIT ?",
-          (rs, n) -> new RagDocument(rs.getString(1), rs.getString(2), rs.getString(3), 0.5),
+          (rs, n) ->
+              new RagDocument(
+                  rs.getString(1),
+                  ChatSafetyGuard.redact(rs.getString(2)),
+                  ChatSafetyGuard.redact(rs.getString(3)),
+                  0.5),
           like,
           like,
           limit);

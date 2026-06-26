@@ -8,6 +8,7 @@ import in.elcot.avgcxr.chat.application.service.llm.LlmProvider.LlmResponse;
 import in.elcot.avgcxr.chat.domain.model.ChatMessage;
 import in.elcot.avgcxr.chat.domain.model.ChatRole;
 import in.elcot.avgcxr.chat.domain.model.ChatSession;
+import in.elcot.avgcxr.common.infrastructure.security.ChatSafetyGuard;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -82,8 +83,12 @@ public class ChatService {
     messageRepo.save(userMsg);
     session.incrementMessageCount();
 
-    // 3) RAG
-    List<RagDocument> ragDocs = ragService.retrieve(userMessage, language);
+    // 2b) Policy guard: this endpoint is public/unauthenticated, so refuse any attempt to pull
+    // other people's, bulk, or administrative data before touching RAG or the LLM.
+    boolean blocked = ChatSafetyGuard.looksLikeDataExfil(userMessage);
+
+    // 3) RAG (skipped for blocked requests; retrieved context is PII-redacted in RagService)
+    List<RagDocument> ragDocs = blocked ? List.of() : ragService.retrieve(userMessage, language);
     List<String> ragIds = ragDocs.stream().map(RagDocument::id).toList();
 
     // 4) Build prompt
@@ -95,22 +100,34 @@ public class ChatService {
       llmMessages.add(PromptBuilder.msg(role, m.getContent()));
     }
 
-    // 5) Call LLM
+    // 5) Call LLM (or return the policy refusal directly)
     LlmResponse llmResp;
-    try {
-      llmResp = llm.complete(systemPrompt, llmMessages, LlmProvider.LlmOptions.defaults());
-    } catch (Exception e) {
-      log.error("LLM call failed: {}", e.getMessage());
-      // Fallback to rule-based if the configured provider is down
+    if (blocked) {
+      log.warn("Chat data-exfil attempt blocked (session {})", session.getId());
       llmResp =
           new LlmResponse(
-              "I'm having trouble reaching the AI service right now. "
-                  + "Please try again, or visit /helpdesk for human support.",
-              "fallback",
+              ChatSafetyGuard.refusalMessage(language),
+              "policy-guard",
               0,
               0,
               0,
               System.currentTimeMillis() - start);
+    } else {
+      try {
+        llmResp = llm.complete(systemPrompt, llmMessages, LlmProvider.LlmOptions.defaults());
+      } catch (Exception e) {
+        log.error("LLM call failed: {}", e.getMessage());
+        // Fallback to rule-based if the configured provider is down
+        llmResp =
+            new LlmResponse(
+                "I'm having trouble reaching the AI service right now. "
+                    + "Please try again, or visit /helpdesk for human support.",
+                "fallback",
+                0,
+                0,
+                0,
+                System.currentTimeMillis() - start);
+      }
     }
 
     // 6) Persist assistant message
