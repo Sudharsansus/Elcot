@@ -4,7 +4,7 @@
       <span class="brand-mark"><img src="assets/brand/tn-emblem.png" alt="Government of Tamil Nadu" width="32" height="32" /></span>
       <span class="brand-word">
         <span class="brand-title">AVGC<span class="dot">·</span>XR</span>
-        <span class="brand-sub">{{ lang() === 'ta' ? 'தமிழ்நாடு அரசு' : 'Government of Tamil Nadu' }}</span>
+        <span class="brand-sub">{{ lang() === 'ta' ? 'ELCOT முன்முயற்சி' : 'An ELCOT Initiative' }}</span>
       </span>
     </a>
 
@@ -18,6 +18,9 @@
     </nav>
 
     <div class="nav-actions">
+      <a class="nav-elcot" href="https://elcot.in" target="_blank" rel="noopener" aria-label="ELCOT">
+        <img src="assets/brand/elcot-logo.png" alt="ELCOT" height="22" />
+      </a>
       <button type="button" class="icon-btn theme-btn" (click)="toggleTheme()" aria-label="Toggle dark mode">
         <mat-icon>{{ theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
       </button>

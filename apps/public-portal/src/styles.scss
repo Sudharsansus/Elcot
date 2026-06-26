@@ -1,76 +1,86 @@
 // ============================================================
-// TAMIL NADU AVGC-XR PORTAL — "IVORY & CRIMSON" DESIGN SYSTEM
-// Light, official, creative-warm. TN crimson primary, coral→gold accent.
-// Fonts loaded in index.html.
+// TAMIL NADU AVGC-XR PORTAL — "ELCOT LAVENDER" DESIGN SYSTEM
+// Matches elcot.tn.gov.in: white/lavender canvas, deep-purple utility bar,
+// blue->violet->magenta signature gradient. Fonts loaded in index.html.
+// NOTE: legacy accent token names (--crimson/--coral/--gold/--teal) are kept
+// but now hold the ELCOT palette, so existing component SCSS re-themes for free.
 // ============================================================
 
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 
-// ------------------------------------------------------------
-// DESIGN TOKENS
-// ------------------------------------------------------------
 :root {
   color-scheme: light;
 
-  // ---- Canvas / surfaces (warm ivory) ----
-  --bg: #fbf8f3;
+  // ---- Canvas / surfaces (white + lavender tints) ----
+  --bg: #ffffff;
   --bg-1: #ffffff;
-  --bg-2: #f4efe6;
+  --bg-2: #f5f2fd;
+  --lavender: #f4f1fb;
   --surface: #ffffff;
-  --surface-2: #fbf8f3;
+  --surface-2: #faf8ff;
   --surface-strong: rgba(255, 255, 255, 0.92);
   --glass: rgba(255, 255, 255, 0.72);
-  --glass-border: rgba(20, 18, 22, 0.10);
-  --glass-border-strong: rgba(20, 18, 22, 0.20);
-  --line: rgba(20, 18, 22, 0.10);
-  --header-bg: rgba(255, 255, 255, 0.72);
-  --header-bg-scrolled: rgba(255, 255, 255, 0.90);
+  --glass-border: rgba(91, 33, 182, 0.13);
+  --glass-border-strong: rgba(91, 33, 182, 0.24);
+  --line: rgba(91, 33, 182, 0.11);
+  --header-bg: rgba(255, 255, 255, 0.78);
+  --header-bg-scrolled: rgba(255, 255, 255, 0.92);
 
-  // ---- Ink ----
-  --ink: #14161d;
-  --ink-dim: #474c58;
-  --ink-mut: #6e7382;
-  --ink-faint: #9aa0ad;
+  // ---- Ink (dark navy-violet) ----
+  --ink: #1a1533;
+  --ink-dim: #463f63;
+  --ink-mut: #756d92;
+  --ink-faint: #a49dbf;
   --ink-inverse: #ffffff;
 
-  // ---- Brand (TN crimson + warm creative accent) ----
-  --crimson: #c8102e;
-  --crimson-dark: #9b0c24;
-  --crimson-light: #e5354c;
-  --coral: #ff6a3d;
-  --gold: #ffc14d;
-  --teal: #0e9e8e;
-  --blue: #1e66f5;
+  // ---- Brand palette (ELCOT) — names are legacy, values are ELCOT ----
+  --violet: #7c3aed;        // PRIMARY
+  --violet-dark: #6d28d9;
+  --violet-light: #a78bfa;
+  --blue: #2563eb;
+  --magenta: #db2777;
+  --cyan: #06b6d4;
+  --purple-deep: #45125c;   // top utility bar
 
-  --accent: var(--crimson);
-  --accent-2: var(--coral);
+  --crimson: #7c3aed;       // -> violet (primary alias used across components)
+  --crimson-dark: #6d28d9;
+  --crimson-light: #a78bfa;
+  --coral: #2563eb;         // -> blue
+  --gold: #db2777;          // -> magenta
+  --teal: #06b6d4;          // -> cyan
+  --indigo: #4f46e5;
+  --amber: #db2777;
+  --lime: #06b6d4;
 
-  // ---- Signature gradients ----
-  --grad-aurora: linear-gradient(110deg, #c8102e 0%, #ff6a3d 55%, #ffc14d 100%);
-  --grad-warm: linear-gradient(110deg, #ff6a3d 0%, #ffc14d 100%);
-  --grad-iris: linear-gradient(120deg, #c8102e 0%, #ff6a3d 60%, #ffc14d 100%);
+  --accent: var(--violet);
+  --accent-2: var(--blue);
+
+  // ---- Signature gradients (blue -> violet -> magenta) ----
+  --grad-aurora: linear-gradient(110deg, #2563eb 0%, #7c3aed 52%, #db2777 100%);
+  --grad-warm: linear-gradient(110deg, #3b5bdb 0%, #7c3aed 100%);
+  --grad-iris: linear-gradient(120deg, #2563eb 0%, #7c3aed 55%, #db2777 100%);
   --grad-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0));
 
-  // ---- Shadows / soft glow (warm) ----
-  --shadow-xs: 0 1px 2px rgba(20, 18, 22, 0.05);
-  --shadow-sm: 0 1px 3px rgba(20, 18, 22, 0.08), 0 1px 2px rgba(20, 18, 22, 0.04);
-  --shadow-card: 0 1px 2px rgba(20, 18, 22, 0.04), 0 10px 30px -16px rgba(120, 30, 20, 0.22);
-  --shadow-lift: 0 1px 2px rgba(20, 18, 22, 0.05), 0 22px 48px -20px rgba(120, 30, 20, 0.30);
-  --glow-soft: 0 18px 50px -22px rgba(120, 30, 20, 0.30);
-  --glow-crimson: 0 14px 38px -14px rgba(200, 16, 46, 0.45);
+  // ---- Shadows / soft glow (violet-tinted) ----
+  --shadow-xs: 0 1px 2px rgba(26, 21, 51, 0.05);
+  --shadow-sm: 0 1px 3px rgba(26, 21, 51, 0.08), 0 1px 2px rgba(26, 21, 51, 0.04);
+  --shadow-card: 0 1px 2px rgba(26, 21, 51, 0.04), 0 12px 30px -16px rgba(91, 33, 182, 0.26);
+  --shadow-lift: 0 1px 2px rgba(26, 21, 51, 0.06), 0 24px 50px -20px rgba(91, 33, 182, 0.34);
+  --glow-soft: 0 18px 50px -22px rgba(91, 33, 182, 0.34);
+  --glow-crimson: 0 14px 38px -14px rgba(124, 58, 237, 0.5);
 
-  // ---- Sector colors (distinct, no purple) ----
-  --sector-animation: #e23744;
-  --sector-vfx: #0e9e8e;
-  --sector-gaming: #1e66f5;
-  --sector-comics: #f5872b;
-  --sector-xr: #16a34a;
+  // ---- Sector colors ----
+  --sector-animation: #db2777;
+  --sector-vfx: #7c3aed;
+  --sector-gaming: #2563eb;
+  --sector-comics: #f59e0b;
+  --sector-xr: #06b6d4;
 
   // ---- Semantic ----
-  --success: #15803d;
-  --warning: #c2710c;
-  --error: #c8102e;
-  --info: #1e66f5;
+  --success: #16a34a;
+  --warning: #d97706;
+  --error: #db2777;
+  --info: #2563eb;
 
   // ---- Type ----
   --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
@@ -82,20 +92,17 @@
   --text-xl: 1.25rem;   --text-2xl: 1.5rem;  --text-3xl: 1.875rem; --text-4xl: 2.5rem;
   --text-5xl: 3.25rem;  --text-6xl: 4.5rem;  --text-7xl: 6rem;     --text-8xl: 8rem;
 
-  // ---- Spacing ----
   --space-1: 0.25rem; --space-2: 0.5rem;  --space-3: 0.75rem; --space-4: 1rem;
   --space-5: 1.25rem; --space-6: 1.5rem;  --space-8: 2rem;    --space-10: 2.5rem;
   --space-12: 3rem;   --space-16: 4rem;   --space-20: 5rem;   --space-24: 6rem;
   --space-32: 8rem;   --space-40: 10rem;
 
-  // ---- Radii ----
   --radius-sm: 8px;  --radius-md: 12px; --radius-lg: 18px;
   --radius-xl: 24px; --radius-2xl: 32px; --radius-full: 9999px;
 
   --max-content-width: 1280px;
   --header-height: 76px;
 
-  // ---- Motion ----
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -104,17 +111,9 @@
   --z-bg: 0; --z-base: 1; --z-sticky: 100; --z-header: 200;
   --z-overlay: 800; --z-modal: 900; --z-toast: 1000; --z-cursor: 9999;
 
-  // legacy accent aliases (older component SCSS still references these names) ----
-  --violet: var(--crimson);
-  --indigo: var(--crimson-light);
-  --cyan: var(--teal);
-  --magenta: var(--coral);
-  --amber: var(--gold);
-  --lime: var(--gold);
-
   // legacy aliases
-  --color-primary: var(--crimson);
-  --color-primary-dark: var(--crimson-dark);
+  --color-primary: var(--violet);
+  --color-primary-dark: var(--violet-dark);
   --color-text-primary: var(--ink);
   --color-text-secondary: var(--ink-dim);
   --color-text-tertiary: var(--ink-mut);
@@ -125,40 +124,38 @@
 }
 
 // ------------------------------------------------------------
-// DARK MODE — toggled via ThemeService -> body[data-theme="dark"]
-// (keeps the crimson/coral/gold brand accents; flips surfaces + ink)
+// DARK MODE
 // ------------------------------------------------------------
 body[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #14110d;
-  --bg-1: #1c1813;
-  --bg-2: #221d16;
+  --bg: #120f1c;
+  --bg-1: #1a1528;
+  --bg-2: #201a30;
+  --lavender: #201a30;
   --surface: rgba(255, 255, 255, 0.05);
   --surface-2: rgba(255, 255, 255, 0.03);
-  --surface-strong: rgba(28, 24, 19, 0.9);
-  --glass: rgba(28, 24, 19, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.10);
-  --glass-border-strong: rgba(255, 255, 255, 0.20);
-  --line: rgba(255, 255, 255, 0.10);
-  --header-bg: rgba(26, 22, 17, 0.62);
-  --header-bg-scrolled: rgba(26, 22, 17, 0.86);
+  --surface-strong: rgba(26, 21, 40, 0.9);
+  --glass: rgba(26, 21, 40, 0.6);
+  --glass-border: rgba(167, 139, 250, 0.18);
+  --glass-border-strong: rgba(167, 139, 250, 0.30);
+  --line: rgba(167, 139, 250, 0.16);
+  --header-bg: rgba(20, 16, 32, 0.62);
+  --header-bg-scrolled: rgba(20, 16, 32, 0.88);
 
-  --ink: #f6f1e9;
-  --ink-dim: #c9c2b6;
-  --ink-mut: #968d7f;
-  --ink-faint: #5f594e;
+  --ink: #f2effb;
+  --ink-dim: #c7c0e0;
+  --ink-mut: #948cb5;
+  --ink-faint: #5d5680;
 
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 14px 34px -18px rgba(0, 0, 0, 0.7);
   --shadow-lift: 0 1px 2px rgba(0, 0, 0, 0.5), 0 26px 52px -22px rgba(0, 0, 0, 0.85);
   --glow-soft: 0 18px 50px -22px rgba(0, 0, 0, 0.7);
 }
 body[data-theme="dark"]::before {
   background:
-    radial-gradient(55vw 45vw at 8% -10%, rgba(255, 106, 61, 0.16), transparent 60%),
-    radial-gradient(45vw 40vw at 98% 0%, rgba(255, 193, 77, 0.13), transparent 60%),
-    radial-gradient(50vw 45vw at 85% 105%, rgba(200, 16, 46, 0.13), transparent 60%);
+    radial-gradient(55vw 45vw at 8% -10%, rgba(124, 58, 237, 0.20), transparent 60%),
+    radial-gradient(45vw 40vw at 98% 0%, rgba(37, 99, 235, 0.16), transparent 60%),
+    radial-gradient(50vw 45vw at 85% 105%, rgba(219, 39, 119, 0.16), transparent 60%);
 }
 
 // ------------------------------------------------------------
@@ -189,22 +186,21 @@ body {
 }
 html[lang="ta"] body { font-family: var(--font-tamil); }
 
-// soft warm ambience (very subtle on light)
 body::before {
   content: '';
   position: fixed; inset: 0; z-index: var(--z-bg); pointer-events: none;
   background:
-    radial-gradient(55vw 45vw at 8% -10%, rgba(255, 106, 61, 0.10), transparent 60%),
-    radial-gradient(45vw 40vw at 98% 0%, rgba(255, 193, 77, 0.10), transparent 60%),
-    radial-gradient(50vw 45vw at 85% 105%, rgba(200, 16, 46, 0.06), transparent 60%);
+    radial-gradient(55vw 45vw at 6% -12%, rgba(124, 58, 237, 0.10), transparent 60%),
+    radial-gradient(45vw 40vw at 100% -4%, rgba(37, 99, 235, 0.09), transparent 60%),
+    radial-gradient(50vw 45vw at 88% 106%, rgba(219, 39, 119, 0.07), transparent 60%);
 }
 
-::selection { background: rgba(200, 16, 46, 0.16); color: var(--crimson-dark); }
+::selection { background: rgba(124, 58, 237, 0.20); color: var(--violet-dark); }
 
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: var(--bg-2); }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(var(--crimson), var(--coral));
+  background: linear-gradient(var(--violet), var(--magenta));
   border-radius: var(--radius-full);
   border: 2px solid var(--bg);
 }
@@ -267,7 +263,7 @@ main { position: relative; z-index: var(--z-base); }
 }
 .card:hover {
   transform: translateY(-6px);
-  border-color: color-mix(in srgb, var(--crimson) 30%, var(--glass-border));
+  border-color: color-mix(in srgb, var(--violet) 32%, var(--glass-border));
   box-shadow: var(--shadow-lift);
 }
 
@@ -291,23 +287,23 @@ main { position: relative; z-index: var(--z-base); }
               background var(--dur-fast) var(--ease-out);
 }
 .btn:active { transform: scale(0.97); }
-.btn:focus-visible { outline: 2px solid var(--crimson); outline-offset: 2px; }
+.btn:focus-visible { outline: 2px solid var(--violet); outline-offset: 2px; }
 
 .btn-primary {
   border: none; color: #fff;
-  background: var(--grad-aurora); background-size: 160% 160%;
+  background: var(--grad-warm); background-size: 160% 160%;
   box-shadow: var(--glow-crimson);
 }
 .btn-primary::after {
   content: ''; position: absolute; inset: 0; z-index: -1;
-  background: var(--grad-warm); background-size: 200% 200%;
+  background: var(--grad-aurora); background-size: 200% 200%;
   opacity: 0; transition: opacity var(--dur-normal) var(--ease-out);
 }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 20px 46px -14px rgba(200, 16, 46, 0.55); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 20px 46px -14px rgba(124, 58, 237, 0.55); }
 .btn-primary:hover::after { opacity: 1; }
 
 .btn-ghost { background: transparent; box-shadow: none; }
-.btn-ghost:hover { border-color: var(--crimson); color: var(--crimson); background: color-mix(in srgb, var(--crimson) 6%, transparent); }
+.btn-ghost:hover { border-color: var(--violet); color: var(--violet); background: color-mix(in srgb, var(--violet) 7%, transparent); }
 
 .btn-lg { padding: 1.05rem 2rem; font-size: var(--text-base); }
 
@@ -322,7 +318,7 @@ main { position: relative; z-index: var(--z-base); }
   background: var(--surface); color: var(--ink-dim);
   box-shadow: var(--shadow-xs);
 }
-.pill .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--crimson); box-shadow: 0 0 0 4px rgba(200,16,46,0.12); }
+.pill .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--violet); box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.14); }
 
 // ------------------------------------------------------------
 // REVEAL ON SCROLL
@@ -346,17 +342,17 @@ main { position: relative; z-index: var(--z-base); }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 .skip-link {
   position: fixed; top: -120px; left: var(--space-4); z-index: var(--z-toast);
-  padding: var(--space-3) var(--space-4); background: var(--crimson); color: #fff;
+  padding: var(--space-3) var(--space-4); background: var(--violet); color: #fff;
   border-radius: var(--radius-md); transition: top var(--dur-fast) var(--ease-out);
 }
 .skip-link:focus { top: var(--space-4); }
 
 // ------------------------------------------------------------
-// ANGULAR MATERIAL — primary tint to crimson
+// ANGULAR MATERIAL
 // ------------------------------------------------------------
 .mat-mdc-card { background: var(--surface) !important; color: var(--ink) !important; border: 1px solid var(--glass-border); border-radius: var(--radius-lg) !important; box-shadow: var(--shadow-card) !important; }
 .mat-mdc-form-field { width: 100%; }
-.mdc-text-field--focused .mdc-line-ripple::after { border-color: var(--crimson) !important; }
+.mdc-text-field--focused .mdc-line-ripple::after { border-color: var(--violet) !important; }
 .mat-mdc-snack-bar-container .mdc-snackbar__surface { border-radius: var(--radius-md); }
 .mat-icon { color: inherit; }
 
@@ -364,7 +360,7 @@ main { position: relative; z-index: var(--z-base); }
 // LOADING SHIMMER
 // ------------------------------------------------------------
 @keyframes shimmer { 0% { background-position: -800px 0; } 100% { background-position: 800px 0; } }
-.skeleton { background: linear-gradient(90deg, var(--bg-2) 25%, #efe9df 50%, var(--bg-2) 75%); background-size: 1600px 100%; animation: shimmer 1.8s infinite linear; border-radius: var(--radius-md); }
+.skeleton { background: linear-gradient(90deg, var(--bg-2) 25%, #ece6fb 50%, var(--bg-2) 75%); background-size: 1600px 100%; animation: shimmer 1.8s infinite linear; border-radius: var(--radius-md); }
 
 // ------------------------------------------------------------
 // REDUCED MOTION

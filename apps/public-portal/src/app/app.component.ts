@@ -4,6 +4,7 @@
 // ============================================================
 import { Component, inject, afterNextRender } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { TopBarComponent } from './shared/top-bar/top-bar.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { FooterComponent } from './shared/footer/footer.component';
 import { SmoothScrollService } from './core/services/smooth-scroll.service';
@@ -11,9 +12,10 @@ import { SmoothScrollService } from './core/services/smooth-scroll.service';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, FooterComponent],
+  imports: [RouterOutlet, TopBarComponent, NavbarComponent, FooterComponent],
   template: `
     <a class="skip-link" href="#main-content">Skip to content</a>
+    <app-top-bar />
     <app-navbar />
     <main id="main-content" class="main-content" role="main">
       <router-outlet />

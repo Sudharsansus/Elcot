@@ -32,7 +32,7 @@ export class AuroraHeroComponent implements OnDestroy {
   private particles: P[] = [];
   private w = 0; private h = 0; private dpr = 1;
   private mx = -9999; private my = -9999; private tmx = -9999; private tmy = -9999;
-  private readonly palette = ['#c8102e', '#ff6a3d', '#ffc14d', '#0e9e8e', '#1e66f5'];
+  private readonly palette = ['#7c3aed', '#2563eb', '#db2777', '#06b6d4', '#a78bfa'];
 
   constructor() {
     afterNextRender(() => this.zone.runOutsideAngular(() => this.boot()));
@@ -115,7 +115,7 @@ export class AuroraHeroComponent implements OnDestroy {
         const dx = a.x - b.x, dy = a.y - b.y; const d2 = dx * dx + dy * dy;
         if (d2 < 15000) {
           const alpha = (1 - d2 / 15000) * 0.10;
-          ctx.strokeStyle = `rgba(150, 60, 50, ${alpha})`;
+          ctx.strokeStyle = `rgba(124, 90, 200, ${alpha})`;
           ctx.lineWidth = 0.6;
           ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
         }
