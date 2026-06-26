@@ -197,4 +197,42 @@ public class RabbitMQConfig {
   public Binding exportGenerateBinding() {
     return BindingBuilder.bind(exportGenerateQueue()).to(eventsExchange()).with(RK_EXPORT_GENERATE);
   }
+
+  /**
+   * Per-entity event queues consumed by the auto-generated *EventConsumer listeners. They are
+   * declared here so RabbitAdmin creates them on startup; otherwise each listener's passive
+   * declaration fails with 404 NOT_FOUND. Queues already declared above are excluded.
+   */
+  @Bean
+  public Declarables stubEventQueues() {
+    String[] names = {
+      "avgc.audit.updated",
+      "avgc.auth.created",
+      "avgc.auth.updated",
+      "avgc.businessconnect.created",
+      "avgc.businessconnect.updated",
+      "avgc.document.submitted",
+      "avgc.file.created",
+      "avgc.freelancerregistry.created",
+      "avgc.freelancerregistry.updated",
+      "avgc.helpdesk.created",
+      "avgc.helpdesk.updated",
+      "avgc.notification.updated",
+      "avgc.scheme.approved",
+      "avgc.scheme.submitted",
+      "avgc.search.created",
+      "avgc.search.updated",
+      "avgc.talentconnect.created",
+      "avgc.talentconnect.updated",
+      "avgc.user.created",
+      "avgc.user.updated",
+      "avgc.workflow.created",
+      "avgc.workflow.updated"
+    };
+    java.util.List<Declarable> queues = new java.util.ArrayList<>();
+    for (String name : names) {
+      queues.add(QueueBuilder.durable(name).build());
+    }
+    return new Declarables(queues);
+  }
 }

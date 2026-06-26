@@ -86,6 +86,9 @@ spring:
       simple:
         acknowledge-mode: manual
         prefetch: 10
+        # Stub per-entity consumers listen on queues that may not exist yet; don't
+        # let a missing queue abort startup (RabbitAdmin declares them via beans).
+        missing-queues-fatal: false
         retry:
           enabled: true
           max-attempts: 3
