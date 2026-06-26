@@ -36,7 +36,9 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update
+      # Flyway owns the schema (V1..V28). Hibernate must NOT alter it; update mode
+      # generated conflicting DDL for stub entities and failed startup.
+      ddl-auto: none
     open-in-view: false
     show-sql: false
     properties:
