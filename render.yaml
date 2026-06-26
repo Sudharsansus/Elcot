@@ -94,15 +94,20 @@ services:
     runtime: image
     image:
       url: docker.io/minio/minio:latest
-    dockerCommand: server /data --address :10000 --console-address :9001
+    # On Render the dockerCommand REPLACES the image entrypoint, so it must invoke
+    # the `minio` binary itself. `server ...` alone isn't an executable and exits
+    # 128 with no output.
+    dockerCommand: minio server /data --address :10000 --console-address :9001
     plan: starter
     disk:
       name: minio-data
       mountPath: /data
       sizeGB: 20
     envVars:
+      # Pin the access key to a clean alphanumeric value — generateValue can emit
+      # '/' and '=', which are invalid in a MinIO root user (access key).
       - key: MINIO_ROOT_USER
-        generateValue: true
+        value: avgcxrminioadmin
       - key: MINIO_ROOT_PASSWORD
         generateValue: true
 
