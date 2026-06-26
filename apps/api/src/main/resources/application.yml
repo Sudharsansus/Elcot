@@ -2,7 +2,7 @@
 # Tamil Nadu AVGC-XR Portal — API Configuration
 # ══════════════════════════════════════════════════════════════
 server:
-  port: 8080
+  port: ${PORT:8080}
   servlet:
     context-path: /
   forward-headers-strategy: native
@@ -17,7 +17,7 @@ spring:
 
   # ─── DataSource (through PgBouncer) ─────────────────────
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${PGBOUNCER_PORT:6432}/${DB_NAME:avgcxr_portal}?prepareThreshold=0&preparedStatementQueryModes=ALL
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:${PGBOUNCER_PORT:5432}}/${DB_NAME:avgcxr_portal}?prepareThreshold=0
     username: ${DB_USER:avgcxr_user}
     password: ${DB_PASSWORD:avgcxr_user}
     driver-class-name: org.postgresql.Driver

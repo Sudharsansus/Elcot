@@ -95,7 +95,7 @@ services:
     runtime: image
     image:
       url: docker.io/minio/minio:latest
-    dockerCommand: server /data --console-address ":9001"
+    dockerCommand: server /data --address ":10000" --console-address ":9001"
     plan: starter
     disk:
       name: minio-data
@@ -158,7 +158,7 @@ services:
       # MinIO access is lazy, so a wrong value won't block API startup — only
       # document uploads; correct it post-deploy if the host differs.
       - key: MINIO_ENDPOINT
-        value: http://avgcxr-minio:9000
+        value: http://avgcxr-minio:10000
       - key: MINIO_ACCESS_KEY
         fromService: { name: avgcxr-minio, type: pserv, envVarKey: MINIO_ROOT_USER }
       - key: MINIO_SECRET_KEY
@@ -218,7 +218,7 @@ services:
       - key: ELASTICSEARCH_PORT
         value: "9200"
       - key: MINIO_ENDPOINT
-        value: http://avgcxr-minio:9000
+        value: http://avgcxr-minio:10000
       - key: MINIO_ACCESS_KEY
         fromService: { name: avgcxr-minio, type: pserv, envVarKey: MINIO_ROOT_USER }
       - key: MINIO_SECRET_KEY
