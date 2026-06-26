@@ -300,6 +300,12 @@ services:
       - path: /*
         name: Referrer-Policy
         value: strict-origin-when-cross-origin
+      - path: /*
+        name: Content-Security-Policy
+        value: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://avgcxr-cms.onrender.com; connect-src 'self' https://avgcxr-api.onrender.com wss://avgcxr-api.onrender.com https://avgcxr-cms.onrender.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+      - path: /*
+        name: Permissions-Policy
+        value: "geolocation=(), camera=(), payment=()"
 
   - type: web
     name: avgcxr-applicant-portal
@@ -327,6 +333,12 @@ services:
       - path: /*
         name: Referrer-Policy
         value: strict-origin-when-cross-origin
+      - path: /*
+        name: Content-Security-Policy
+        value: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://avgcxr-cms.onrender.com; connect-src 'self' https://avgcxr-api.onrender.com wss://avgcxr-api.onrender.com https://avgcxr-cms.onrender.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+      - path: /*
+        name: Permissions-Policy
+        value: "geolocation=(), camera=(), payment=()"
 
   - type: web
     name: avgcxr-admin-portal
@@ -354,3 +366,9 @@ services:
       - path: /*
         name: Referrer-Policy
         value: strict-origin-when-cross-origin
+      - path: /*
+        name: Content-Security-Policy
+        value: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://avgcxr-cms.onrender.com; connect-src 'self' https://avgcxr-api.onrender.com wss://avgcxr-api.onrender.com https://avgcxr-cms.onrender.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+      - path: /*
+        name: Permissions-Policy
+        value: "geolocation=(), camera=(), payment=()"

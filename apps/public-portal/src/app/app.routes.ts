@@ -52,6 +52,10 @@ export const routes: Routes = [
     loadChildren: () => import('./features/auth/auth.routes').then(m => m.AUTH_ROUTES)
   },
   {
+    path: 'privacy',
+    loadComponent: () => import('./features/legal/pages/privacy.component').then(m => m.PrivacyComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

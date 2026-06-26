@@ -20,6 +20,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig {
 
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
+  private final AuthRateLimitFilter authRateLimitFilter;
 
   @Bean
   @org.springframework.context.annotation.Lazy
@@ -74,6 +75,7 @@ public class SecurityConfig {
                     .requestMatchers(new AntPathRequestMatcher("/**"))
                     .authenticated())
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(authRateLimitFilter, JwtAuthenticationFilter.class)
         .headers(
             headers ->
                 headers
