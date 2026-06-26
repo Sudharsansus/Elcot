@@ -181,6 +181,12 @@ management:
       roles: ADMIN
       probes:
         enabled: true
+  health:
+    # Email is usually unconfigured; its health check tries to reach smtp.gmail.com
+    # and fails, which would mark the whole service DOWN and fail Render's health
+    # check even though the API is serving. Exclude it from the aggregate.
+    mail:
+      enabled: false
   info:
     env:
       enabled: true
