@@ -10,13 +10,17 @@ import { languageInterceptor } from './core/interceptors/language.interceptor';
 import { tracingInterceptor } from './core/interceptors/tracing.interceptor';
 import { unwrapInterceptor } from './core/interceptors/unwrap.interceptor';
 import { API_BASE_URL } from './core/tokens/api-base-url.token';
+import { API_BASE_URL as DATA_ACCESS_API_BASE_URL } from '@avgc-xr/data-access';
 import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    // Point the API client at the real backend (the token otherwise defaults
-    // to the same-origin "/api", which has no backend on the static host).
+    // Point BOTH API clients at the real backend. Both tokens otherwise default
+    // to a same-origin path, which has no backend on the static host:
+    //  - the local AuthService/ApiService use the app token,
+    //  - the shared ApiClientService (data-access) uses its own token.
     { provide: API_BASE_URL, useValue: environment.apiUrl },
+    { provide: DATA_ACCESS_API_BASE_URL, useValue: environment.apiUrl },
     provideRouter(routes, withComponentInputBinding(), withViewTransitions()),
     provideAnimationsAsync(),
     provideHttpClient(

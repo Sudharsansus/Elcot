@@ -1,12 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { PageResponse } from '@avgc-xr/api-contracts';
+import { API_BASE_URL } from '../tokens/api-base-url.token';
 
 @Injectable({ providedIn: 'root' })
 export class ApiClientService {
   private readonly http = inject(HttpClient);
-  private readonly API_BASE = '/api/v1';
+  // Real backend base (provided per-app); falls back to same-origin /api/v1.
+  private readonly API_BASE = inject(API_BASE_URL);
 
   get<T>(endpoint: string, params?: Record<string, string | number | boolean>): Observable<T> {
     let hp = new HttpParams();
@@ -15,7 +17,27 @@ export class ApiClientService {
   }
 
   getPage<T>(endpoint: string, page: number, size: number, extra?: Record<string, string>): Observable<PageResponse<T>> {
-    return this.get<PageResponse<T>>(endpoint, { page, size, ...extra });
+    // The API returns the rows in `data` (unwrapped to an array by the app's
+    // response interceptor). Normalise both that and a real page object into a
+    // PageResponse so list components can read .content / .totalElements.
+    return this.get<unknown>(endpoint, { page, size, ...extra }).pipe(
+      map((resp): PageResponse<T> => {
+        const content: T[] = Array.isArray(resp)
+          ? (resp as T[])
+          : (((resp as Partial<PageResponse<T>>)?.content) ?? []);
+        const r = (Array.isArray(resp) ? {} : (resp ?? {})) as Partial<PageResponse<T>>;
+        const totalElements = r.totalElements ?? content.length;
+        return {
+          content,
+          totalElements,
+          totalPages: r.totalPages ?? Math.max(1, Math.ceil(totalElements / (size || 10))),
+          currentPage: r.currentPage ?? page,
+          pageSize: r.pageSize ?? size,
+          hasNext: r.hasNext ?? false,
+          hasPrevious: r.hasPrevious ?? page > 0,
+        };
+      }),
+    );
   }
 
   getById<T>(endpoint: string, id: string): Observable<T> { return this.http.get<T>(`${this.API_BASE}${endpoint}/${id}`); }

@@ -7,6 +7,6 @@ import { ApiClientService } from '@avgc-xr/data-access';
 export class WorkflowManagerComponent {
   private api = inject(ApiClientService);
   pendingTasks = signal<any[]>([]);
-  async ngOnInit() { try { this.pendingTasks.set((await this.api.get<any[]>('/workflow/tasks/pending').toPromise()) ?? []); } catch (e) { console.error(e); } }
-  async completeTask(taskId: string, action: string) { await this.api.post('/workflow/tasks/' + taskId + '/complete', { action }).toPromise(); }
+  async ngOnInit() { try { this.pendingTasks.set((await this.api.get<any[]>('/workflows/tasks/pending').toPromise()) ?? []); } catch (e) { console.error(e); } }
+  async completeTask(taskId: string, action: string) { await this.api.post('/workflows/tasks/' + taskId + '/complete', { action }).toPromise(); }
 }

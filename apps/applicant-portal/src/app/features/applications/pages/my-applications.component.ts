@@ -24,7 +24,7 @@ export class MyApplicationsComponent implements OnInit {
 
   async loadApplications() {
     this.loading.set(true);
-    try { const resp = await this.api.getPage('/applications', this.page, this.size).toPromise(); this.applications.set(resp?.content ?? []); this.total = resp?.totalElements ?? 0; }
+    try { const resp = await this.api.getPage('/applications/mine', this.page, this.size).toPromise(); this.applications.set(resp?.content ?? []); this.total = resp?.totalElements ?? 0; }
     finally { this.loading.set(false); }
   }
 }
