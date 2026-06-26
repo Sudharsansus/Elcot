@@ -1,0 +1,73 @@
+<!-- Launcher -->
+<button class="mira-fab" [class.is-hidden]="open()" (click)="toggle()"
+        [attr.aria-label]="lang() === 'ta' ? 'Mira AI உதவியாளரைத் திற' : 'Open Mira, the AI assistant'">
+  <span class="fab-orb" aria-hidden="true"></span>
+  <span class="fab-spark" aria-hidden="true">✦</span>
+  <span class="fab-label">Mira</span>
+</button>
+
+<!-- Panel -->
+@if (open()) {
+  <section class="mira-panel" role="dialog" aria-label="Mira AI assistant">
+    <header class="mira-head">
+      <div class="mira-id">
+        <span class="mira-avatar" [class.busy]="thinking() || listening()" aria-hidden="true"></span>
+        <span class="mira-id-text">
+          <strong>Mira</strong>
+          <span class="mira-status">
+            {{ listening() ? (lang()==='ta' ? 'கேட்கிறேன்…' : 'Listening…')
+               : thinking() ? (lang()==='ta' ? 'யோசிக்கிறேன்…' : 'Thinking…')
+               : (lang()==='ta' ? 'AI வழிகாட்டி · AVGC-XR' : 'AI guide · AVGC-XR') }}
+          </span>
+        </span>
+      </div>
+      <div class="mira-head-actions">
+        <button type="button" class="mira-icon" [class.on]="speakOn()" (click)="toggleSpeak()"
+                [attr.aria-pressed]="speakOn()" aria-label="Toggle voice replies">
+          @if (speakOn()) {
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2a4.5 4.5 0 00-2.5-4v8a4.5 4.5 0 002.5-4zM14 3.2v2.1a7 7 0 010 13.4v2.1a9 9 0 000-17.6z"/></svg>
+          } @else {
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M3 10v4h4l5 5V5L7 10H3zm16.6 2 2.1-2.1-1.4-1.4L18.2 10.6 16.1 8.5l-1.4 1.4 2.1 2.1-2.1 2.1 1.4 1.4 2.1-2.1 2.1 2.1 1.4-1.4z"/></svg>
+          }
+        </button>
+        <button type="button" class="mira-icon" (click)="close()" aria-label="Close Mira">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7l1.4-1.4L10.6 10.6 16.9 4.3z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="mira-body" #scroller>
+      @for (m of messages(); track m.id) {
+        <div class="msg" [class.user]="m.role === 'USER'" [class.bot]="m.role === 'ASSISTANT'">
+          <p>{{ m.content }}</p>
+        </div>
+      }
+      @if (thinking()) {
+        <div class="msg bot"><p class="typing" aria-label="Mira is typing"><span></span><span></span><span></span></p></div>
+      }
+    </div>
+
+    @if (messages().length <= 1) {
+      <div class="mira-quick">
+        @for (qp of quickPrompts; track qp.q) {
+          <button type="button" (click)="onQuick(qp.q)">{{ lang() === 'ta' ? qp.ta : qp.en }}</button>
+        }
+      </div>
+    }
+
+    <form class="mira-input" (ngSubmit)="submit()">
+      @if (voiceSupported()) {
+        <button type="button" class="mic" [class.listening]="listening()" (click)="toggleVoice()"
+                [attr.aria-label]="listening() ? 'Stop voice' : 'Speak to Mira'">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 14a3 3 0 003-3V5a3 3 0 00-6 0v6a3 3 0 003 3zm5-3a5 5 0 01-10 0H5a7 7 0 006 6.9V21h2v-3.1A7 7 0 0019 11h-2z"/></svg>
+        </button>
+      }
+      <input [ngModel]="draft()" (ngModelChange)="draft.set($event)" name="q" type="text"
+             [placeholder]="listening() ? (lang()==='ta' ? 'கேட்கிறேன்…' : 'Listening…') : (lang()==='ta' ? 'Mira-விடம் கேளுங்கள்…' : 'Ask Mira anything…')"
+             autocomplete="off" [attr.aria-label]="lang()==='ta' ? 'செய்தி' : 'Message Mira'" />
+      <button type="submit" class="send" [disabled]="!draft().trim() || thinking()" aria-label="Send">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3.4 20.4 21 12 3.4 3.6 3.4 10l11 2-11 2z"/></svg>
+      </button>
+    </form>
+  </section>
+}

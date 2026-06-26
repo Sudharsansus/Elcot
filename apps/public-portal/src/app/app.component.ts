@@ -7,12 +7,13 @@ import { RouterOutlet } from '@angular/router';
 import { TopBarComponent } from './shared/top-bar/top-bar.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { FooterComponent } from './shared/footer/footer.component';
+import { MiraComponent } from './features/chat/mira/mira.component';
 import { SmoothScrollService } from './core/services/smooth-scroll.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, TopBarComponent, NavbarComponent, FooterComponent],
+  imports: [RouterOutlet, TopBarComponent, NavbarComponent, FooterComponent, MiraComponent],
   template: `
     <a class="skip-link" href="#main-content">Skip to content</a>
     <app-top-bar />
@@ -21,6 +22,7 @@ import { SmoothScrollService } from './core/services/smooth-scroll.service';
       <router-outlet />
     </main>
     <app-footer />
+    <app-mira />
   `,
   styles: [`
     :host { display: flex; flex-direction: column; min-height: 100vh; }

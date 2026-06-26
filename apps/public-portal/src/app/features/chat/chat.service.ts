@@ -1,6 +1,7 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of, tap, catchError, map } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, of, tap, catchError, map, timeout } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 /**
  * Chat message from the AI assistant (bilingual).
@@ -39,7 +40,7 @@ export interface SendMessageRequest {
 @Injectable({ providedIn: 'root' })
 export class ChatService {
   private readonly http = inject(HttpClient);
-  private readonly API_BASE = '/api/v1/chat';
+  private readonly API_BASE = `${environment.apiUrl}/chat`;
 
   /** Persisted in localStorage; survives page reloads */
   private readonly STORAGE_KEY = 'avgcxr-chat-session';
@@ -113,6 +114,36 @@ export class ChatService {
         return of({} as ChatTurnResponse);
       })
     );
+  }
+
+  /** Lightweight ask: returns just the assistant reply text (or null on any
+   *  failure/timeout). Does NOT mutate the message list — Mira owns that. */
+  askBackend(text: string): Observable<string | null> {
+    const headers = new HttpHeaders({ 'X-Silent-Error': '1' });
+    const req: SendMessageRequest = {
+      message: text,
+      sessionToken: this.sessionToken() ?? undefined,
+      language: this.language(),
+    };
+    return this.http.post<ChatTurnResponse>(`${this.API_BASE}/send`, req, { headers }).pipe(
+      timeout(6000),
+      tap(resp => {
+        if (resp?.sessionToken && !this.sessionToken()) {
+          this.sessionToken.set(resp.sessionToken);
+          this.saveSessionToken(resp.sessionToken);
+        }
+      }),
+      map(resp => resp?.assistantMessage?.content ?? null),
+      catchError(() => of(null)),
+    );
+  }
+
+  /** Append a locally-composed message (Mira's agentic actions / KB answers). */
+  push(role: ChatMessage['role'], content: string): void {
+    this.messages.update(msgs => [...msgs, {
+      id: `${role.toLowerCase()}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      role, content, language: this.language(), createdAt: new Date().toISOString(),
+    }]);
   }
 
   /** Load message history for a session. */
