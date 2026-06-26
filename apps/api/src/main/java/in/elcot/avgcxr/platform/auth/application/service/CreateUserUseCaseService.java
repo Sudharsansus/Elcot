@@ -93,15 +93,22 @@ public class CreateUserUseCaseService implements CreateUserUseCase {
     return AuthResponse.of(accessToken, refreshToken, 86400L, toUserResponse(saved));
   }
 
+  private static final java.util.Set<String> SELF_SERVICE_ROLES =
+      java.util.Set.of("APPLICANT", "USER", "COMPANY_REP", "COMPANY_REPRESENTATIVE");
+
+  /**
+   * Public self-registration may only ever create a non-privileged APPLICANT account. Elevated
+   * roles (ADMIN / officer) are deliberately NOT self-grantable — an administrator provisions them
+   * via POST /api/v1/users. A request for an elevated role is downgraded to APPLICANT and logged as
+   * a possible privilege-escalation attempt.
+   */
   private static String normalizeRole(String role) {
     if (role == null || role.isBlank()) return "APPLICANT";
     String upper = role.toUpperCase().replace('-', '_');
-    return switch (upper) {
-      case "ADMIN", "SUPER_ADMIN" -> "ADMIN";
-      case "OFFICER", "DISTRICT_OFFICER", "NODAL_OFFICER" -> "DISTRICT_OFFICER";
-      case "APPLICANT", "USER" -> "APPLICANT";
-      default -> "APPLICANT";
-    };
+    if (!SELF_SERVICE_ROLES.contains(upper)) {
+      log.warn("Blocked privileged self-registration role '{}'; using APPLICANT", role);
+    }
+    return "APPLICANT";
   }
 
   private static UserResponse toUserResponse(User u) {
