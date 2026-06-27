@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -10,6 +10,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { I18nService } from '../../../core/services/i18n.service';
 import { AuthShellComponent } from '../auth-shell.component';
+import { FormAssistService, AssistSpec } from '../../chat/form-assist.service';
 
 @Component({
   selector: 'app-register',
@@ -23,6 +24,11 @@ import { AuthShellComponent } from '../auth-shell.component';
       [points]="points()">
       <h2 class="auth-heading">{{ ta() ? 'பதிவு' : 'Register' }}</h2>
       <p class="auth-subheading">{{ ta() ? 'தொடங்க உங்கள் விவரங்களை வழங்கவும்.' : 'Provide your details to get started.' }}</p>
+
+      <button type="button" class="mira-fill" (click)="fillWithMira()">
+        <span class="mf-orb" aria-hidden="true"></span>
+        {{ ta() ? 'Mira-வுடன் இந்தப் படிவத்தை நிரப்பவும்' : 'Fill this form with Mira' }}
+      </button>
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
         <mat-form-field appearance="outline">
@@ -83,13 +89,34 @@ import { AuthShellComponent } from '../auth-shell.component';
       </div>
     </app-auth-shell>
   `,
+  styles: [`
+    .mira-fill {
+      display: inline-flex; align-items: center; gap: 10px;
+      margin: 0 0 18px; padding: 10px 16px;
+      border: 1px solid var(--glass-border); border-radius: var(--radius-full);
+      background: color-mix(in srgb, var(--violet) 6%, transparent);
+      color: var(--violet); font: inherit; font-weight: 600; font-size: 0.9rem; cursor: pointer;
+      transition: background var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+    }
+    .mira-fill:hover { background: color-mix(in srgb, var(--violet) 12%, transparent); transform: translateY(-1px); }
+    .mf-orb {
+      width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0; overflow: hidden;
+      background: conic-gradient(from 0deg, #ff4fa3, #38bdf8, #34d399, #a78bfa, #ff4fa3);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4), 0 0 8px -1px rgba(124,58,237,0.7);
+      animation: mf-spin 4s linear infinite;
+    }
+    @keyframes mf-spin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) { .mf-orb { animation: none; } }
+  `],
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly notification = inject(NotificationService);
   private readonly router = inject(Router);
   private readonly i18n = inject(I18nService);
+  private readonly formAssist = inject(FormAssistService);
+  private spec!: AssistSpec;
 
   readonly ta = computed(() => this.i18n.currentLanguage() === 'ta');
   readonly loading = signal(false);
@@ -105,6 +132,42 @@ export class RegisterComponent {
     password: ['', [Validators.required, Validators.minLength(8)]],
     confirmPassword: ['', Validators.required],
   });
+
+  ngOnInit(): void {
+    this.spec = {
+      titleEn: 'registration',
+      titleTa: 'பதிவு',
+      fields: [
+        { key: 'name', labelEn: 'What is your full name?', labelTa: 'உங்கள் முழுப் பெயர் என்ன?',
+          validate: (v) => (v.trim().length >= 2 ? null : 'a full name (at least 2 letters)') },
+        { key: 'email', labelEn: 'What is your email address?', labelTa: 'உங்கள் மின்னஞ்சல் முகவரி என்ன?', type: 'email',
+          validate: (v) => (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v.trim()) ? null : 'a valid email like name@example.com') },
+        { key: 'phone', labelEn: 'Your 10-digit mobile number?', labelTa: 'உங்கள் 10 இலக்க மொபைல் எண்?', type: 'tel',
+          validate: (v) => (/^[6-9]\d{9}$/.test(v.replace(/\D/g, '')) ? null : 'a 10-digit mobile starting with 6-9') },
+        { key: 'role', labelEn: 'Are you an Individual / Freelancer, or a Company representative?',
+          labelTa: 'நீங்கள் தனிநபர்/ஃப்ரீலான்சரா, அல்லது நிறுவன பிரதிநிதியா?',
+          type: 'select', options: ['Individual / Freelancer', 'Company representative'] },
+        { key: 'password', labelEn: 'Choose a password (at least 8 characters).', labelTa: 'கடவுச்சொல்லைத் தேர்வுசெய்யவும் (குறைந்தது 8 எழுத்துகள்).', type: 'password',
+          validate: (v) => (v.length >= 8 ? null : 'at least 8 characters') },
+        { key: 'confirmPassword', labelEn: 'Re-enter the same password.', labelTa: 'அதே கடவுச்சொல்லை மீண்டும் உள்ளிடவும்.', type: 'password',
+          validate: (v) => (v === this.form.get('password')?.value ? null : 'the two passwords must match') },
+      ],
+      setValue: (k, val) => {
+        let v = val;
+        if (k === 'phone') v = val.replace(/\D/g, '');
+        if (k === 'role') v = val.toLowerCase().includes('company') ? 'COMPANY_REP' : 'APPLICANT';
+        this.form.get(k)?.setValue(v);
+        this.form.get(k)?.markAsTouched();
+      },
+      getValue: (k) => this.form.get(k)?.value ?? '',
+      submit: () => { void this.onSubmit(); },
+    };
+    this.formAssist.register(this.spec);
+  }
+
+  ngOnDestroy(): void { this.formAssist.clear(this.spec); }
+
+  fillWithMira(): void { this.formAssist.begin(); }
 
   async onSubmit(): Promise<void> {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }

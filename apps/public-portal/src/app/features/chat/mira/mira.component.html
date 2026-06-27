@@ -17,6 +17,7 @@
           <span class="mira-status">
             {{ listening() ? (lang()==='ta' ? 'கேட்கிறேன்…' : 'Listening…')
                : speaking() ? (lang()==='ta' ? 'பேசுகிறேன்…' : 'Speaking…')
+               : filling() ? (lang()==='ta' ? 'படிவத்தை நிரப்புகிறேன்…' : 'Filling your form…')
                : thinking() ? (lang()==='ta' ? 'யோசிக்கிறேன்…' : 'Thinking…')
                : (lang()==='ta' ? 'AI வழிகாட்டி · AVGC-XR' : 'AI guide · AVGC-XR') }}
           </span>

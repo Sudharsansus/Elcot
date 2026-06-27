@@ -29,8 +29,8 @@ import { SmoothScrollService } from './core/services/smooth-scroll.service';
     </main>
     @if (!isAuthRoute()) {
       <app-footer />
-      <app-mira />
     }
+    <app-mira />
   `,
   styles: [`
     :host { display: flex; flex-direction: column; min-height: 100vh; }

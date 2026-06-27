@@ -9,7 +9,7 @@
 // ============================================================
 import {
   Component, ChangeDetectionStrategy, inject, signal, ElementRef, viewChild,
-  afterNextRender, effect, OnDestroy,
+  afterNextRender, effect, untracked, OnDestroy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -18,6 +18,7 @@ import { firstValueFrom } from 'rxjs';
 import { ChatService } from '../chat.service';
 import { SmoothScrollService } from '../../../core/services/smooth-scroll.service';
 import { I18nService } from '../../../core/services/i18n.service';
+import { FormAssistService } from '../form-assist.service';
 import { SCHEMES_DATA, SECTOR_CATEGORIES } from '../../schemes/schemes.data';
 
 type IntentKind = 'navigate' | 'finder' | 'answer';
@@ -36,6 +37,7 @@ export class MiraComponent implements OnDestroy {
   private readonly router = inject(Router);
   private readonly smooth = inject(SmoothScrollService);
   private readonly i18n = inject(I18nService);
+  private readonly formAssist = inject(FormAssistService);
 
   readonly open = this.chat.isOpen;
   readonly messages = this.chat.messages;
@@ -45,8 +47,12 @@ export class MiraComponent implements OnDestroy {
   readonly speakOn = signal(false);
   readonly thinking = signal(false);
   readonly speaking = signal(false);
+  readonly filling = signal(false);
   readonly voiceSupported = signal(false);
   readonly tamilVoiceAvailable = signal(false);
+
+  private formStep = -1;
+  private awaitingSubmit = false;
 
   private recognition: { start(): void; stop(): void } | null = null;
   private readonly scroller = viewChild<ElementRef<HTMLElement>>('scroller');
@@ -65,6 +71,11 @@ export class MiraComponent implements OnDestroy {
       this.loadVoices();
     });
     effect(() => { this.messages(); queueMicrotask(() => this.scrollToEnd()); });
+    // "Fill with Mira" tapped on a form → start the guided fill
+    effect(() => {
+      const n = this.formAssist.startTick();
+      if (n > 0) untracked(() => this.startFormFill());
+    });
   }
 
   private t(en: string, ta: string): string { return this.lang() === 'ta' ? ta : en; }
@@ -75,7 +86,7 @@ export class MiraComponent implements OnDestroy {
       this.chat.push('ASSISTANT', this.greeting());
     }
   }
-  close(): void { this.chat.close(); this.stopListening(); this.stopSpeaking(); }
+  close(): void { this.chat.close(); this.stopListening(); this.stopSpeaking(); this.resetFill(); }
 
   // ---- page awareness: Mira knows which page you're on ----
   private pageName(): string {
@@ -102,7 +113,88 @@ export class MiraComponent implements OnDestroy {
     const text = this.draft().trim();
     if (!text || this.thinking()) return;
     this.draft.set('');
+    if (this.formStep >= 0 || this.awaitingSubmit) {
+      this.chat.push('USER', text);
+      this.handleFormInput(text);
+      return;
+    }
     void this.handle(text);
+  }
+
+  // ---- guided "Fill with Mira" flow ----
+  private startFormFill(): void {
+    const spec = this.formAssist.active();
+    if (!spec) return;
+    if (!this.chat.isOpen()) this.chat.toggle();
+    this.formStep = 0;
+    this.awaitingSubmit = false;
+    this.filling.set(true);
+    this.chat.push('ASSISTANT', this.t(
+      `Sure — let's fill the ${spec.titleEn} together. I'll ask one thing at a time; reply here and I'll fill it in (and flag anything that looks off).`,
+      `சரி — ${spec.titleTa} படிவத்தை ஒன்றாக நிரப்புவோம். ஒவ்வொன்றாகக் கேட்கிறேன்; இங்கே பதிலளியுங்கள், நான் நிரப்புகிறேன்.`));
+    this.askField(0);
+  }
+  private askField(i: number): void {
+    const spec = this.formAssist.active();
+    if (!spec) return;
+    const f = spec.fields[i];
+    let q = this.lang() === 'ta' ? f.labelTa : f.labelEn;
+    if (f.type === 'select' && f.options) q += `\n(${f.options.join('  •  ')})`;
+    this.chat.push('ASSISTANT', q);
+  }
+  private handleFormInput(text: string): void {
+    const spec = this.formAssist.active();
+    if (!spec) { this.resetFill(); return; }
+
+    if (this.awaitingSubmit) {
+      this.awaitingSubmit = false;
+      this.filling.set(false);
+      if (/\b(yes|submit|ok|okay|go|create|sure|ஆம்|சரி|சமர்ப்)/i.test(text)) {
+        this.chat.push('ASSISTANT', this.t('Submitting…', 'சமர்ப்பிக்கிறேன்…'));
+        spec.submit?.();
+      } else {
+        this.chat.push('ASSISTANT', this.t(
+          "No problem — the form's filled in. Review it and submit whenever you're ready.",
+          'பரவாயில்லை — படிவம் நிரப்பப்பட்டது. சரிபார்த்து சமர்ப்பிக்கவும்.'));
+      }
+      return;
+    }
+
+    const i = this.formStep;
+    const f = spec.fields[i];
+    let value = text.trim();
+    if (f.type === 'select' && f.options) {
+      const m = f.options.find(
+        (o) => o.toLowerCase().includes(value.toLowerCase())
+          || value.toLowerCase().includes(o.split(' ')[0].toLowerCase()));
+      value = m ?? value;
+    }
+    const err = f.validate ? f.validate(value) : null;
+    if (err) {
+      this.chat.push('ASSISTANT', this.t(
+        `Hmm — I need ${err}. Let's try that one again:`,
+        `சரியில்லை — ${err} தேவை. மீண்டும் முயற்சிக்கவும்:`));
+      this.askField(i);
+      return;
+    }
+    spec.setValue(f.key, value);
+    const next = i + 1;
+    if (next < spec.fields.length) {
+      this.formStep = next;
+      this.chat.push('ASSISTANT', this.t('Got it ✓', 'சரி ✓'));
+      this.askField(next);
+    } else {
+      this.formStep = -1;
+      this.awaitingSubmit = true;
+      this.chat.push('ASSISTANT', this.t(
+        "All set ✓ — I've filled the form. Want me to submit it now? (yes / no)",
+        'அனைத்தும் தயார் ✓ — படிவத்தை நிரப்பிவிட்டேன். இப்போது சமர்ப்பிக்கவா? (ஆம்/இல்லை)'));
+    }
+  }
+  private resetFill(): void {
+    this.formStep = -1;
+    this.awaitingSubmit = false;
+    this.filling.set(false);
   }
 
   private async handle(text: string): Promise<void> {
