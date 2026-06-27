@@ -84,6 +84,10 @@
               </button>
             </div>
           } @else {
+            <button type="button" class="mira-fill" (click)="fillWithMira()">
+              <span class="mf-orb" aria-hidden="true"></span>
+              {{ lang() === 'ta' ? 'Mira-வுடன் இந்தப் படிவத்தை நிரப்பவும்' : 'Fill this form with Mira' }}
+            </button>
             <form [formGroup]="form" (ngSubmit)="onSubmit()" class="contact-form">
               <mat-form-field appearance="outline" class="form-field">
                 <mat-label>{{ t('contact.form.name') }}</mat-label>
