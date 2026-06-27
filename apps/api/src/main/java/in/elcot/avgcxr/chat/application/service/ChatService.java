@@ -1,5 +1,7 @@
 package in.elcot.avgcxr.chat.application.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import in.elcot.avgcxr.chat.application.port.output.ChatMessageRepositoryPort;
 import in.elcot.avgcxr.chat.application.port.output.ChatSessionRepositoryPort;
 import in.elcot.avgcxr.chat.application.service.PromptBuilder.RagDocument;
@@ -10,9 +12,13 @@ import in.elcot.avgcxr.chat.domain.model.ChatRole;
 import in.elcot.avgcxr.chat.domain.model.ChatSession;
 import in.elcot.avgcxr.common.infrastructure.security.ChatSafetyGuard;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -40,6 +46,12 @@ public class ChatService {
   private static final Logger log = LoggerFactory.getLogger(ChatService.class);
   private static final int MAX_HISTORY = 20; // last N turns in prompt
   private static final int MAX_HISTORY_TOKENS_EST = 8000;
+
+  private static final ObjectMapper ACTION_MAPPER = new ObjectMapper();
+  private static final Pattern ACTION_PATTERN =
+      Pattern.compile("\\[\\[action:(\\{.*?})]]", Pattern.DOTALL);
+  private static final Set<String> ALLOWED_TOOLS =
+      Set.of("navigate", "openSchemeFinder", "fillForm");
 
   private final LlmProvider llm;
   private final RagService ragService;
@@ -130,11 +142,14 @@ public class ChatService {
       }
     }
 
-    // 6) Persist assistant message
+    // 5b) Parse any agent action the model emitted; strip the tag from the visible reply
+    ParsedReply parsed = extractAction(llmResp.content());
+
+    // 6) Persist assistant message (the user-facing text, without the action tag)
     ChatMessage assistantMsg =
         ChatMessage.assistantMessage(
             session.getId(),
-            llmResp.content(),
+            parsed.text(),
             language,
             llmResp.model(),
             llmResp.totalTokens(),
@@ -157,7 +172,53 @@ public class ChatService {
         ragDocs,
         llmResp.model(),
         llmResp.totalTokens(),
-        System.currentTimeMillis() - start);
+        System.currentTimeMillis() - start,
+        parsed.action());
+  }
+
+  /** The user-facing reply text plus an optional, validated agent action. */
+  private record ParsedReply(String text, Map<String, Object> action) {}
+
+  /**
+   * Pull a trailing {@code [[action:{...}]]} tag (if any) out of the model output, validate it
+   * against the allow-list, and return the cleaned reply + action. Anything malformed or unknown is
+   * ignored so the chat degrades gracefully to plain text (and rule-based providers, which never
+   * emit the tag, are unaffected).
+   */
+  private static ParsedReply extractAction(String content) {
+    if (content == null) return new ParsedReply("", null);
+    Matcher m = ACTION_PATTERN.matcher(content);
+    if (!m.find()) return new ParsedReply(content.trim(), null);
+    String clean = content.substring(0, m.start()).trim();
+    String fallbackText = clean.isEmpty() ? content.trim() : clean;
+    try {
+      JsonNode node = ACTION_MAPPER.readTree(m.group(1));
+      String tool = node.path("tool").asText("");
+      if (!ALLOWED_TOOLS.contains(tool)) return new ParsedReply(fallbackText, null);
+
+      Map<String, Object> args = new HashMap<>();
+      JsonNode argsNode = node.path("args");
+      if (argsNode.isObject()) {
+        argsNode.fields().forEachRemaining(e -> args.put(e.getKey(), e.getValue().asText()));
+      }
+      // per-tool validation (only internal routes / known forms allowed)
+      if ("navigate".equals(tool)
+          && !String.valueOf(args.getOrDefault("route", "")).startsWith("/")) {
+        return new ParsedReply(fallbackText, null);
+      }
+      if ("fillForm".equals(tool)) {
+        String form = String.valueOf(args.getOrDefault("form", ""));
+        if (!"register".equals(form) && !"contact".equals(form)) {
+          return new ParsedReply(fallbackText, null);
+        }
+      }
+      Map<String, Object> action = new HashMap<>();
+      action.put("tool", tool);
+      action.put("args", args);
+      return new ParsedReply(fallbackText, action);
+    } catch (Exception e) {
+      return new ParsedReply(fallbackText, null);
+    }
   }
 
   @Transactional
@@ -202,5 +263,6 @@ public class ChatService {
       List<RagDocument> ragDocuments,
       String modelUsed,
       int tokensUsed,
-      long totalLatencyMs) {}
+      long totalLatencyMs,
+      Map<String, Object> action) {}
 }

@@ -19,6 +19,12 @@ export interface ChatMessage {
   pending?: boolean;
 }
 
+/** An action the agent (LLM) asked the client to perform. */
+export interface AgentAction {
+  tool: string;
+  args?: Record<string, unknown>;
+}
+
 export interface ChatTurnResponse {
   sessionId: string;
   sessionToken: string;
@@ -29,6 +35,7 @@ export interface ChatTurnResponse {
   modelUsed: string;
   tokensUsed: number;
   totalLatencyMs: number;
+  action?: AgentAction | null;
 }
 
 export interface SendMessageRequest {
@@ -116,9 +123,9 @@ export class ChatService {
     );
   }
 
-  /** Lightweight ask: returns just the assistant reply text (or null on any
-   *  failure/timeout). Does NOT mutate the message list — Mira owns that. */
-  askBackend(text: string): Observable<string | null> {
+  /** Lightweight ask: returns the assistant reply text + any agent action (or
+   *  nulls on failure/timeout). Does NOT mutate the message list — Mira owns that. */
+  askBackend(text: string): Observable<{ reply: string | null; action: AgentAction | null }> {
     const headers = new HttpHeaders({ 'X-Silent-Error': '1' });
     const req: SendMessageRequest = {
       message: text,
@@ -133,8 +140,8 @@ export class ChatService {
           this.saveSessionToken(resp.sessionToken);
         }
       }),
-      map(resp => resp?.assistantMessage?.content ?? null),
-      catchError(() => of(null)),
+      map(resp => ({ reply: resp?.assistantMessage?.content ?? null, action: resp?.action ?? null })),
+      catchError(() => of({ reply: null, action: null })),
     );
   }
 

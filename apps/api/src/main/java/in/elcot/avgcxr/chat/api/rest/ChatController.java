@@ -139,7 +139,8 @@ public class ChatController {
         r.ragDocuments().stream().map(d -> d.id()).toList(),
         r.modelUsed(),
         r.tokensUsed(),
-        r.totalLatencyMs());
+        r.totalLatencyMs(),
+        r.action());
   }
 
   private UUID currentUserIdFromAuth(Authentication auth) {

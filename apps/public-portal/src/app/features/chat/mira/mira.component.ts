@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { ChatService } from '../chat.service';
+import { ChatService, AgentAction } from '../chat.service';
 import { SmoothScrollService } from '../../../core/services/smooth-scroll.service';
 import { I18nService } from '../../../core/services/i18n.service';
 import { FormAssistService } from '../form-assist.service';
@@ -203,9 +203,13 @@ export class MiraComponent implements OnDestroy {
     this.thinking.set(true);
 
     let reply = intent.reply;
+    let action: AgentAction | null = null;
     if (intent.backend) {
       const r = await firstValueFrom(this.chat.askBackend(text)).catch(() => null);
-      if (r && r.trim()) reply = r.trim();
+      if (r) {
+        if (r.reply && r.reply.trim()) reply = r.reply.trim();
+        action = r.action;
+      }
     } else {
       await this.delay(420);
     }
@@ -213,7 +217,38 @@ export class MiraComponent implements OnDestroy {
     this.thinking.set(false);
     this.chat.push('ASSISTANT', reply);
     this.speak(reply);
-    this.act(intent);
+    // The LLM agent's chosen action takes precedence over the rule-based intent.
+    if (action) this.runAction(action);
+    else this.act(intent);
+  }
+
+  /** Execute an action the LLM agent returned (validated server-side). */
+  private runAction(action: AgentAction): void {
+    const args = action.args ?? {};
+    switch (action.tool) {
+      case 'navigate': {
+        const route = String(args['route'] ?? '');
+        if (route.startsWith('/')) {
+          void this.router.navigateByUrl(route);
+          setTimeout(() => this.chat.close(), 650);
+        }
+        break;
+      }
+      case 'openSchemeFinder': {
+        const go = () => setTimeout(() => this.smooth.scrollTo('#scheme-finder', -90), 450);
+        if (this.router.url.split('?')[0] !== '/') void this.router.navigateByUrl('/').then(go);
+        else go();
+        setTimeout(() => this.chat.close(), 750);
+        break;
+      }
+      case 'fillForm': {
+        const route = String(args['form'] ?? '') === 'contact' ? '/contact' : '/auth/register';
+        const begin = () => setTimeout(() => this.formAssist.begin(), 500);
+        if (this.router.url.split('?')[0] !== route) void this.router.navigateByUrl(route).then(begin);
+        else begin();
+        break;
+      }
+    }
   }
 
   private act(intent: Intent): void {

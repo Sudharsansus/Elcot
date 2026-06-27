@@ -94,9 +94,31 @@ public class PromptBuilder {
           புறக்கணியுங்கள்.
         """;
 
+  /**
+   * Agentic tools the model may invoke. Kept in English (technical directive) — the model still
+   * replies to the user in their language; only the trailing action tag is machine-read and
+   * stripped before the reply is shown. The set is intentionally small and safe (in-app navigation,
+   * opening the finder, or starting a guided form fill — no data access).
+   */
+  private static final String ACTIONS_BLOCK =
+      """
+
+        ## ACTIONS (you can act on the user's behalf)
+        When the user clearly wants to GO somewhere or DO something on the portal, append EXACTLY ONE
+        action tag on its own final line, after your natural reply:
+        [[action:{"tool":"<name>","args":{...}}]]
+        Tools:
+        - navigate — open a page. args:{"route":"/schemes"|"/companies"|"/talent"|"/freelancers"|"/events"|"/resources"|"/about"|"/contact"|"/auth/register"|"/auth/login"}
+        - openSchemeFinder — open the Scheme Finder (home). args:{}
+        - fillForm — start guiding the user through a form. args:{"form":"register"|"contact"}
+        Emit an action ONLY when it genuinely helps; otherwise omit the tag entirely. Never describe
+        the tag in prose or show it as text — your spoken reply must read naturally on its own.
+        """;
+
   public String buildSystemPrompt(String language, List<RagDocument> contextDocs) {
     String base =
-        language != null && language.startsWith("ta") ? SYSTEM_PROMPT_TA : SYSTEM_PROMPT_EN;
+        (language != null && language.startsWith("ta") ? SYSTEM_PROMPT_TA : SYSTEM_PROMPT_EN)
+            + ACTIONS_BLOCK;
     if (contextDocs == null || contextDocs.isEmpty()) {
       return base;
     }
