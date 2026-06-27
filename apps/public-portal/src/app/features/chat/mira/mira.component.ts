@@ -44,6 +44,7 @@ export class MiraComponent implements OnDestroy {
   readonly listening = signal(false);
   readonly speakOn = signal(false);
   readonly thinking = signal(false);
+  readonly speaking = signal(false);
   readonly voiceSupported = signal(false);
   readonly tamilVoiceAvailable = signal(false);
 
@@ -296,10 +297,14 @@ export class MiraComponent implements OnDestroy {
       u.lang = this.lang() === 'ta' ? 'ta-IN' : 'en-IN';
       u.rate = this.lang() === 'ta' ? 0.95 : 1.0; // slightly slower for Tamil clarity
       u.pitch = 1.18; // brighter, younger female timbre
+      u.onstart = () => this.speaking.set(true);
+      u.onend = () => this.speaking.set(false);
+      u.onerror = () => this.speaking.set(false);
       speechSynthesis.speak(u);
     } catch { /* ignore */ }
   }
   private stopSpeaking(): void {
+    this.speaking.set(false);
     try { if (typeof speechSynthesis !== 'undefined') speechSynthesis.cancel(); } catch { /* ignore */ }
   }
 

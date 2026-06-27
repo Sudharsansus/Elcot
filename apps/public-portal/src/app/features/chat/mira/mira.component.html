@@ -11,7 +11,7 @@
   <section class="mira-panel" role="dialog" aria-label="Mira AI assistant">
     <header class="mira-head">
       <div class="mira-id">
-        <span class="mira-avatar" [class.busy]="thinking() || listening()" aria-hidden="true"></span>
+        <span class="mira-avatar" [class.busy]="thinking() || listening() || speaking()" aria-hidden="true"></span>
         <span class="mira-id-text">
           <strong>Mira</strong>
           <span class="mira-status">
