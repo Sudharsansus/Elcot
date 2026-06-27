@@ -62,3 +62,28 @@ adversarial eval pass against the live endpoint:
   both English and Tamil.
 
 Re-run on every model or prompt change.
+
+## Agentic mode (LLM chooses + Mira executes actions)
+
+When the LLM is active, Mira is a real **agent**, not just Q&A. The model may end a
+reply with one machine-read action tag, which the backend validates and strips, and
+the client executes:
+
+```
+[[action:{"tool":"navigate","args":{"route":"/schemes"}}]]
+```
+
+- **Tools** (defined in `PromptBuilder.ACTIONS_BLOCK`): `navigate(route)`,
+  `openSchemeFinder`, `fillForm(register|contact)`. Intentionally small and
+  **data-free** — an action can only move the user around the app or start a guided
+  form-fill; it can never read or write data.
+- **Server-side guard** (`ChatService.extractAction`): allow-list of tools, internal
+  routes only (`/...`), known forms only. Anything malformed/unknown is dropped and
+  the reply degrades to plain text. The rule-based provider never emits the tag, so
+  this is inert until the LLM is on.
+- **Client** (`Mira.runAction`): executes the validated action; it takes precedence
+  over the local rule-based intent.
+
+Add a tool by: (1) listing it in `ACTIONS_BLOCK`, (2) allow-listing + validating it
+in `extractAction`, (3) handling it in `Mira.runAction`. Include agentic actions in
+the eval gate (e.g. confirm the model never navigates to external/unknown routes).
