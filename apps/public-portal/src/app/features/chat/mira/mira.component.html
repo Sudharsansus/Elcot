@@ -58,15 +58,23 @@
       }
     </div>
 
-    @if (messages().length <= 1) {
+    @if (showSuggestions()) {
       <div class="mira-quick">
-        @for (qp of quickPrompts; track qp.q) {
-          <button type="button" (click)="onQuick(qp.q)">{{ lang() === 'ta' ? qp.ta : qp.en }}</button>
-        }
+        <span class="mq-label">{{ lang()==='ta' ? 'தொடங்க ஒரு கட்டளையைத் தட்டவும்:' : 'Tap a command to get started:' }}</span>
+        <div class="mq-chips">
+          @for (qp of quickPrompts; track qp.q) {
+            <button type="button" (click)="onQuick(qp.q)">{{ lang() === 'ta' ? qp.ta : qp.en }}</button>
+          }
+        </div>
       </div>
     }
 
     <form class="mira-input" (ngSubmit)="submit()">
+      <button type="button" class="sugg" [class.on]="showSuggestions()" (click)="toggleSuggestions()"
+              [attr.aria-pressed]="showSuggestions()"
+              [attr.aria-label]="lang()==='ta' ? 'கட்டளைகளைக் காட்டு' : 'Show quick commands'">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M9 21h6v-1.5H9V21zm3-19a7 7 0 00-4.2 12.6c.5.4.8.9.9 1.4l.1 1h6.4l.1-1c.1-.5.4-1 .9-1.4A7 7 0 0012 2z"/></svg>
+      </button>
       @if (voiceSupported()) {
         <button type="button" class="mic" [class.listening]="listening()" (click)="toggleVoice()"
                 [attr.aria-label]="listening() ? 'Stop voice' : 'Speak to Mira'">

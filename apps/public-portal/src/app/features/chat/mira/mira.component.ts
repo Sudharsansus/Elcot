@@ -57,12 +57,21 @@ export class MiraComponent implements OnDestroy {
   private recognition: { start(): void; stop(): void } | null = null;
   private readonly scroller = viewChild<ElementRef<HTMLElement>>('scroller');
 
+  /** Prebuilt commands — help users who aren't sure what to ask. */
   readonly quickPrompts = [
-    { en: 'Find me a scheme', ta: 'எனக்கேற்ற திட்டம்', q: 'find me a scheme' },
-    { en: 'Animation incentives', ta: 'அனிமேஷன் ஊக்கம்', q: 'animation schemes' },
+    { en: '✨ Find me a scheme', ta: '✨ எனக்கேற்ற திட்டம்', q: 'find me a scheme' },
+    { en: 'List all schemes', ta: 'அனைத்து திட்டங்கள்', q: 'list all schemes' },
     { en: 'How do I apply?', ta: 'எப்படி விண்ணப்பிப்பது?', q: 'how do i apply' },
-    { en: 'What is this portal?', ta: 'இந்த இணையதளம்?', q: 'what is this portal' },
+    { en: 'Required documents', ta: 'தேவையான ஆவணங்கள்', q: 'what documents do i need' },
+    { en: 'Application deadlines', ta: 'விண்ணப்ப காலக்கெடு', q: 'deadlines' },
+    { en: 'Animation incentives', ta: 'அனிமேஷன் ஊக்கம்', q: 'animation schemes' },
+    { en: 'Business Connect', ta: 'பிசினஸ் கனெக்ட்', q: 'open business connect' },
+    { en: 'Talent Connect', ta: 'டேலன்ட் கனெக்ட்', q: 'open talent connect' },
+    { en: 'Track my application', ta: 'என் விண்ணப்ப நிலை', q: 'track my application' },
+    { en: 'Contact ELCOT', ta: 'ELCOT தொடர்பு', q: 'contact' },
   ];
+  readonly showSuggestions = signal(true);
+  toggleSuggestions(): void { this.showSuggestions.update((v) => !v); }
 
   constructor() {
     afterNextRender(() => {
@@ -120,7 +129,11 @@ export class MiraComponent implements OnDestroy {
       .join('\n');
   }
 
-  onQuick(q: string): void { if (!this.thinking()) this.handle(q); }
+  onQuick(q: string): void {
+    if (this.thinking()) return;
+    this.showSuggestions.set(false);
+    void this.handle(q);
+  }
 
   submit(): void {
     const text = this.draft().trim();
@@ -131,6 +144,7 @@ export class MiraComponent implements OnDestroy {
       this.handleFormInput(text);
       return;
     }
+    this.showSuggestions.set(false);
     void this.handle(text);
   }
 
