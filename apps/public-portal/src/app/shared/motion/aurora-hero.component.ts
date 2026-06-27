@@ -28,6 +28,11 @@ export class AuroraHeroComponent implements OnDestroy {
 
   private raf = 0;
   private ro?: ResizeObserver;
+  private io?: IntersectionObserver;
+  private ctx?: CanvasRenderingContext2D;
+  private running = false;
+  private onScreen = true;
+  private reduce = false;
   private dispose: Array<() => void> = [];
   private particles: P[] = [];
   private w = 0; private h = 0; private dpr = 1;
@@ -70,9 +75,45 @@ export class AuroraHeroComponent implements OnDestroy {
       () => window.removeEventListener('pointerout', onLeave),
     );
 
+    this.ctx = ctx;
+    this.reduce = reduce;
     if (reduce) { this.draw(ctx); return; }
-    const loop = () => { this.step(); this.draw(ctx); this.raf = requestAnimationFrame(loop); };
+
+    // Only animate while the hero is on-screen and the tab is visible — a
+    // continuously-running O(n^2) canvas loop behind a scrolled-away hero is a
+    // real cause of scroll lag.
+    this.io = new IntersectionObserver(
+      (entries) => { this.onScreen = entries[0]?.isIntersecting ?? true; this.sync(); },
+      { threshold: 0 },
+    );
+    this.io.observe(canvas);
+    const onVis = () => this.sync();
+    document.addEventListener('visibilitychange', onVis);
+    this.dispose.push(() => document.removeEventListener('visibilitychange', onVis));
+    this.sync();
+  }
+
+  /** Start/stop the RAF loop based on visibility + on-screen state. */
+  private sync(): void {
+    if (this.onScreen && !document.hidden && !this.reduce) this.start();
+    else this.stop();
+  }
+
+  private start(): void {
+    if (this.running || !this.ctx) return;
+    this.running = true;
+    const ctx = this.ctx;
+    const loop = () => {
+      if (!this.running) return;
+      this.step(); this.draw(ctx);
+      this.raf = requestAnimationFrame(loop);
+    };
     this.raf = requestAnimationFrame(loop);
+  }
+
+  private stop(): void {
+    this.running = false;
+    cancelAnimationFrame(this.raf);
   }
 
   private seed(): void {
@@ -140,8 +181,9 @@ export class AuroraHeroComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    cancelAnimationFrame(this.raf);
+    this.stop();
     this.ro?.disconnect();
+    this.io?.disconnect();
     this.dispose.forEach((d) => d());
   }
 }

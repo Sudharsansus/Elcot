@@ -10,18 +10,17 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { TnEmblemComponent } from '../../shared/brand/tn-emblem.component';
 
 @Component({
   selector: 'app-auth-shell',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, MatIconModule, TnEmblemComponent],
+  imports: [CommonModule, RouterModule, MatIconModule],
   template: `
     <div class="auth-shell">
       <aside class="auth-brand">
         <a routerLink="/" class="auth-brand-home" aria-label="Tamil Nadu AVGC-XR Portal home">
-          <app-tn-emblem [size]="48" [decorative]="true"></app-tn-emblem>
+          <span class="ab-emblem"><img src="assets/brand/tn-emblem.png" alt="Government of Tamil Nadu" width="40" height="40" /></span>
           <span class="ab-home-text">
             <span class="ab-gov">Government of Tamil Nadu</span>
             <span class="ab-portal">AVGC-XR Portal</span>
@@ -61,34 +60,39 @@ import { TnEmblemComponent } from '../../shared/brand/tn-emblem.component';
       min-height: 100vh;
     }
 
-    /* ---- Brand panel ---- */
+    /* ---- Brand panel (ELCOT deep-purple → violet, matches the site theme) ---- */
     .auth-brand {
       position: relative; overflow: hidden;
       display: flex; flex-direction: column; justify-content: space-between; gap: 32px;
       padding: clamp(32px, 4.5vw, 64px);
       color: #fff;
       background:
-        radial-gradient(720px 360px at 88% -8%, #7a0a1f 0%, transparent 62%),
-        linear-gradient(155deg, #9b0c24 0%, #6a0918 52%, #2a0a16 100%);
+        radial-gradient(680px 340px at 88% -6%, rgba(124, 58, 237, 0.55) 0%, transparent 60%),
+        linear-gradient(155deg, #45125c 0%, #2c1153 48%, #181233 100%);
     }
     /* subtle dotted texture, fading toward the top-right */
     .auth-brand::before {
-      content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.6;
-      background-image: radial-gradient(rgba(255,255,255,0.10) 1px, transparent 1.4px);
+      content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.55;
+      background-image: radial-gradient(rgba(255,255,255,0.12) 1px, transparent 1.4px);
       background-size: 24px 24px;
       -webkit-mask-image: radial-gradient(120% 85% at 100% 0%, #000 0%, transparent 72%);
       mask-image: radial-gradient(120% 85% at 100% 0%, #000 0%, transparent 72%);
     }
-    /* soft aurora glow, bottom-left for depth */
+    /* soft magenta aurora glow, bottom-left for depth (signature palette) */
     .auth-brand::after {
-      content: ''; position: absolute; width: 440px; height: 440px; left: -140px; bottom: -160px;
-      background: radial-gradient(circle, rgba(124,58,237,0.40), transparent 66%);
+      content: ''; position: absolute; width: 460px; height: 460px; left: -150px; bottom: -170px;
+      background: radial-gradient(circle, rgba(219, 39, 119, 0.38), transparent 66%);
       pointer-events: none;
     }
     .auth-brand > * { position: relative; z-index: 1; }
 
     .auth-brand-home { display: inline-flex; align-items: center; gap: 14px; color: #fff; text-decoration: none; width: fit-content; }
-    .auth-brand-home app-tn-emblem { color: var(--color-secondary); }
+    .ab-emblem {
+      width: 56px; height: 56px; flex-shrink: 0;
+      display: grid; place-items: center; border-radius: 50%;
+      background: #fff; box-shadow: 0 6px 18px -8px rgba(0,0,0,0.55);
+    }
+    .ab-emblem img { width: 40px; height: 40px; object-fit: contain; display: block; }
     .ab-home-text { display: flex; flex-direction: column; line-height: 1.2; }
     .ab-gov { font-size: var(--text-sm); color: rgba(255,255,255,0.82); letter-spacing: 0.01em; }
     .ab-portal { font-family: var(--font-serif); font-size: var(--text-lg); font-weight: 700; }

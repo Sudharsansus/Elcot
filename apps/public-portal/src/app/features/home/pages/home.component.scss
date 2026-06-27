@@ -10,8 +10,6 @@
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
   padding: var(--space-6);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   transition: transform var(--dur-normal) var(--ease-out),
               border-color var(--dur-normal) var(--ease-out),
               box-shadow var(--dur-normal) var(--ease-out);
@@ -137,7 +135,6 @@ mat-icon { font-size: 1.1rem; width: 1.1rem; height: 1.1rem; }
   border-radius: var(--radius-lg);
   overflow: hidden;
   max-width: 760px;
-  backdrop-filter: blur(12px);
 }
 .hero-stat { padding: 1.4rem 1.5rem; background: rgba(255,255,255,0.72); }
 .hero-stat-value {

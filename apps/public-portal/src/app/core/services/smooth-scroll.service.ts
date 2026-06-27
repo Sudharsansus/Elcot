@@ -15,11 +15,17 @@ export class SmoothScrollService {
   private lenis: Lenis | null = null;
   private ticker?: (time: number) => void;
 
-  /** Initialise once (no-op on server or when the user prefers reduced motion).
-   *  Drives Lenis from the GSAP ticker and syncs ScrollTrigger so scroll
-   *  animations stay in lock-step with the smooth scroll. */
+  /** Lenis JS smooth-scroll is disabled: its per-frame transform of the page
+   *  caused sub-pixel shimmer ("vibration") and scroll lag on many devices.
+   *  Native scrolling is used instead (rock-solid, zero overhead); GSAP
+   *  ScrollTrigger animations work fine on native scroll. Flip to `true` to
+   *  bring back the Lenis cinematic inertia. */
+  private readonly enabled = false;
+
+  /** Initialise once (no-op on server, when disabled, or under reduced motion). */
   init(): void {
     if (!isPlatformBrowser(this.platformId) || this.lenis) return;
+    if (!this.enabled) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     this.zone.runOutsideAngular(() => {
