@@ -36,6 +36,7 @@ export class MiraComponent implements OnDestroy {
   private readonly router = inject(Router);
   private readonly smooth = inject(SmoothScrollService);
   private readonly i18n = inject(I18nService);
+  private readonly elRef = inject<ElementRef<HTMLElement>>(ElementRef);
 
   readonly open = this.chat.isOpen;
   readonly messages = this.chat.messages;
@@ -63,6 +64,7 @@ export class MiraComponent implements OnDestroy {
       const w = window as unknown as Record<string, unknown>;
       this.voiceSupported.set(!!(w['webkitSpeechRecognition'] || w['SpeechRecognition']));
       this.loadVoices();
+      this.restorePos();
     });
     effect(() => { this.messages(); queueMicrotask(() => this.scrollToEnd()); });
   }
@@ -70,12 +72,71 @@ export class MiraComponent implements OnDestroy {
   private t(en: string, ta: string): string { return this.lang() === 'ta' ? ta : en; }
 
   toggle(): void {
+    if (this.moved) { this.moved = false; return; } // ignore the click that ends a drag
     this.chat.toggle();
     if (this.chat.isOpen() && this.messages().length === 0) {
       this.chat.push('ASSISTANT', this.greeting());
     }
   }
   close(): void { this.chat.close(); this.stopListening(); this.stopSpeaking(); }
+
+  // ---- draggable (move Mira anywhere) ----
+  private drag: { sx: number; sy: number; ox: number; oy: number } | null = null;
+  private moved = false;
+
+  startDrag(ev: PointerEvent): void {
+    const r = this.elRef.nativeElement.getBoundingClientRect();
+    this.drag = { sx: ev.clientX, sy: ev.clientY, ox: r.left, oy: r.top };
+    this.moved = false;
+    window.addEventListener('pointermove', this.onDragMove);
+    window.addEventListener('pointerup', this.onDragUp, { once: true });
+  }
+  private onDragMove = (ev: PointerEvent): void => {
+    if (!this.drag) return;
+    const dx = ev.clientX - this.drag.sx;
+    const dy = ev.clientY - this.drag.sy;
+    if (Math.abs(dx) + Math.abs(dy) > 4) this.moved = true;
+    const host = this.elRef.nativeElement;
+    const x = Math.max(8, Math.min(window.innerWidth - host.offsetWidth - 8, this.drag.ox + dx));
+    const y = Math.max(8, Math.min(window.innerHeight - host.offsetHeight - 8, this.drag.oy + dy));
+    this.place(x + 'px', y + 'px');
+  };
+  private onDragUp = (): void => {
+    window.removeEventListener('pointermove', this.onDragMove);
+    this.drag = null;
+    const s = this.elRef.nativeElement.style;
+    try { localStorage.setItem('mira-pos', JSON.stringify({ x: s.left, y: s.top })); } catch { /* ignore */ }
+  };
+  private place(left: string, top: string): void {
+    const s = this.elRef.nativeElement.style;
+    s.left = left; s.top = top; s.right = 'auto'; s.bottom = 'auto';
+  }
+  private restorePos(): void {
+    try {
+      const raw = localStorage.getItem('mira-pos');
+      const p = raw ? JSON.parse(raw) : null;
+      if (p?.x && p?.y) this.place(p.x, p.y);
+    } catch { /* ignore */ }
+  }
+
+  // ---- page awareness: Mira knows which page you're on ----
+  private pageName(): string {
+    const u = (this.router.url.split('?')[0] || '/').toLowerCase();
+    const map: Record<string, [string, string]> = {
+      '/schemes': ['Schemes', 'திட்டங்கள்'],
+      '/companies': ['Business Connect', 'பிசினஸ் கனெக்ட்'],
+      '/talent': ['Talent Connect', 'டேலன்ட் கனெக்ட்'],
+      '/freelancers': ['Freelancer Registry', 'ஃப்ரீலான்சர்'],
+      '/events': ['News & Events', 'செய்திகள் & நிகழ்வுகள்'],
+      '/resources': ['Resources', 'வளங்கள்'],
+      '/about': ['About', 'பற்றி'],
+      '/contact': ['Contact', 'தொடர்பு'],
+      '/auth': ['sign-in', 'உள்நுழைவு'],
+    };
+    const key = Object.keys(map).find((k) => u.startsWith(k));
+    if (key) return this.lang() === 'ta' ? map[key][1] : map[key][0];
+    return u === '/' ? (this.lang() === 'ta' ? 'முகப்பு' : 'Home') : '';
+  }
 
   onQuick(q: string): void { if (!this.thinking()) this.handle(q); }
 
@@ -178,9 +239,12 @@ export class MiraComponent implements OnDestroy {
   }
 
   private greeting(): string {
+    const page = this.pageName();
+    const enPage = page ? ` I see you're on the ${page} page — I can help with that, or anything else.` : '';
+    const taPage = page ? ` நீங்கள் ${page} பக்கத்தில் உள்ளீர்கள் — அதற்கும் உதவ முடியும்.` : '';
     return this.t(
-      "Hi, I'm Mira — your guide to the Tamil Nadu AVGC-XR portal. I can find government schemes, check what you're eligible for, help you apply, and take you anywhere on the site. Ask me, or tap the mic to talk.",
-      'வணக்கம், நான் Mira — தமிழ்நாடு AVGC-XR இணையதளத்திற்கான வழிகாட்டி. திட்டங்கள், தகுதி, விண்ணப்பம் — கேளுங்கள், அல்லது மைக்கைத் தட்டுங்கள்.');
+      `Hi, I'm Mira — your guide to the Tamil Nadu AVGC-XR portal.${enPage} I can find schemes, check what you're eligible for, help you apply, and take you anywhere on the site. Ask me, or tap the mic to talk.`,
+      `வணக்கம், நான் Mira — தமிழ்நாடு AVGC-XR இணையதளத்திற்கான வழிகாட்டி.${taPage} திட்டங்கள், தகுதி, விண்ணப்பம் — கேளுங்கள், அல்லது மைக்கைத் தட்டுங்கள்.`);
   }
 
   // ---- voice input ----
@@ -314,5 +378,10 @@ export class MiraComponent implements OnDestroy {
   }
   private delay(ms: number): Promise<void> { return new Promise((r) => setTimeout(r, ms)); }
 
-  ngOnDestroy(): void { this.stopListening(); this.stopSpeaking(); }
+  ngOnDestroy(): void {
+    this.stopListening();
+    this.stopSpeaking();
+    window.removeEventListener('pointermove', this.onDragMove);
+    window.removeEventListener('pointerup', this.onDragUp);
+  }
 }

@@ -1,5 +1,5 @@
 <!-- Launcher -->
-<button class="mira-fab" [class.is-hidden]="open()" (click)="toggle()"
+<button class="mira-fab" [class.is-hidden]="open()" (click)="toggle()" (pointerdown)="startDrag($event)"
         [attr.aria-label]="lang() === 'ta' ? 'Mira AI உதவியாளரைத் திற' : 'Open Mira, the AI assistant'">
   <span class="fab-orb" aria-hidden="true"></span>
   <span class="fab-spark" aria-hidden="true">✦</span>
@@ -10,16 +10,20 @@
 @if (open()) {
   <section class="mira-panel" role="dialog" aria-label="Mira AI assistant">
     <header class="mira-head">
-      <div class="mira-id">
+      <div class="mira-id drag-handle" (pointerdown)="startDrag($event)" title="Drag to move Mira">
         <span class="mira-avatar" [class.busy]="thinking() || listening() || speaking()" aria-hidden="true"></span>
         <span class="mira-id-text">
           <strong>Mira</strong>
           <span class="mira-status">
             {{ listening() ? (lang()==='ta' ? 'கேட்கிறேன்…' : 'Listening…')
+               : speaking() ? (lang()==='ta' ? 'பேசுகிறேன்…' : 'Speaking…')
                : thinking() ? (lang()==='ta' ? 'யோசிக்கிறேன்…' : 'Thinking…')
                : (lang()==='ta' ? 'AI வழிகாட்டி · AVGC-XR' : 'AI guide · AVGC-XR') }}
           </span>
         </span>
+        @if (listening() || speaking()) {
+          <span class="mira-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+        }
       </div>
       <div class="mira-head-actions">
         <div class="mira-lang" role="group" [attr.aria-label]="lang()==='ta' ? 'Mira மொழி' : 'Mira language'">
