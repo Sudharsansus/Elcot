@@ -122,6 +122,11 @@ services:
     dockerfilePath: ./apps/api/Dockerfile
     dockerContext: .
     plan: standard
+    # Only rebuild when API code or the reactor root changes (not on frontend/CMS commits).
+    buildFilters:
+      paths:
+        - apps/api/**
+        - pom.xml
     healthCheckPath: /actuator/health
     envVars:
       - key: SPRING_PROFILES_ACTIVE
@@ -258,6 +263,11 @@ services:
     dockerfilePath: ./apps/worker/Dockerfile
     dockerContext: .
     plan: starter
+    # Only rebuild when worker code or the reactor root changes.
+    buildFilters:
+      paths:
+        - apps/worker/**
+        - pom.xml
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
@@ -315,6 +325,10 @@ services:
     dockerfilePath: ./apps/cms/Dockerfile
     dockerContext: ./apps/cms
     plan: starter
+    # Only rebuild when CMS code changes.
+    buildFilters:
+      paths:
+        - apps/cms/**
     healthCheckPath: /_health
     envVars:
       - key: NODE_ENV
@@ -356,6 +370,15 @@ services:
       pnpm install --no-frozen-lockfile &&
       pnpm exec nx build public-portal --configuration=production
     staticPublishPath: dist/public-portal/browser
+    # Rebuild only when this app, a shared lib, or a workspace build file changes.
+    buildFilters:
+      paths:
+        - apps/public-portal/**
+        - libs/**
+        - package.json
+        - pnpm-lock.yaml
+        - nx.json
+        - tsconfig.base.json
     pullRequestPreviewsEnabled: false
     envVars:
       - key: NODE_VERSION
@@ -389,6 +412,15 @@ services:
       pnpm install --no-frozen-lockfile &&
       pnpm exec nx build applicant-portal --configuration=production
     staticPublishPath: dist/applicant-portal/browser
+    # Rebuild only when this app, a shared lib, or a workspace build file changes.
+    buildFilters:
+      paths:
+        - apps/applicant-portal/**
+        - libs/**
+        - package.json
+        - pnpm-lock.yaml
+        - nx.json
+        - tsconfig.base.json
     pullRequestPreviewsEnabled: false
     envVars:
       - key: NODE_VERSION
@@ -422,6 +454,15 @@ services:
       pnpm install --no-frozen-lockfile &&
       pnpm exec nx build admin-portal --configuration=production
     staticPublishPath: dist/admin-portal/browser
+    # Rebuild only when this app, a shared lib, or a workspace build file changes.
+    buildFilters:
+      paths:
+        - apps/admin-portal/**
+        - libs/**
+        - package.json
+        - pnpm-lock.yaml
+        - nx.json
+        - tsconfig.base.json
     pullRequestPreviewsEnabled: false
     envVars:
       - key: NODE_VERSION
