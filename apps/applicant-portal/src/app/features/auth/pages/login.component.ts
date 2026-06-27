@@ -18,13 +18,13 @@ import { NotificationService } from '../../../core/services/notification.service
         <h2>Login</h2>
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
           <mat-form-field appearance="outline">
-            <mat-label>Email</mat-label>
-            <input matInput formControlName="email" type="email" autocomplete="email" />
+            <mat-label>Email or mobile number</mat-label>
+            <input matInput formControlName="email" type="text" inputmode="email" autocomplete="username" />
             @if (form.get('email')?.hasError('required')) {
-              <mat-error>Email is required</mat-error>
+              <mat-error>Email or mobile is required</mat-error>
             }
-            @if (form.get('email')?.hasError('email')) {
-              <mat-error>Enter a valid email</mat-error>
+            @if (form.get('email')?.touched && form.get('email')?.hasError('pattern')) {
+              <mat-error>Enter a valid email or 10-digit mobile</mat-error>
             }
           </mat-form-field>
           <mat-form-field appearance="outline">
@@ -80,7 +80,8 @@ export class LoginComponent {
 
   readonly loading = signal(false);
   readonly form: FormGroup = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
+    // accepts an email OR a 10-digit Indian mobile number as the login identifier
+    email: ['', [Validators.required, Validators.pattern(/^([^@\s]+@[^@\s]+\.[^@\s]+|[6-9]\d{9})$/)]],
     password: ['', [Validators.required, Validators.minLength(8)]]
   });
 

@@ -1,11 +1,129 @@
 <div class="profile-page" data-testid="profile">
-  <h1>My Profile</h1>
-  <form (ngSubmit)="saveProfile()" class="profile-form">
-    <avgc-input label="Full Name" [(ngModel)]="profileForm.fullName"></avgc-input>
-    <avgc-input label="Full Name (Tamil)" [(ngModel)]="profileForm.fullNameTamil"></avgc-input>
-    <avgc-input label="Email" type="email" [(ngModel)]="profileForm.email"></avgc-input>
-    <avgc-input label="Mobile" type="tel" [(ngModel)]="profileForm.mobile"></avgc-input>
-    <avgc-select label="District" [options]="districts"></avgc-select>
-    <avgc-button variant="primary" type="submit" [loading]="saving">Save Changes</avgc-button>
-  </form>
+  <header class="profile-head">
+    <h1>My Profile</h1>
+    <p>Manage your details, verify your contacts and complete KYC.</p>
+  </header>
+
+  <div class="profile-grid">
+    <!-- ───── Personal details ───── -->
+    <section class="card">
+      <h2>Personal details</h2>
+      <form (ngSubmit)="saveProfile()" class="form-grid">
+        <label>Full name
+          <input [(ngModel)]="profileForm.fullName" name="fullName" />
+        </label>
+        <label>Full name (Tamil)
+          <input [(ngModel)]="profileForm.fullNameTamil" name="fullNameTamil" lang="ta" />
+        </label>
+        <label>Email
+          <input [(ngModel)]="profileForm.email" name="email" type="email" />
+        </label>
+        <label>Mobile
+          <input [(ngModel)]="profileForm.mobile" name="mobile" type="tel" maxlength="10" />
+        </label>
+        <label>Date of birth
+          <input [(ngModel)]="profileForm.dob" name="dob" type="date" />
+        </label>
+        <label>District
+          <select [(ngModel)]="profileForm.district" name="district">
+            @for (d of districts; track d) { <option [value]="d">{{ d }}</option> }
+          </select>
+        </label>
+        <label class="full">Address
+          <textarea [(ngModel)]="profileForm.address" name="address" rows="2"></textarea>
+        </label>
+        <button type="submit" class="btn-primary" [disabled]="saving()">
+          {{ saving() ? 'Saving…' : 'Save changes' }}
+        </button>
+      </form>
+    </section>
+
+    <!-- ───── Account verification ───── -->
+    <section class="card">
+      <div class="card-head"><h2>Account verification</h2><span class="demo-chip">Demo</span></div>
+
+      <div class="verify-row">
+        <div class="vr-info"><span class="vr-icon">✉</span>
+          <div><strong>Email</strong><span>{{ profileForm.email }}</span></div>
+        </div>
+        @if (emailVerified()) { <span class="badge ok">✓ Verified</span> }
+        @else { <button class="btn-outline" (click)="startVerify('email')">Verify</button> }
+      </div>
+
+      <div class="verify-row">
+        <div class="vr-info"><span class="vr-icon">📱</span>
+          <div><strong>Mobile</strong><span>+91 {{ profileForm.mobile }}</span></div>
+        </div>
+        @if (mobileVerified()) { <span class="badge ok">✓ Verified</span> }
+        @else { <button class="btn-outline" (click)="startVerify('mobile')">Verify</button> }
+      </div>
+
+      <p class="hint">OTP delivery activates once the SMS / email provider is configured.</p>
+    </section>
+
+    <!-- ───── KYC via DigiLocker ───── -->
+    <section class="card kyc">
+      <div class="card-head"><h2>KYC — Aadhaar &amp; PAN</h2><span class="demo-chip">Demo</span></div>
+
+      @if (!aadhaarLinked()) {
+        <p>Link your Aadhaar and PAN securely through <strong>DigiLocker</strong>. No documents are
+          stored on the portal — only the verified status is recorded.</p>
+        <button class="btn-digilocker" (click)="openDigilocker()">
+          <span class="dl-mark">🔒</span> Link with DigiLocker
+        </button>
+      } @else {
+        <div class="kyc-done">
+          <div class="kyc-item"><span>Aadhaar</span><strong>{{ aadhaarMasked() }}</strong><span class="badge ok">✓ Verified</span></div>
+          <div class="kyc-item"><span>PAN</span><strong>{{ panNumber() }}</strong><span class="badge ok">✓ Verified</span></div>
+          <p class="hint">Linked via DigiLocker · Government of India</p>
+        </div>
+      }
+    </section>
+  </div>
 </div>
+
+<!-- OTP modal (demo) -->
+@if (otp().open) {
+  <div class="overlay" (click)="cancelOtp()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h3>Verify your {{ otp().channel === 'email' ? 'email' : 'mobile' }}</h3>
+      @if (otp().sending) {
+        <p class="sending">Sending a code to
+          <strong>{{ otp().channel === 'email' ? profileForm.email : '+91 ' + profileForm.mobile }}</strong>…</p>
+      } @else {
+        <p>Enter the 6-digit code sent to
+          <strong>{{ otp().channel === 'email' ? profileForm.email : '+91 ' + profileForm.mobile }}</strong>.</p>
+        <input class="otp-input" inputmode="numeric" maxlength="6" placeholder="● ● ● ● ● ●"
+               [ngModel]="otp().code" (ngModelChange)="setOtpCode($event)" name="otp" />
+        <p class="demo-note">Demo — enter any 4–6 digits to continue.</p>
+      }
+      <div class="modal-actions">
+        <button class="btn-ghost" (click)="cancelOtp()">Cancel</button>
+        <button class="btn-primary" [disabled]="otp().sending" (click)="confirmOtp()">Verify</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- DigiLocker modal (demo) -->
+@if (dl().open) {
+  <div class="overlay">
+    <div class="modal dl-modal" (click)="$event.stopPropagation()">
+      <div class="dl-head"><span class="dl-logo">DigiLocker</span><span class="demo-chip">Demo</span></div>
+      @if (dl().step === 'consent') {
+        <p>Allow <strong>Tamil Nadu AVGC-XR Portal</strong> to fetch your
+          <strong>Aadhaar</strong> and <strong>PAN</strong> verification from DigiLocker?</p>
+        <ul class="dl-scope">
+          <li>Aadhaar — name, masked number, photo</li>
+          <li>PAN — number &amp; name</li>
+        </ul>
+        <div class="modal-actions">
+          <button class="btn-ghost" (click)="digilockerDeny()">Deny</button>
+          <button class="btn-primary" (click)="digilockerAllow()">Allow</button>
+        </div>
+      } @else {
+        <p class="sending">Securely fetching your documents from DigiLocker…</p>
+      }
+    </div>
+  </div>
+}

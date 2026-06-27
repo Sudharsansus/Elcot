@@ -26,13 +26,13 @@ import { AuthShellComponent } from '../auth-shell.component';
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
         <mat-form-field appearance="outline">
-          <mat-label>{{ ta() ? 'மின்னஞ்சல்' : 'Email' }}</mat-label>
-          <input matInput formControlName="email" type="email" autocomplete="email" />
+          <mat-label>{{ ta() ? 'மின்னஞ்சல் அல்லது மொபைல் எண்' : 'Email or mobile number' }}</mat-label>
+          <input matInput formControlName="email" type="text" inputmode="email" autocomplete="username" />
           @if (form.get('email')?.touched && form.get('email')?.hasError('required')) {
-            <mat-error>{{ ta() ? 'மின்னஞ்சல் தேவை' : 'Email is required' }}</mat-error>
+            <mat-error>{{ ta() ? 'மின்னஞ்சல் அல்லது மொபைல் எண் தேவை' : 'Email or mobile is required' }}</mat-error>
           }
-          @if (form.get('email')?.hasError('email')) {
-            <mat-error>{{ ta() ? 'சரியான மின்னஞ்சலை உள்ளிடவும்' : 'Enter a valid email' }}</mat-error>
+          @if (form.get('email')?.touched && form.get('email')?.hasError('pattern')) {
+            <mat-error>{{ ta() ? 'சரியான மின்னஞ்சல் அல்லது 10 இலக்க எண்' : 'Enter a valid email or 10-digit mobile' }}</mat-error>
           }
         </mat-form-field>
 
@@ -76,7 +76,8 @@ export class LoginComponent {
     : ['One sign-in for every scheme', 'Track your application status live', 'Secure government portal']);
 
   readonly form: FormGroup = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
+    // accepts an email OR a 10-digit Indian mobile number as the login identifier
+    email: ['', [Validators.required, Validators.pattern(/^([^@\s]+@[^@\s]+\.[^@\s]+|[6-9]\d{9})$/)]],
     password: ['', [Validators.required, Validators.minLength(8)]],
   });
 
