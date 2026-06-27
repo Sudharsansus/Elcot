@@ -150,30 +150,6 @@
   --sidebar-width: 280px;
 }
 
-// ---------- Dark Theme ----------
-body[data-theme="dark"] {
-  color-scheme: dark;
-  --color-background: #120f1c;
-  --color-surface: #1a1528;
-  --color-surface-elevated: #201a30;
-  --color-text-primary: #f2effb;
-  --color-text-secondary: #c7c0e0;
-  --color-text-tertiary: #948cb5;
-  --color-text-disabled: #5d5680;
-  --color-border: #2c2542;
-  --color-divider: #241e38;
-  --color-primary-50: rgba(124, 58, 237, 0.14);
-
-  --glass: rgba(26, 21, 40, 0.6);
-  --glass-border: rgba(167, 139, 250, 0.18);
-  --surface-strong: rgba(26, 21, 40, 0.9);
-  --header-bg: rgba(20, 16, 32, 0.82);
-
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 28px -16px rgba(0, 0, 0, 0.7);
-  --shadow-lg: 0 1px 2px rgba(0, 0, 0, 0.5), 0 24px 48px -20px rgba(0, 0, 0, 0.85);
-}
-
 // ---------- Reset ----------
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -203,11 +179,6 @@ body::before {
   background:
     radial-gradient(50vw 40vw at 4% -10%, rgba(124, 58, 237, 0.08), transparent 60%),
     radial-gradient(42vw 38vw at 100% 0%, rgba(37, 99, 235, 0.07), transparent 60%);
-}
-body[data-theme="dark"]::before {
-  background:
-    radial-gradient(50vw 40vw at 4% -10%, rgba(124, 58, 237, 0.18), transparent 60%),
-    radial-gradient(42vw 38vw at 100% 0%, rgba(37, 99, 235, 0.14), transparent 60%);
 }
 app-root { position: relative; z-index: 1; display: flex; flex-direction: column; min-height: 100vh; }
 

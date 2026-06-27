@@ -21,9 +21,6 @@
       <a class="nav-elcot" href="https://elcot.in" target="_blank" rel="noopener" aria-label="ELCOT">
         <img src="assets/brand/elcot-logo.png" alt="ELCOT" height="22" />
       </a>
-      <button type="button" class="icon-btn theme-btn" (click)="toggleTheme()" aria-label="Toggle dark mode">
-        <mat-icon>{{ theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
-      </button>
       <button type="button" class="lang-btn" (click)="toggleLanguage()" [attr.aria-label]="t('a11y.toggleLang')">
         {{ lang() === 'en' ? 'த' : 'EN' }}
       </button>

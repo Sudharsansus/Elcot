@@ -153,41 +153,6 @@
 }
 
 // ------------------------------------------------------------
-// DARK MODE
-// ------------------------------------------------------------
-body[data-theme="dark"] {
-  color-scheme: dark;
-  --bg: #120f1c;
-  --bg-1: #1a1528;
-  --bg-2: #201a30;
-  --lavender: #201a30;
-  --surface: rgba(255, 255, 255, 0.05);
-  --surface-2: rgba(255, 255, 255, 0.03);
-  --surface-strong: rgba(26, 21, 40, 0.9);
-  --glass: rgba(26, 21, 40, 0.6);
-  --glass-border: rgba(167, 139, 250, 0.18);
-  --glass-border-strong: rgba(167, 139, 250, 0.30);
-  --line: rgba(167, 139, 250, 0.16);
-  --header-bg: rgba(20, 16, 32, 0.62);
-  --header-bg-scrolled: rgba(20, 16, 32, 0.88);
-
-  --ink: #f2effb;
-  --ink-dim: #c7c0e0;
-  --ink-mut: #948cb5;
-  --ink-faint: #5d5680;
-
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 14px 34px -18px rgba(0, 0, 0, 0.7);
-  --shadow-lift: 0 1px 2px rgba(0, 0, 0, 0.5), 0 26px 52px -22px rgba(0, 0, 0, 0.85);
-  --glow-soft: 0 18px 50px -22px rgba(0, 0, 0, 0.7);
-}
-body[data-theme="dark"]::before {
-  background:
-    radial-gradient(55vw 45vw at 8% -10%, rgba(124, 58, 237, 0.20), transparent 60%),
-    radial-gradient(45vw 40vw at 98% 0%, rgba(37, 99, 235, 0.16), transparent 60%),
-    radial-gradient(50vw 45vw at 85% 105%, rgba(219, 39, 119, 0.16), transparent 60%);
-}
-
-// ------------------------------------------------------------
 // RESET + BASE
 // ------------------------------------------------------------
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
