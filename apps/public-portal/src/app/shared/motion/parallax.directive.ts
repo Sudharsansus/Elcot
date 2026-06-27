@@ -32,7 +32,10 @@ export class ParallaxDirective implements OnDestroy {
               trigger: this.el.nativeElement,
               start: 'top bottom',
               end: 'bottom top',
-              scrub: true,
+              // Numeric scrub adds ~0.6s catch-up smoothing so the transform
+              // doesn't jitter on Lenis's sub-pixel interpolated scroll deltas
+              // (scrub:true ties it directly to scroll → visible vibration).
+              scrub: 0.6,
             },
           },
         );
