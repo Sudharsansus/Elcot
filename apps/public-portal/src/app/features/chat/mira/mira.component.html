@@ -62,7 +62,7 @@
       <div class="mira-quick">
         <span class="mq-label">{{ lang()==='ta' ? 'தொடங்க ஒரு கட்டளையைத் தட்டவும்:' : 'Tap a command to get started:' }}</span>
         <div class="mq-chips">
-          @for (qp of quickPrompts; track qp.q) {
+          @for (qp of quickPrompts(); track qp.q) {
             <button type="button" (click)="onQuick(qp.q)">{{ lang() === 'ta' ? qp.ta : qp.en }}</button>
           }
         </div>

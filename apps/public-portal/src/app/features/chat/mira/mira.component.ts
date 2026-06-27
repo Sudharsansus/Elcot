@@ -8,13 +8,14 @@
 // Browser-only, graceful when speech APIs are unavailable.
 // ============================================================
 import {
-  Component, ChangeDetectionStrategy, inject, signal, ElementRef, viewChild,
+  Component, ChangeDetectionStrategy, inject, signal, computed, ElementRef, viewChild,
   afterNextRender, effect, untracked, OnDestroy,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter, firstValueFrom, map } from 'rxjs';
 import { ChatService, AgentAction } from '../chat.service';
 import { SmoothScrollService } from '../../../core/services/smooth-scroll.service';
 import { I18nService } from '../../../core/services/i18n.service';
@@ -57,19 +58,16 @@ export class MiraComponent implements OnDestroy {
   private recognition: { start(): void; stop(): void } | null = null;
   private readonly scroller = viewChild<ElementRef<HTMLElement>>('scroller');
 
-  /** Prebuilt commands — help users who aren't sure what to ask. */
-  readonly quickPrompts = [
-    { en: '✨ Find me a scheme', ta: '✨ எனக்கேற்ற திட்டம்', q: 'find me a scheme' },
-    { en: 'List all schemes', ta: 'அனைத்து திட்டங்கள்', q: 'list all schemes' },
-    { en: 'How do I apply?', ta: 'எப்படி விண்ணப்பிப்பது?', q: 'how do i apply' },
-    { en: 'Required documents', ta: 'தேவையான ஆவணங்கள்', q: 'what documents do i need' },
-    { en: 'Application deadlines', ta: 'விண்ணப்ப காலக்கெடு', q: 'deadlines' },
-    { en: 'Animation incentives', ta: 'அனிமேஷன் ஊக்கம்', q: 'animation schemes' },
-    { en: 'Business Connect', ta: 'பிசினஸ் கனெக்ட்', q: 'open business connect' },
-    { en: 'Talent Connect', ta: 'டேலன்ட் கனெக்ட்', q: 'open talent connect' },
-    { en: 'Track my application', ta: 'என் விண்ணப்ப நிலை', q: 'track my application' },
-    { en: 'Contact ELCOT', ta: 'ELCOT தொடர்பு', q: 'contact' },
-  ];
+  private readonly routeUrl = toSignal(
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      map(() => this.router.url),
+    ),
+    { initialValue: this.router.url },
+  );
+
+  /** Prebuilt commands — context-aware to the page the user is on. */
+  readonly quickPrompts = computed(() => this.promptsFor(this.routeUrl()));
   readonly showSuggestions = signal(true);
   toggleSuggestions(): void { this.showSuggestions.update((v) => !v); }
 
@@ -91,8 +89,9 @@ export class MiraComponent implements OnDestroy {
 
   toggle(): void {
     this.chat.toggle();
-    if (this.chat.isOpen() && this.messages().length === 0) {
-      this.chat.push('ASSISTANT', this.greeting());
+    if (this.chat.isOpen()) {
+      this.showSuggestions.set(true); // re-surface the (context-aware) commands on open
+      if (this.messages().length === 0) this.chat.push('ASSISTANT', this.greeting());
     }
   }
   close(): void { this.chat.close(); this.stopListening(); this.stopSpeaking(); this.resetFill(); }
@@ -116,6 +115,66 @@ export class MiraComponent implements OnDestroy {
     return u === '/' ? (this.lang() === 'ta' ? 'முகப்பு' : 'Home') : '';
   }
 
+  /** Context-aware prebuilt commands for the page the user is on. */
+  private promptsFor(url: string): { en: string; ta: string; q: string }[] {
+    const u = (url.split('?')[0] || '/').toLowerCase();
+    const findScheme = { en: 'Find me a scheme', ta: 'திட்டத்தைக் கண்டறி', q: 'find me a scheme' };
+    if (u.startsWith('/schemes')) return [
+      { en: 'Check eligibility', ta: 'தகுதியைச் சரிபார்', q: 'find me a scheme' },
+      { en: 'Required documents', ta: 'தேவையான ஆவணங்கள்', q: 'what documents do i need' },
+      { en: 'Application deadlines', ta: 'விண்ணப்ப காலக்கெடு', q: 'deadlines' },
+      { en: 'How do I apply?', ta: 'எப்படி விண்ணப்பிப்பது?', q: 'how do i apply' },
+      { en: 'List all schemes', ta: 'அனைத்து திட்டங்கள்', q: 'list all schemes' },
+    ];
+    if (u.startsWith('/companies')) return [
+      { en: 'Register my company', ta: 'நிறுவனத்தைப் பதிவு செய்', q: 'how do i apply' },
+      findScheme,
+      { en: 'Talent Connect', ta: 'டேலன்ட் கனெக்ட்', q: 'open talent connect' },
+      { en: 'Contact ELCOT', ta: 'ELCOT தொடர்பு', q: 'contact' },
+    ];
+    if (u.startsWith('/talent')) return [
+      { en: 'Register as talent', ta: 'திறமையாளராகப் பதிவு', q: 'how do i apply' },
+      { en: 'Freelancer Registry', ta: 'ஃப்ரீலான்சர் பதிவு', q: 'open freelancers' },
+      findScheme,
+    ];
+    if (u.startsWith('/freelancers')) return [
+      { en: 'Register as freelancer', ta: 'ஃப்ரீலான்சராகப் பதிவு', q: 'how do i apply' },
+      { en: 'Talent Connect', ta: 'டேலன்ட் கனெக்ட்', q: 'open talent connect' },
+      findScheme,
+    ];
+    if (u.startsWith('/auth/register')) return [
+      { en: '✨ Fill this form with Mira', ta: '✨ Mira-வுடன் நிரப்பு', q: 'fill the form' },
+      { en: 'What documents do I need?', ta: 'தேவையான ஆவணங்கள்?', q: 'what documents do i need' },
+      { en: 'How do I apply?', ta: 'எப்படி விண்ணப்பிப்பது?', q: 'how do i apply' },
+    ];
+    if (u.startsWith('/contact') || u.startsWith('/grievance')) return [
+      { en: '✨ Fill this form with Mira', ta: '✨ Mira-வுடன் நிரப்பு', q: 'fill the form' },
+      { en: 'Helpline number', ta: 'உதவி எண்', q: 'contact' },
+      findScheme,
+    ];
+    if (u.startsWith('/events')) return [
+      { en: 'Latest events', ta: 'சமீபத்திய நிகழ்வுகள்', q: 'open events' },
+      findScheme,
+      { en: 'How do I apply?', ta: 'எப்படி விண்ணப்பிப்பது?', q: 'how do i apply' },
+    ];
+    if (u.startsWith('/resources')) return [
+      { en: 'Policy documents', ta: 'கொள்கை ஆவணங்கள்', q: 'open resources' },
+      findScheme,
+      { en: 'Required documents', ta: 'தேவையான ஆவணங்கள்', q: 'what documents do i need' },
+    ];
+    // default — home and everything else
+    return [
+      { en: '✨ Find me a scheme', ta: '✨ எனக்கேற்ற திட்டம்', q: 'find me a scheme' },
+      { en: 'List all schemes', ta: 'அனைத்து திட்டங்கள்', q: 'list all schemes' },
+      { en: 'How do I apply?', ta: 'எப்படி விண்ணப்பிப்பது?', q: 'how do i apply' },
+      { en: 'Required documents', ta: 'தேவையான ஆவணங்கள்', q: 'what documents do i need' },
+      { en: 'Application deadlines', ta: 'விண்ணப்ப காலக்கெடு', q: 'deadlines' },
+      { en: 'Business Connect', ta: 'பிசினஸ் கனெக்ட்', q: 'open business connect' },
+      { en: 'Talent Connect', ta: 'டேலன்ட் கனெக்ட்', q: 'open talent connect' },
+      { en: 'Contact ELCOT', ta: 'ELCOT தொடர்பு', q: 'contact' },
+    ];
+  }
+
   /** Format the scheme list (optionally filtered by category) for the chat. */
   private schemeList(category?: Scheme['category']): string {
     const list = category ? SCHEMES_DATA.filter((s) => s.category === category) : SCHEMES_DATA;
@@ -132,6 +191,7 @@ export class MiraComponent implements OnDestroy {
   onQuick(q: string): void {
     if (this.thinking()) return;
     this.showSuggestions.set(false);
+    if (q === 'fill the form') { this.formAssist.begin(); return; }
     void this.handle(q);
   }
 
