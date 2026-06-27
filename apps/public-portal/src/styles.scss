@@ -363,14 +363,14 @@ main { position: relative; z-index: var(--z-base); }
 // ------------------------------------------------------------
 // AUTH FORMS — projected into <app-auth-shell>, so must be global
 // ------------------------------------------------------------
-.auth-heading { font-family: var(--font-display); font-size: var(--text-2xl); font-weight: 700; color: var(--ink); margin: 0 0 6px; }
-.auth-subheading { font-size: var(--text-base); color: var(--ink-dim); margin: 0 0 24px; line-height: 1.5; }
-.auth-form { display: flex; flex-direction: column; gap: 14px; }
+.auth-heading { font-family: var(--font-display); font-size: clamp(1.6rem, 2.4vw, 1.9rem); font-weight: 700; letter-spacing: -0.01em; color: var(--ink); margin: 0 0 8px; }
+.auth-subheading { font-size: var(--text-base); color: var(--ink-dim); margin: 0 0 28px; line-height: 1.5; }
+.auth-form { display: flex; flex-direction: column; gap: 16px; }
 .auth-form .mat-mdc-form-field { width: 100%; }
 .auth-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .auth-submit {
   width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 13px 20px; background: var(--grad-warm); color: #fff;
+  padding: 15px 22px; margin-top: 4px; background: var(--grad-warm); color: #fff;
   border: none; border-radius: var(--radius-full);
   font-family: inherit; font-size: var(--text-base); font-weight: 700; cursor: pointer;
   box-shadow: var(--glow-crimson);
