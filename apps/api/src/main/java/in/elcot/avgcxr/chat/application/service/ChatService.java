@@ -51,7 +51,7 @@ public class ChatService {
   private static final Pattern ACTION_PATTERN =
       Pattern.compile("\\[\\[action:(\\{.*?})]]", Pattern.DOTALL);
   private static final Set<String> ALLOWED_TOOLS =
-      Set.of("navigate", "openSchemeFinder", "fillForm");
+      Set.of("navigate", "openSchemeFinder", "fillForm", "findScheme", "listSchemes");
 
   private final LlmProvider llm;
   private final RagService ragService;

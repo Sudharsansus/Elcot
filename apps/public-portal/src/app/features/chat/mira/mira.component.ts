@@ -19,7 +19,7 @@ import { ChatService, AgentAction } from '../chat.service';
 import { SmoothScrollService } from '../../../core/services/smooth-scroll.service';
 import { I18nService } from '../../../core/services/i18n.service';
 import { FormAssistService } from '../form-assist.service';
-import { SCHEMES_DATA, SECTOR_CATEGORIES } from '../../schemes/schemes.data';
+import { SCHEMES_DATA, SECTOR_CATEGORIES, Scheme } from '../../schemes/schemes.data';
 
 type IntentKind = 'navigate' | 'finder' | 'answer';
 interface Intent { kind: IntentKind; route?: string; reply: string; backend?: boolean; }
@@ -105,6 +105,19 @@ export class MiraComponent implements OnDestroy {
     const key = Object.keys(map).find((k) => u.startsWith(k));
     if (key) return this.lang() === 'ta' ? map[key][1] : map[key][0];
     return u === '/' ? (this.lang() === 'ta' ? 'முகப்பு' : 'Home') : '';
+  }
+
+  /** Format the scheme list (optionally filtered by category) for the chat. */
+  private schemeList(category?: Scheme['category']): string {
+    const list = category ? SCHEMES_DATA.filter((s) => s.category === category) : SCHEMES_DATA;
+    const use = list.length ? list : SCHEMES_DATA;
+    return use
+      .map((s) => {
+        const nm = this.lang() === 'ta' ? s.nameTa : s.name;
+        const amt = s.maxAmount >= 100000 ? `₹${Math.round(s.maxAmount / 100000)}L` : `₹${s.maxAmount}`;
+        return `• ${nm} — ${this.t('up to', 'அதிகபட்சம்')} ${amt}`;
+      })
+      .join('\n');
   }
 
   onQuick(q: string): void { if (!this.thinking()) this.handle(q); }
@@ -207,7 +220,14 @@ export class MiraComponent implements OnDestroy {
     if (intent.backend) {
       const r = await firstValueFrom(this.chat.askBackend(text)).catch(() => null);
       if (r) {
-        if (r.reply && r.reply.trim()) reply = r.reply.trim();
+        const br = (r.reply ?? '').trim();
+        // Only let the backend REPLACE Mira's helpful local reply when it gives a
+        // substantive answer — never override with a short "can't help" refusal
+        // (which the rule-based backend returns until the LLM is configured).
+        const unhelpful =
+          !br || br.length < 18 ||
+          /can'?t help|cannot help|couldn'?t help|unable to help|i'?m not sure|don'?t know|trouble reaching/i.test(br);
+        if (br && !unhelpful) reply = br;
         action = r.action;
       }
     } else {
@@ -248,6 +268,16 @@ export class MiraComponent implements OnDestroy {
         else begin();
         break;
       }
+      case 'findScheme': {
+        const c = String(args['category'] ?? '') as Scheme['category'];
+        const valid = ['production', 'training', 'infrastructure', 'export', 'freelancer', 'scholarship'].includes(c);
+        this.chat.push('ASSISTANT', this.schemeList(valid ? c : undefined));
+        break;
+      }
+      case 'listSchemes': {
+        this.chat.push('ASSISTANT', this.schemeList());
+        break;
+      }
     }
   }
 
@@ -281,7 +311,46 @@ export class MiraComponent implements OnDestroy {
         "Let's match you to the right scheme. Opening the Scheme Finder — choose your profile (studio, individual or student), sector and stage, and I'll filter the incentives you qualify for.",
         'சரியான திட்டத்தைப் பொருத்துவோம். Scheme Finder-ஐத் திறக்கிறேன் — உங்கள் சுயவிவரத்தைத் தேர்ந்தெடுங்கள்.') };
     }
+
+    // map a category keyword in the message to a scheme bucket (for filtered lists)
+    const catKey: Record<string, Scheme['category']> = {
+      subsid: 'production', production: 'production',
+      training: 'training', skill: 'training', course: 'training',
+      infrastructure: 'infrastructure', 'studio setup': 'infrastructure', setup: 'infrastructure',
+      export: 'export', 'market access': 'export', international: 'export',
+      freelanc: 'freelancer', scholar: 'scholarship', student: 'scholarship',
+    };
+    const catHit = Object.keys(catKey).find((k) => x.includes(k));
+    const cat = catHit ? catKey[catHit] : undefined;
+
+    if (has('list scheme', 'what scheme', 'all scheme', 'available scheme', 'schemes are',
+            'show scheme', 'scheme list', 'what are the scheme', 'list of scheme', 'see scheme',
+            'schemes do you', 'schemes you have')) {
+      return { kind: 'answer', reply: this.t(
+        `${cat ? 'Matching schemes' : `There are ${SCHEMES_DATA.length} active incentive schemes`}:\n${this.schemeList(cat)}\nAsk about any one for eligibility & documents, or say "open schemes" for the full catalogue.`,
+        `${cat ? 'பொருந்தும் திட்டங்கள்' : `${SCHEMES_DATA.length} செயலில் உள்ள திட்டங்கள்`}:\n${this.schemeList(cat)}\nஏதேனும் ஒன்றைப் பற்றிக் கேளுங்கள், அல்லது "open schemes" எனச் சொல்லுங்கள்.`) };
+    }
+    if (has('deadline', 'last date', 'due date', 'closing date', 'when to apply', 'when does it close', 'application date')) {
+      const lines = SCHEMES_DATA.map((s) => `• ${this.lang() === 'ta' ? s.nameTa : s.name}: ${s.deadline}`).join('\n');
+      return { kind: 'answer', reply: this.t(`Application deadlines:\n${lines}`, `விண்ணப்ப காலக்கெடு:\n${lines}`) };
+    }
+    if (has('document', 'what do i need', 'papers', 'what to submit', 'certificate')) {
+      return { kind: 'navigate', route: '/schemes', reply: this.t(
+        'Typical documents: company registration, GST & PAN, a project proposal, budget, audited financials and a portfolio. Each scheme lists its exact set — opening the catalogue so you can check the one you want.',
+        'பொதுவான ஆவணங்கள்: நிறுவன பதிவு, GST & PAN, திட்ட முன்மொழிவு, பட்ஜெட், தணிக்கை அறிக்கைகள், போர்ட்ஃபோலியோ. திட்டப் பட்டியலைத் திறக்கிறேன்.') };
+    }
+    if (has('status', 'track', 'my application', 'application status', 'where is my', 'check my')) {
+      return { kind: 'navigate', route: '/auth/login', reply: this.t(
+        'Sign in to track your application status on your dashboard. Taking you to the login page.',
+        'உங்கள் டாஷ்போர்டில் விண்ணப்ப நிலையைக் காண உள்நுழையவும். உள்நுழைவுப் பக்கம்.') };
+    }
+
     if (has('scheme', 'incentive', 'grant', 'subsid', 'funding', 'financial')) {
+      if (cat) {
+        return { kind: 'answer', reply: this.t(
+          `Matching schemes:\n${this.schemeList(cat)}\nAsk about any one for eligibility & documents, or say "open schemes".`,
+          `பொருந்தும் திட்டங்கள்:\n${this.schemeList(cat)}`) };
+      }
       const names = SCHEMES_DATA.slice(0, 3).map((s) => '• ' + s.name).join('\n');
       return { kind: 'navigate', route: '/schemes', reply: this.t(
         `There are ${SCHEMES_DATA.length} active incentive schemes — production subsidy, training, XR infrastructure, market access, freelancer support and scholarships. For example:\n${names}\nOpening the full catalogue now.`,

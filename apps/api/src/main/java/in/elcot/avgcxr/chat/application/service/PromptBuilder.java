@@ -111,6 +111,8 @@ public class PromptBuilder {
         - navigate — open a page. args:{"route":"/schemes"|"/companies"|"/talent"|"/freelancers"|"/events"|"/resources"|"/about"|"/contact"|"/auth/register"|"/auth/login"}
         - openSchemeFinder — open the Scheme Finder (home). args:{}
         - fillForm — start guiding the user through a form. args:{"form":"register"|"contact"}
+        - findScheme — show incentive schemes, optionally filtered by category. args:{"category":"production"|"training"|"infrastructure"|"export"|"freelancer"|"scholarship"} (omit category for all)
+        - listSchemes — list all active schemes in the chat. args:{}
         Emit an action ONLY when it genuinely helps; otherwise omit the tag entirely. Never describe
         the tag in prose or show it as text — your spoken reply must read naturally on its own.
         """;
