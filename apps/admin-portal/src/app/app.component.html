@@ -1,3 +1,4 @@
+@if (!isAuthRoute()) {
 <header class="app-header">
   <div class="container header-content">
     <a routerLink="/" class="logo-link" aria-label="AVGC-XR Admin Home">
@@ -43,6 +44,7 @@
     </button>
   </div>
 </header>
+}
 
 <main class="app-main">
   <div class="page-enter">
@@ -50,6 +52,7 @@
   </div>
 </main>
 
+@if (!isAuthRoute()) {
 <footer class="app-footer">
   <div class="container">
     <div class="footer-bottom">
@@ -57,3 +60,4 @@
     </div>
   </div>
 </footer>
+}

@@ -47,24 +47,29 @@ import { NotificationService } from '../../../core/services/notification.service
   `,
   styles: [`
     .auth-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: calc(100vh - 200px);
-      padding: var(--spacing-xl);
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      padding: 40px 20px;
+      background:
+        radial-gradient(620px 320px at 85% -8%, rgba(124,58,237,0.5), transparent 60%),
+        linear-gradient(155deg, #45125c 0%, #2c1153 50%, #181233 100%);
     }
     .auth-card {
-      background: var(--color-surface);
-      padding: var(--spacing-xxl);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-lg);
-      width: 100%;
-      max-width: 440px;
+      position: relative; background: #fff; padding: 44px 36px 32px;
+      border-radius: 20px; box-shadow: 0 30px 80px -30px rgba(0,0,0,0.55);
+      width: 100%; max-width: 460px;
     }
-    .auth-card h2 { margin-bottom: var(--spacing-lg); text-align: center; }
-    .auth-card form { display: flex; flex-direction: column; gap: var(--spacing-md); }
+    .auth-card::before {
+      content: ''; display: block; width: 64px; height: 64px; margin: 0 auto 16px;
+      border-radius: 50%; background: #fff url('/assets/images/tn-emblem.png') center / 42px no-repeat;
+      box-shadow: 0 6px 18px -8px rgba(0,0,0,0.3); border: 1px solid rgba(124,58,237,0.12);
+    }
+    .auth-card h2 { margin: 0 0 8px; text-align: center; color: #1a1533; }
+    .auth-card p { margin: 0 0 18px; text-align: center; color: #6b6485; }
+    .auth-card form { display: flex; flex-direction: column; gap: 14px; margin-top: 10px; }
     .full-width { width: 100%; }
-    .auth-links { display: flex; justify-content: space-between; margin-top: var(--spacing-md); }
+    .auth-links { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+    .auth-links a, .back-link { color: #7c3aed; font-weight: 600; }
+    .back-link { display: block; text-align: center; margin-top: 18px; }
   `]
 })
 export class LoginComponent {

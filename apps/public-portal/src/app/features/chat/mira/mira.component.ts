@@ -45,6 +45,7 @@ export class MiraComponent implements OnDestroy {
   readonly speakOn = signal(false);
   readonly thinking = signal(false);
   readonly voiceSupported = signal(false);
+  readonly tamilVoiceAvailable = signal(false);
 
   private recognition: { start(): void; stop(): void } | null = null;
   private readonly scroller = viewChild<ElementRef<HTMLElement>>('scroller');
@@ -217,42 +218,73 @@ export class MiraComponent implements OnDestroy {
   private static readonly FEMALE_HINTS = [
     'female', 'samantha', 'zira', 'veena', 'raveena', 'heera', 'pallavi',
     'kalpana', 'asha', 'swara', 'neerja', 'aditi', 'sangeeta', 'tessa',
-    'fiona', 'karen', 'serena', 'moira', 'google uk english female', 'google தமிழ்',
+    'fiona', 'karen', 'serena', 'moira', 'google uk english female',
+    'google தமிழ்', 'tamil', 'valluvar', 'pooja',
   ];
 
   private loadVoices(): void {
     if (typeof speechSynthesis === 'undefined') return;
-    const grab = () => { this.voices = speechSynthesis.getVoices() ?? []; };
+    const grab = () => {
+      this.voices = speechSynthesis.getVoices() ?? [];
+      this.tamilVoiceAvailable.set(
+        this.voices.some((v) => v.lang?.toLowerCase().startsWith('ta')),
+      );
+    };
     grab();
     try { speechSynthesis.onvoiceschanged = grab; } catch { /* ignore */ }
   }
 
-  /** Pick a female voice for the language, preferring an Indian-region match. */
+  /**
+   * Pick the best voice for the language (female + Indian-region preferred).
+   * Tamil text is ONLY ever spoken by a Tamil voice — never an English fallback,
+   * which would mangle the phonetics. If no Tamil voice is installed this returns
+   * null, and {@link speak} still tags the utterance ta-IN so OS engines that can
+   * synthesise Tamil by language code (e.g. Android) speak it correctly.
+   */
   private pickVoice(lang: 'en' | 'ta'): SpeechSynthesisVoice | null {
     if (!this.voices.length) return null;
-    const pref = lang === 'ta' ? 'ta' : 'en';
-    const pool = this.voices.filter((v) => v.lang?.toLowerCase().startsWith(pref));
-    const list = pool.length ? pool : this.voices;
-    const region = lang === 'ta' ? 'ta-in' : 'en-in';
     const isFemale = (v: SpeechSynthesisVoice) =>
       MiraComponent.FEMALE_HINTS.some((h) => v.name.toLowerCase().includes(h));
+
+    if (lang === 'ta') {
+      const ta = this.voices.filter((v) => v.lang?.toLowerCase().startsWith('ta'));
+      if (!ta.length) return null;
+      return (
+        ta.find((v) => v.lang?.toLowerCase() === 'ta-in' && isFemale(v)) ||
+        ta.find((v) => v.lang?.toLowerCase() === 'ta-in') ||
+        ta.find(isFemale) ||
+        ta[0]
+      );
+    }
+
+    const en = this.voices.filter((v) => v.lang?.toLowerCase().startsWith('en'));
+    const list = en.length ? en : this.voices;
     return (
-      list.find((v) => isFemale(v) && v.lang?.toLowerCase() === region) ||
+      list.find((v) => isFemale(v) && v.lang?.toLowerCase() === 'en-in') ||
       list.find((v) => isFemale(v)) ||
-      list.find((v) => v.lang?.toLowerCase() === region) ||
+      list.find((v) => v.lang?.toLowerCase() === 'en-in') ||
       list[0] || null
     );
   }
 
   /** Choose Mira's language — switches her text replies AND her voice together. */
-  setVoiceLang(lang: 'en' | 'ta'): void {
+  async setVoiceLang(lang: 'en' | 'ta'): Promise<void> {
     if (this.lang() === lang) return;
-    void this.i18n.setLanguage(lang);
+    await this.i18n.setLanguage(lang);
+    // If voice replies are on, confirm in the newly-selected language so the user
+    // immediately hears the switch (Tamil voice when 'ta').
+    if (this.speakOn()) {
+      this.speak(this.t('Voice switched to English.', 'குரல் தமிழுக்கு மாற்றப்பட்டது.'));
+    }
   }
 
   toggleSpeak(): void {
     this.speakOn.update((v) => !v);
-    if (!this.speakOn()) this.stopSpeaking();
+    if (this.speakOn()) {
+      this.speak(this.t('Voice replies are on.', 'குரல் பதில்கள் இயக்கப்பட்டுள்ளன.'));
+    } else {
+      this.stopSpeaking();
+    }
   }
   private speak(text: string): void {
     if (!this.speakOn() || typeof speechSynthesis === 'undefined') return;
@@ -262,7 +294,7 @@ export class MiraComponent implements OnDestroy {
       const voice = this.pickVoice(this.lang() === 'ta' ? 'ta' : 'en');
       if (voice) u.voice = voice;
       u.lang = this.lang() === 'ta' ? 'ta-IN' : 'en-IN';
-      u.rate = 1.0;
+      u.rate = this.lang() === 'ta' ? 0.95 : 1.0; // slightly slower for Tamil clarity
       u.pitch = 1.18; // brighter, younger female timbre
       speechSynthesis.speak(u);
     } catch { /* ignore */ }

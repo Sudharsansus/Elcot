@@ -6,8 +6,7 @@
   top: 0;
   z-index: var(--z-sticky);
   background: var(--header-bg);
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  /* backdrop-filter removed: blur on a sticky header repaints every scroll frame. */
   border-bottom: 1px solid var(--glass-border);
   height: var(--header-height);
 

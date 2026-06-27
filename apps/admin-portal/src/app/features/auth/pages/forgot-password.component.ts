@@ -29,12 +29,28 @@ import { NotificationService } from '../../../core/services/notification.service
     </div>
   `,
   styles: [`
-    .auth-container { display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 200px); padding: var(--spacing-xl); }
-    .auth-card { background: var(--color-surface); padding: var(--spacing-xxl); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); width: 100%; max-width: 440px; }
-    .auth-card h2 { margin-bottom: var(--spacing-sm); text-align: center; }
-    .auth-card p { margin-bottom: var(--spacing-lg); text-align: center; color: var(--color-text-secondary); }
-    .auth-card form { display: flex; flex-direction: column; gap: var(--spacing-md); }
-    .back-link { display: block; text-align: center; margin-top: var(--spacing-lg); }
+    .auth-container {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      padding: 40px 20px;
+      background:
+        radial-gradient(620px 320px at 85% -8%, rgba(124,58,237,0.5), transparent 60%),
+        linear-gradient(155deg, #45125c 0%, #2c1153 50%, #181233 100%);
+    }
+    .auth-card {
+      position: relative; background: #fff; padding: 44px 36px 32px;
+      border-radius: 20px; box-shadow: 0 30px 80px -30px rgba(0,0,0,0.55);
+      width: 100%; max-width: 440px;
+    }
+    .auth-card::before {
+      content: ''; display: block; width: 64px; height: 64px; margin: 0 auto 16px;
+      border-radius: 50%; background: #fff url('/assets/images/tn-emblem.png') center / 42px no-repeat;
+      box-shadow: 0 6px 18px -8px rgba(0,0,0,0.3); border: 1px solid rgba(124,58,237,0.12);
+    }
+    .auth-card h2 { margin: 0 0 8px; text-align: center; color: #1a1533; }
+    .auth-card p { margin: 0 0 18px; text-align: center; color: #6b6485; }
+    .auth-card form { display: flex; flex-direction: column; gap: 14px; margin-top: 6px; }
+    .full-width { width: 100%; }
+    .back-link { display: block; text-align: center; margin-top: 18px; color: #7c3aed; font-weight: 600; }
   `]
 })
 export class ForgotPasswordComponent {

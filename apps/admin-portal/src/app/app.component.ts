@@ -1,9 +1,10 @@
 import { Component, inject, signal, computed, OnInit, DestroyRef } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
+import { filter, map } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -16,6 +17,16 @@ export class AppComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly document = inject(DOCUMENT) as Document;
   private readonly translate = inject(TranslateService);
+  private readonly router = inject(Router);
+
+  /** Hide the dashboard chrome (header/footer) on /auth/* screens. */
+  readonly isAuthRoute = toSignal(
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      map(() => this.router.url.startsWith('/auth')),
+    ),
+    { initialValue: this.router.url.startsWith('/auth') },
+  );
 
   readonly title = signal('Tamil Nadu AVGC-XR Portal');
   readonly currentLanguage = signal<string>('en');
