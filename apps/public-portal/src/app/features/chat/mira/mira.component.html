@@ -1,5 +1,5 @@
 <!-- Launcher -->
-<button class="mira-fab" [class.is-hidden]="open()" (click)="toggle()" (pointerdown)="startDrag($event)"
+<button class="mira-fab" [class.is-hidden]="open()" (click)="toggle()"
         [attr.aria-label]="lang() === 'ta' ? 'Mira AI உதவியாளரைத் திற' : 'Open Mira, the AI assistant'">
   <span class="fab-orb" aria-hidden="true"></span>
   <span class="fab-spark" aria-hidden="true">✦</span>
@@ -10,7 +10,7 @@
 @if (open()) {
   <section class="mira-panel" role="dialog" aria-label="Mira AI assistant">
     <header class="mira-head">
-      <div class="mira-id drag-handle" (pointerdown)="startDrag($event)" title="Drag to move Mira">
+      <div class="mira-id">
         <span class="mira-avatar" [class.busy]="thinking() || listening() || speaking()" aria-hidden="true"></span>
         <span class="mira-id-text">
           <strong>Mira</strong>

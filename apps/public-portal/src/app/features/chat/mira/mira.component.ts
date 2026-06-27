@@ -36,7 +36,6 @@ export class MiraComponent implements OnDestroy {
   private readonly router = inject(Router);
   private readonly smooth = inject(SmoothScrollService);
   private readonly i18n = inject(I18nService);
-  private readonly elRef = inject<ElementRef<HTMLElement>>(ElementRef);
 
   readonly open = this.chat.isOpen;
   readonly messages = this.chat.messages;
@@ -64,7 +63,6 @@ export class MiraComponent implements OnDestroy {
       const w = window as unknown as Record<string, unknown>;
       this.voiceSupported.set(!!(w['webkitSpeechRecognition'] || w['SpeechRecognition']));
       this.loadVoices();
-      this.restorePos();
     });
     effect(() => { this.messages(); queueMicrotask(() => this.scrollToEnd()); });
   }
@@ -72,52 +70,12 @@ export class MiraComponent implements OnDestroy {
   private t(en: string, ta: string): string { return this.lang() === 'ta' ? ta : en; }
 
   toggle(): void {
-    if (this.moved) { this.moved = false; return; } // ignore the click that ends a drag
     this.chat.toggle();
     if (this.chat.isOpen() && this.messages().length === 0) {
       this.chat.push('ASSISTANT', this.greeting());
     }
   }
   close(): void { this.chat.close(); this.stopListening(); this.stopSpeaking(); }
-
-  // ---- draggable (move Mira anywhere) ----
-  private drag: { sx: number; sy: number; ox: number; oy: number } | null = null;
-  private moved = false;
-
-  startDrag(ev: PointerEvent): void {
-    const r = this.elRef.nativeElement.getBoundingClientRect();
-    this.drag = { sx: ev.clientX, sy: ev.clientY, ox: r.left, oy: r.top };
-    this.moved = false;
-    window.addEventListener('pointermove', this.onDragMove);
-    window.addEventListener('pointerup', this.onDragUp, { once: true });
-  }
-  private onDragMove = (ev: PointerEvent): void => {
-    if (!this.drag) return;
-    const dx = ev.clientX - this.drag.sx;
-    const dy = ev.clientY - this.drag.sy;
-    if (Math.abs(dx) + Math.abs(dy) > 4) this.moved = true;
-    const host = this.elRef.nativeElement;
-    const x = Math.max(8, Math.min(window.innerWidth - host.offsetWidth - 8, this.drag.ox + dx));
-    const y = Math.max(8, Math.min(window.innerHeight - host.offsetHeight - 8, this.drag.oy + dy));
-    this.place(x + 'px', y + 'px');
-  };
-  private onDragUp = (): void => {
-    window.removeEventListener('pointermove', this.onDragMove);
-    this.drag = null;
-    const s = this.elRef.nativeElement.style;
-    try { localStorage.setItem('mira-pos', JSON.stringify({ x: s.left, y: s.top })); } catch { /* ignore */ }
-  };
-  private place(left: string, top: string): void {
-    const s = this.elRef.nativeElement.style;
-    s.left = left; s.top = top; s.right = 'auto'; s.bottom = 'auto';
-  }
-  private restorePos(): void {
-    try {
-      const raw = localStorage.getItem('mira-pos');
-      const p = raw ? JSON.parse(raw) : null;
-      if (p?.x && p?.y) this.place(p.x, p.y);
-    } catch { /* ignore */ }
-  }
 
   // ---- page awareness: Mira knows which page you're on ----
   private pageName(): string {
@@ -378,10 +336,5 @@ export class MiraComponent implements OnDestroy {
   }
   private delay(ms: number): Promise<void> { return new Promise((r) => setTimeout(r, ms)); }
 
-  ngOnDestroy(): void {
-    this.stopListening();
-    this.stopSpeaking();
-    window.removeEventListener('pointermove', this.onDragMove);
-    window.removeEventListener('pointerup', this.onDragUp);
-  }
+  ngOnDestroy(): void { this.stopListening(); this.stopSpeaking(); }
 }
