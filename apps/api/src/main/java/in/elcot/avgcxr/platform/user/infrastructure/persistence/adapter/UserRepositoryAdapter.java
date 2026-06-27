@@ -61,6 +61,11 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
   }
 
   @Override
+  public Optional<User> findByMobileNumber(String mobile) {
+    return jpaRepo.findByMobileNumber(mobile).map(mapper::toDomain);
+  }
+
+  @Override
   public boolean existsByEmail(String email) {
     return jpaRepo.existsByEmail(email);
   }

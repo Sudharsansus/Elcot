@@ -122,11 +122,12 @@ public class UserService
   @Transactional
   public AuthResponse authenticate(String email, String password) {
     log.info("Login attempt for: {}", email);
-    // Look up by email first, then by username
+    // Identifier may be an email, a username, or a 10-digit mobile number.
     User user =
         userRepo
             .findByEmail(email)
             .or(() -> userRepo.findByUsername(email))
+            .or(() -> userRepo.findByMobileNumber(email))
             .orElseThrow(
                 () -> {
                   log.warn("Login failed — user not found: {}", email);

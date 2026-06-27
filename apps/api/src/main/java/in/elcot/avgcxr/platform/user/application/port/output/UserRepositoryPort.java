@@ -24,6 +24,8 @@ public interface UserRepositoryPort {
 
   Optional<User> findByEmail(String email);
 
+  Optional<User> findByMobileNumber(String mobile);
+
   boolean existsByEmail(String email);
 
   boolean existsByMobileNumber(String mobile);
