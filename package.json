@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "nx": "^20.3.0",
-    "@nx/angular": "^20.3.0",
+    "@nx/angular": "^23.0.1",
     "@nx/eslint": "^20.3.0",
     "@nx/eslint-plugin": "^20.3.0",
     "@nx/jest": "^20.3.0",
