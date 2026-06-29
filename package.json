@@ -41,7 +41,7 @@
     "@angular/platform-server": "^19.2.0",
     "@angular/router": "^19.2.0",
     "@angular/ssr": "^19.2.0",
-    "@ngx-translate/core": "^16.0.4",
+    "@ngx-translate/core": "^18.0.0",
     "@ngx-translate/http-loader": "^16.0.1",
     "echarts": "^5.5.1",
     "ngx-echarts": "^19.0.0",
