@@ -69,7 +69,7 @@
         <co-elastic-clients.version>8.13.4</co-elastic-clients.version>
 
         <!-- MinIO -->
-        <minio.version>8.6.0</minio.version> <!-- 8.5.9 -> 8.6.0: clears CVE-2025-59952 (high) -->
+        <minio.version>9.0.3</minio.version> <!-- 8.5.9 -> 8.6.0: clears CVE-2025-59952 (high) -->
 
         <!-- JWT -->
         <jjwt.version>0.12.6</jjwt.version>
