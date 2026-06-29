@@ -24,7 +24,7 @@
     "@angular/router": "^19.2.0",
     "@angular/ssr": "^19.2.0",
     "@ngx-translate/core": "^15.0.0",
-    "echarts": "^5.5.0",
+    "echarts": "^6.1.0",
     "ngx-echarts": "^17.2.0",
     "rxjs": "^7.8.1",
     "tslib": "^2.6.2",
