@@ -75,7 +75,7 @@
         <jjwt.version>0.12.6</jjwt.version>
 
         <!-- MapStruct -->
-        <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
 
         <!-- Lombok: override the Spring-Boot-managed version. JDK 25 requires
              Lombok >= 1.18.40 (older releases fail with "Unable to load javac
