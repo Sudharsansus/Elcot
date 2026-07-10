@@ -2,9 +2,10 @@ import { Component, inject, signal } from '@angular/core';
 import { CardComponent } from '@avgc-xr/ui-kit';
 import { CommonModule } from '@angular/common';
 import { ApiClientService } from '@avgc-xr/data-access';
+import { ApplicantAiComponent } from '../applicant-ai.component';
 
 @Component({
-  selector: 'app-applicant-dashboard', standalone: true, imports: [CardComponent, CommonModule],
+  selector: 'app-applicant-dashboard', standalone: true, imports: [CardComponent, CommonModule, ApplicantAiComponent],
   templateUrl: './applicant-dashboard.component.html'
 })
 export class ApplicantDashboardComponent {

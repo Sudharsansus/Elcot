@@ -2,8 +2,9 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiClientService } from '@avgc-xr/data-access';
 import { SelectComponent, TableColumn, TableComponent } from '@avgc-xr/ui-kit';
+import { AiTriagePanelComponent } from '../ai-triage-panel.component';
 
-@Component({ selector: 'app-application-review', standalone: true, imports: [SelectComponent, CommonModule, TableComponent], templateUrl: './application-review.component.html' })
+@Component({ selector: 'app-application-review', standalone: true, imports: [SelectComponent, CommonModule, TableComponent, AiTriagePanelComponent], templateUrl: './application-review.component.html' })
 export class ApplicationReviewComponent {
   private api = inject(ApiClientService);
   columns: TableColumn[] = [

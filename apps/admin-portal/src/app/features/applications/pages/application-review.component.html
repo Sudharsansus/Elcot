@@ -1,3 +1,4 @@
 <div data-testid="application-review"><div class="page-header"><h1>Application Review</h1><avgc-select placeholder="Filter by status"></avgc-select></div>
+  <app-ai-triage-panel />
   <avgc-table [columns]="columns" [data]="applications()" [loading]="loading()"></avgc-table>
 </div>
