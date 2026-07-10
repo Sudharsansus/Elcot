@@ -22,6 +22,9 @@
       <a routerLink="/applications" routerLinkActive="active">
         {{ isTamil() ? 'விண்ணப்பங்கள்' : 'Applications' }}
       </a>
+      <a routerLink="/reports" routerLinkActive="active" class="nav-ai-link">
+        <span class="nav-ai-dot" aria-hidden="true"></span>{{ isTamil() ? 'AI அறிக்கைகள்' : 'AI Reports' }}
+      </a>
       <a routerLink="/workflow" routerLinkActive="active">
         {{ isTamil() ? 'பணிப்பாய்வு' : 'Workflow' }}
       </a>

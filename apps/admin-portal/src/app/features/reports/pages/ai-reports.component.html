@@ -1,0 +1,103 @@
+<section class="air container">
+  <header class="air-head">
+    <div class="air-titles">
+      <h1>
+        <span class="air-orb" aria-hidden="true"></span>
+        {{ t('AI Reports', 'AI அறிக்கைகள்') }}
+      </h1>
+      <p class="air-sub">{{ t('Ask about your data in plain language — I build the report.', 'உங்கள் தரவைப் பற்றி எளிய மொழியில் கேளுங்கள் — நான் அறிக்கையை உருவாக்குகிறேன்.') }}</p>
+    </div>
+  </header>
+
+  <form class="air-ask" (ngSubmit)="ask()">
+    <span class="air-ask-ico" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2l1.9 5.1L19 9l-5.1 1.9L12 16l-1.9-5.1L5 9l5.1-1.9L12 2z"/></svg>
+    </span>
+    <input [ngModel]="draft()" (ngModelChange)="draft.set($event)" name="q" type="text"
+           [placeholder]="t('e.g. How many registrations by sector this quarter?', 'எ.கா. இந்த காலாண்டில் துறை வாரியாக எத்தனை பதிவுகள்?')"
+           [attr.aria-label]="t('Ask AI Reports', 'AI அறிக்கைகளிடம் கேள்')" autocomplete="off" />
+    <button type="submit" class="air-go" [disabled]="!draft().trim() || busy()">
+      {{ busy() ? t('Analysing…', 'பகுப்பாய்வு…') : t('Generate', 'உருவாக்கு') }}
+    </button>
+  </form>
+
+  <div class="air-suggest">
+    @for (s of suggestions; track s.q) {
+      <button type="button" (click)="pick(s.q)">{{ lang() === 'ta' ? s.ta : s.en }}</button>
+    }
+  </div>
+
+  @if (report(); as r) {
+    <article class="air-report">
+      @if (r.demo) {
+        <p class="air-demo" role="note">
+          {{ t('Illustrative sample data — connects to live figures when the reporting API is enabled.', 'விளக்க மாதிரி தரவு — அறிக்கை API இயக்கப்பட்டதும் நேரடித் தரவுடன் இணைக்கப்படும்.') }}
+        </p>
+      }
+
+      <div class="air-report-head">
+        <h2>{{ r.title }}</h2>
+        <div class="air-actions">
+          @if (r.table) {
+            <button type="button" (click)="exportCsv()">{{ t('Export CSV', 'CSV ஏற்றுமதி') }}</button>
+          }
+          <button type="button" (click)="printReport()">{{ t('Print / PDF', 'அச்சு / PDF') }}</button>
+        </div>
+      </div>
+
+      <p class="air-summary">{{ r.summary }}</p>
+
+      <div class="air-kpis">
+        @for (m of r.metrics; track m.label) {
+          <div class="air-kpi" [attr.data-tone]="m.tone || 'neutral'">
+            <span class="air-kpi-label">{{ m.label }}</span>
+            <span class="air-kpi-value">
+              {{ m.value }}
+              @if (m.delta) {
+                <span class="air-kpi-delta" [class.up]="m.trend === 'up'" [class.down]="m.trend === 'down'">
+                  @if (m.trend === 'up') { ▲ } @else if (m.trend === 'down') { ▼ }
+                  {{ m.delta }}
+                </span>
+              }
+            </span>
+          </div>
+        }
+      </div>
+
+      @if (r.chart) {
+        <div class="air-chart">
+          <avgc-chart [options]="r.chart" [type]="r.chartType" height="360px" />
+        </div>
+      }
+
+      @if (r.insights.length) {
+        <div class="air-insights">
+          <h3>{{ t('AI insights', 'AI நுண்ணறிவுகள்') }}</h3>
+          <ul>
+            @for (i of r.insights; track i) { <li>{{ i }}</li> }
+          </ul>
+        </div>
+      }
+
+      @if (r.table) {
+        <div class="air-table-wrap">
+          <table class="air-table">
+            <thead>
+              <tr>@for (h of r.table.headers; track h) { <th>{{ h }}</th> }</tr>
+            </thead>
+            <tbody>
+              @for (row of r.table.rows; track row) {
+                <tr>@for (cell of row; track $index) { <td>{{ cell }}</td> }</tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </article>
+  } @else {
+    <div class="air-empty">
+      <span class="air-empty-orb" aria-hidden="true"></span>
+      <p>{{ t('Ask a question above, or tap a suggestion, to generate a live report.', 'மேலே ஒரு கேள்வியைக் கேளுங்கள் அல்லது ஒரு பரிந்துரையைத் தட்டுங்கள்.') }}</p>
+    </div>
+  }
+</section>

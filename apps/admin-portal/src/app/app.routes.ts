@@ -22,6 +22,12 @@ export const routes: Routes = [
     data: { roles: ['ADMIN', 'REVIEWER'] }
   },
   {
+    path: 'reports',
+    loadComponent: () => import('./features/reports/pages/ai-reports.component').then(m => m.AiReportsComponent),
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMIN', 'REVIEWER'] }
+  },
+  {
     path: 'workflow',
     loadChildren: () => import('./features/workflow/workflow.routes').then(m => m.WORKFLOW_ROUTES),
     canActivate: [authGuard, roleGuard],

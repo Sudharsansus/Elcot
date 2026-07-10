@@ -1,0 +1,123 @@
+// ============================================================
+// AI REPORTS — natural-language analytics page
+// Self-contained tokens (explicit values) so it renders regardless of the
+// admin theme setup. Violet brand + slate neutrals; light surface.
+// ============================================================
+:host {
+  --air-violet: #7c3aed;
+  --air-ink: #0f172a;
+  --air-ink-2: #475569;
+  --air-ink-3: #94a3b8;
+  --air-line: #e2e8f0;
+  --air-surface: #ffffff;
+  --air-bg: #f8fafc;
+  display: block;
+}
+
+.air { max-width: 1080px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+.air-head { margin-bottom: 1.4rem; }
+.air-titles h1 { display: flex; align-items: center; gap: 0.6rem; margin: 0; font-size: 1.75rem; font-weight: 800; color: var(--air-ink); }
+.air-sub { margin: 0.35rem 0 0; color: var(--air-ink-2); font-size: 0.98rem; }
+.air-orb {
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+  background: conic-gradient(from 0deg, #ff4fa3, #c084fc, #38bdf8, #22d3ee, #34d399, #a78bfa, #ff4fa3);
+  box-shadow: 0 0 12px -2px rgba(139, 92, 246, 0.7);
+  animation: air-spin 5s linear infinite;
+}
+@keyframes air-spin { to { transform: rotate(360deg); } }
+
+// ---- ask bar ----
+.air-ask {
+  display: flex; align-items: center; gap: 0.6rem;
+  background: var(--air-surface); border: 1px solid var(--air-line);
+  border-radius: 14px; padding: 0.6rem 0.75rem;
+  box-shadow: 0 10px 30px -18px rgba(40, 20, 80, 0.35);
+}
+.air-ask:focus-within { border-color: var(--air-violet); }
+.air-ask-ico { color: var(--air-violet); display: grid; place-items: center; flex-shrink: 0; }
+.air-ask input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-size: 1.02rem; color: var(--air-ink); }
+.air-ask input::placeholder { color: var(--air-ink-3); }
+.air-go {
+  flex-shrink: 0; padding: 0.6rem 1.3rem; border-radius: 10px; border: none; cursor: pointer;
+  background: var(--air-violet); color: #fff; font-weight: 600; font-size: 0.92rem;
+}
+.air-go:disabled { opacity: 0.5; cursor: not-allowed; }
+
+// ---- suggestions ----
+.air-suggest { display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 0.85rem 0 0; }
+.air-suggest button {
+  font-size: 0.82rem; font-weight: 500; padding: 0.42rem 0.85rem; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--air-line); color: var(--air-violet); background: rgba(124, 58, 237, 0.06);
+  transition: background 0.15s;
+}
+.air-suggest button:hover { background: rgba(124, 58, 237, 0.13); }
+
+// ---- report ----
+.air-report {
+  margin-top: 1.5rem; background: var(--air-surface); border: 1px solid var(--air-line);
+  border-radius: 16px; padding: 1.4rem; box-shadow: 0 12px 40px -24px rgba(40, 20, 80, 0.3);
+}
+.air-demo {
+  margin: 0 0 1rem; padding: 0.6rem 0.85rem; border-radius: 10px; font-size: 0.82rem;
+  color: #92400e; background: #fef3c7; border: 1px solid #fde68a;
+}
+.air-report-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.air-report-head h2 { margin: 0; font-size: 1.3rem; font-weight: 700; color: var(--air-ink); }
+.air-actions { display: flex; gap: 0.5rem; }
+.air-actions button {
+  font-size: 0.82rem; font-weight: 600; padding: 0.42rem 0.85rem; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--air-line); color: var(--air-ink-2); background: var(--air-surface);
+}
+.air-actions button:hover { border-color: var(--air-violet); color: var(--air-violet); }
+.air-summary { margin: 0.9rem 0 1.2rem; color: var(--air-ink-2); font-size: 1rem; line-height: 1.6; }
+
+// ---- KPI tiles ----
+.air-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.8rem; margin-bottom: 1.4rem; }
+.air-kpi {
+  display: flex; flex-direction: column; gap: 0.3rem; padding: 0.9rem 1rem;
+  border: 1px solid var(--air-line); border-radius: 12px; background: var(--air-bg);
+  border-left: 3px solid var(--air-ink-3);
+}
+.air-kpi[data-tone="good"] { border-left-color: #16a34a; }
+.air-kpi[data-tone="warn"] { border-left-color: #d97706; }
+.air-kpi[data-tone="bad"] { border-left-color: #dc2626; }
+.air-kpi[data-tone="neutral"] { border-left-color: var(--air-violet); }
+.air-kpi-label { font-size: 0.78rem; color: var(--air-ink-2); font-weight: 500; }
+.air-kpi-value { font-size: 1.5rem; font-weight: 800; color: var(--air-ink); line-height: 1.1; display: flex; align-items: baseline; gap: 0.4rem; flex-wrap: wrap; }
+.air-kpi-delta { font-size: 0.8rem; font-weight: 700; color: var(--air-ink-3); }
+.air-kpi-delta.up { color: #16a34a; }
+.air-kpi-delta.down { color: #dc2626; }
+
+.air-chart { margin-bottom: 1.4rem; }
+
+// ---- insights ----
+.air-insights h3 { margin: 0 0 0.5rem; font-size: 1rem; font-weight: 700; color: var(--air-ink); }
+.air-insights ul { margin: 0 0 1.4rem; padding-left: 1.1rem; }
+.air-insights li { color: var(--air-ink-2); font-size: 0.94rem; line-height: 1.6; margin-bottom: 0.3rem; }
+
+// ---- table ----
+.air-table-wrap { overflow-x: auto; }
+.air-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.air-table th, .air-table td { text-align: left; padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--air-line); }
+.air-table th { color: var(--air-ink-2); font-weight: 600; background: var(--air-bg); }
+.air-table td { color: var(--air-ink); }
+.air-table td:last-child, .air-table th:last-child { text-align: right; }
+
+// ---- empty state ----
+.air-empty { margin-top: 2.5rem; display: flex; flex-direction: column; align-items: center; gap: 1rem; color: var(--air-ink-3); text-align: center; }
+.air-empty-orb {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: conic-gradient(from 0deg, #ff4fa3, #c084fc, #38bdf8, #22d3ee, #34d399, #a78bfa, #ff4fa3);
+  filter: blur(1px); opacity: 0.85; animation: air-spin 6s linear infinite;
+}
+.air-empty p { max-width: 360px; font-size: 0.95rem; }
+
+@media (prefers-reduced-motion: reduce) { .air-orb, .air-empty-orb { animation: none; } }
+
+// ---- print → clean PDF of just the report ----
+@media print {
+  .air-ask, .air-suggest, .air-actions, .air-empty { display: none !important; }
+  .air-report { border: none; box-shadow: none; padding: 0; }
+  :host { --air-bg: #fff; }
+}
