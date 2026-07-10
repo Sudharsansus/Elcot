@@ -18,9 +18,13 @@
     </nav>
 
     <div class="nav-actions">
-      <a class="nav-elcot" href="https://elcot.in" target="_blank" rel="noopener" aria-label="ELCOT">
-        <img src="assets/brand/elcot-logo.png" alt="ELCOT" height="22" />
-      </a>
+      <button type="button" class="nav-ai" (click)="openAi()"
+              [attr.aria-label]="lang() === 'ta' ? 'AI முறையைத் திற' : 'Open AI Mode'"
+              aria-keyshortcuts="Control+K Meta+K">
+        <span class="nav-ai-orb" aria-hidden="true"></span>
+        <span class="nav-ai-label">{{ lang() === 'ta' ? 'AI முறை' : 'AI Mode' }}</span>
+        <kbd aria-hidden="true">⌘K</kbd>
+      </button>
       <button type="button" class="lang-btn" (click)="toggleLanguage()" [attr.aria-label]="t('a11y.toggleLang')">
         {{ lang() === 'en' ? 'த' : 'EN' }}
       </button>
@@ -43,6 +47,10 @@
         </a>
       }
     </nav>
+    <button type="button" class="mobile-ai" (click)="openAi()">
+      <span class="nav-ai-orb" aria-hidden="true"></span>
+      {{ lang() === 'ta' ? 'AI முறையிடம் கேள்' : 'Ask with AI Mode' }}
+    </button>
     <div class="mobile-cta">
       <a routerLink="/auth/login" class="btn btn-ghost" (click)="closeMobileMenu()">{{ t('common.login') }}</a>
       <a routerLink="/auth/register" class="btn btn-primary" (click)="closeMobileMenu()">{{ t('common.register') }}</a>

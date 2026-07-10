@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, RouterLink, RouterLinkActive } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { I18nService } from '../../core/services/i18n.service';
+import { AiModeService } from '../../features/chat/ai-mode.service';
 
 @Component({
   selector: 'app-navbar',
@@ -21,6 +22,7 @@ import { I18nService } from '../../core/services/i18n.service';
 })
 export class NavbarComponent {
   private readonly i18n = inject(I18nService);
+  private readonly ai = inject(AiModeService);
 
   readonly mobileMenuOpen = signal(false);
   readonly scrolled = signal(false);
@@ -50,6 +52,12 @@ export class NavbarComponent {
   closeMobileMenu(): void {
     this.mobileMenuOpen.set(false);
     document.body.style.overflow = '';
+  }
+
+  /** Open the primary AI Mode surface (also closes the mobile sheet). */
+  openAi(): void {
+    this.closeMobileMenu();
+    this.ai.openMode();
   }
 
   async toggleLanguage(): Promise<void> {

@@ -11,13 +11,13 @@ import { filter, map } from 'rxjs';
 import { TopBarComponent } from './shared/top-bar/top-bar.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { FooterComponent } from './shared/footer/footer.component';
-import { MiraComponent } from './features/chat/mira/mira.component';
+import { AiModeComponent } from './features/chat/ai-mode/ai-mode.component';
 import { SmoothScrollService } from './core/services/smooth-scroll.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, TopBarComponent, NavbarComponent, FooterComponent, MiraComponent],
+  imports: [RouterOutlet, TopBarComponent, NavbarComponent, FooterComponent, AiModeComponent],
   template: `
     <a class="skip-link" href="#main-content">Skip to content</a>
     @if (!isAuthRoute()) {
@@ -30,7 +30,7 @@ import { SmoothScrollService } from './core/services/smooth-scroll.service';
     @if (!isAuthRoute()) {
       <app-footer />
     }
-    <app-mira />
+    <app-ai-mode />
   `,
   styles: [`
     :host { display: flex; flex-direction: column; min-height: 100vh; }

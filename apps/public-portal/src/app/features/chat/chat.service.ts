@@ -123,9 +123,9 @@ export class ChatService {
     );
   }
 
-  /** Lightweight ask: returns the assistant reply text + any agent action (or
-   *  nulls on failure/timeout). Does NOT mutate the message list — Mira owns that. */
-  askBackend(text: string): Observable<{ reply: string | null; action: AgentAction | null }> {
+  /** The reply text, an optional (server-validated) agent action, and the RAG
+   *  source ids that grounded the answer. Nulls/empties on failure or timeout. */
+  askBackend(text: string): Observable<{ reply: string | null; action: AgentAction | null; sources: string[]; ok: boolean }> {
     const headers = new HttpHeaders({ 'X-Silent-Error': '1' });
     const req: SendMessageRequest = {
       message: text,
@@ -140,8 +140,14 @@ export class ChatService {
           this.saveSessionToken(resp.sessionToken);
         }
       }),
-      map(resp => ({ reply: resp?.assistantMessage?.content ?? null, action: resp?.action ?? null })),
-      catchError(() => of({ reply: null, action: null })),
+      map(resp => ({
+        reply: resp?.assistantMessage?.content ?? null,
+        action: resp?.action ?? null,
+        sources: resp?.ragSourceIds ?? [],
+        ok: true, // reached the AI backend
+      })),
+      // `ok: false` lets AI Mode fall back to local intent + show the offline banner.
+      catchError(() => of({ reply: null, action: null, sources: [] as string[], ok: false })),
     );
   }
 

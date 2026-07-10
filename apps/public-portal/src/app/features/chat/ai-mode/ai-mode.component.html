@@ -1,0 +1,85 @@
+<!-- The persistent launcher lives in the nav bar; this is the overlay. -->
+@if (open()) {
+  <div class="aim-backdrop" (click)="ai.close()" aria-hidden="true"></div>
+
+  <section class="aim" role="dialog" aria-modal="true"
+           [attr.aria-label]="t('AI Mode','AI முறை')" #panel (keydown)="onPanelKeydown($event)">
+    <header class="aim-head">
+      <span class="aim-orb" aria-hidden="true"></span>
+      <div class="aim-id">
+        <strong>{{ t('AI Mode','AI முறை') }}</strong>
+        <span class="aim-tag">
+          {{ busy() ? t('Working…','செயல்படுகிறது…') : t('Ask the portal to do anything','போர்ட்டலிடம் எதையும் கேளுங்கள்') }}
+        </span>
+      </div>
+      <kbd class="aim-kbd" aria-hidden="true">Esc</kbd>
+      <button type="button" class="aim-x" (click)="ai.close()" [attr.aria-label]="t('Close AI Mode','AI முறையை மூடு')">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7l1.4-1.4L10.6 10.6 16.9 4.3z"/></svg>
+      </button>
+    </header>
+
+    <form class="aim-ask" (ngSubmit)="submit()">
+      <span class="aim-ask-ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2l1.9 5.1L19 9l-5.1 1.9L12 16l-1.9-5.1L5 9l5.1-1.9L12 2z"/></svg>
+      </span>
+      <input #askInput [ngModel]="draft()" (ngModelChange)="draft.set($event)" name="q" type="text"
+             [placeholder]="listening() ? t('Listening…','கேட்கிறேன்…') : t('What would you like to do?','நீங்கள் என்ன செய்ய விரும்புகிறீர்கள்?')"
+             autocomplete="off" [attr.aria-label]="t('Ask AI Mode','AI முறையிடம் கேள்')" />
+      @if (voiceSupported()) {
+        <button type="button" class="aim-mic" [class.on]="listening()" (click)="toggleVoice()"
+                [attr.aria-label]="listening() ? t('Stop listening','கேட்பதை நிறுத்து') : t('Speak to AI Mode','AI முறையிடம் பேசு')">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 14a3 3 0 003-3V5a3 3 0 00-6 0v6a3 3 0 003 3zm5-3a5 5 0 01-10 0H5a7 7 0 006 6.9V21h2v-3.1A7 7 0 0019 11h-2z"/></svg>
+        </button>
+      }
+      <button type="submit" class="aim-go" [disabled]="!draft().trim() || busy()">{{ t('Ask','கேள்') }}</button>
+    </form>
+
+    @if (unavailable()) {
+      <p class="aim-warn" role="status">
+        {{ t('AI Mode is running offline — you can still use the menu to navigate.','AI முறை ஆஃப்லைனில் இயங்குகிறது — வழிசெலுத்த மெனுவைப் பயன்படுத்தலாம்.') }}
+      </p>
+    }
+
+    <div class="aim-body" #scroller aria-live="polite">
+      @for (m of messages(); track m.id) {
+        <div class="aim-msg" [class.user]="m.role === 'USER'" [class.bot]="m.role === 'ASSISTANT'">
+          <p>{{ m.content }}</p>
+        </div>
+      }
+      @if (busy()) {
+        <div class="aim-msg bot"><p class="aim-typing" [attr.aria-label]="t('Working','செயல்படுகிறது')"><span></span><span></span><span></span></p></div>
+      }
+      @if (grounded()) {
+        <p class="aim-grounded">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3z"/></svg>
+          {{ t('Based on official policy documents','அதிகாரப்பூர்வ கொள்கை ஆவணங்களின் அடிப்படையில்') }}
+        </p>
+      }
+
+      @if (pending(); as p) {
+        <div class="aim-confirm" role="group" [attr.aria-label]="t('Confirm action','செயலை உறுதிப்படுத்து')">
+          <p class="aim-confirm-q">{{ p.label }}</p>
+          <div class="aim-confirm-btns">
+            <button type="button" class="aim-yes" (click)="ai.confirm()">{{ t('Proceed','தொடரவும்') }}</button>
+            <button type="button" class="aim-no" (click)="ai.cancel()">{{ t('Cancel','ரத்து') }}</button>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (messages().length <= 1 && !pending()) {
+      <div class="aim-suggest">
+        <span class="aim-suggest-lbl">{{ t('Try one of these:','இவற்றில் ஒன்றை முயற்சி செய்:') }}</span>
+        <div class="aim-chips">
+          @for (s of suggestions(); track s.q) {
+            <button type="button" (click)="pick(s.q)">{{ lang() === 'ta' ? s.ta : s.en }}</button>
+          }
+        </div>
+      </div>
+    }
+
+    <p class="aim-foot">
+      {{ t('AI Mode can navigate, find schemes and fill forms — it never approves or changes decisions.','AI முறை வழிசெலுத்த, திட்டங்களைக் கண்டறிய, படிவங்களை நிரப்ப முடியும் — முடிவுகளை மாற்றாது.') }}
+    </p>
+  </section>
+}
