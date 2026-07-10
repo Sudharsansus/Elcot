@@ -26,6 +26,7 @@ import { ChatService } from './chat.service';
 import { SmoothScrollService } from '../../core/services/smooth-scroll.service';
 import { I18nService } from '../../core/services/i18n.service';
 import { FormAssistService } from './form-assist.service';
+import { AiAuditService } from './ai-audit.service';
 import { SCHEMES_DATA, SECTOR_CATEGORIES, Scheme } from '../schemes/schemes.data';
 
 export type AiTool = 'navigate' | 'openSchemeFinder' | 'fillForm' | 'findScheme' | 'listSchemes';
@@ -40,6 +41,7 @@ export class AiModeService {
   private readonly smooth = inject(SmoothScrollService);
   private readonly i18n = inject(I18nService);
   private readonly formAssist = inject(FormAssistService);
+  private readonly audit = inject(AiAuditService);
 
   /** State-changing tools require an explicit confirmation before running. */
   private static readonly STATE_CHANGING: ReadonlySet<string> = new Set([
@@ -150,6 +152,8 @@ export class AiModeService {
   dispatch(action: AiAction): void {
     if (!this.isValid(action)) return;
     const args = action.args ?? {};
+    // Governance: record every executed AI action (non-PII args only).
+    this.audit.record(action.tool, args, AiModeService.STATE_CHANGING.has(action.tool));
     switch (action.tool) {
       case 'navigate': {
         const route = String(args['route'] ?? '');
@@ -182,6 +186,26 @@ export class AiModeService {
         this.chat.push('ASSISTANT', this.schemeList());
         break;
       }
+      case 'crossModuleSearch': {
+        this.chat.push('ASSISTANT', this.crossModuleSearch(String(args['query'] ?? '')));
+        break;
+      }
+      case 'compareSchemes': {
+        this.chat.push('ASSISTANT', this.compareSchemes(String(args['query'] ?? '')));
+        break;
+      }
+      case 'summarize': {
+        this.chat.push('ASSISTANT', this.summarize(String(args['query'] ?? '')));
+        break;
+      }
+      case 'checkEligibility': {
+        this.chat.push('ASSISTANT', this.eligibilityReport(String(args['query'] ?? '')));
+        break;
+      }
+      case 'documentChecklist': {
+        this.chat.push('ASSISTANT', this.documentChecklist(String(args['query'] ?? '')));
+        break;
+      }
     }
   }
 
@@ -198,6 +222,11 @@ export class AiModeService {
       case 'openSchemeFinder':
       case 'findScheme':
       case 'listSchemes':
+      case 'crossModuleSearch':
+      case 'compareSchemes':
+      case 'summarize':
+      case 'checkEligibility':
+      case 'documentChecklist':
         return true;
       default:
         return false; // unknown tool — ignore
@@ -253,6 +282,23 @@ export class AiModeService {
   private detect(raw: string): { reply: string; action: AiAction | null } {
     const x = ` ${raw.toLowerCase()} `;
     const has = (...k: string[]) => k.some((s) => x.includes(s));
+
+    // ---- Layer 2/3 tools (read-only; results render in the panel) ----
+    if (has('compare', ' vs ', 'versus', 'difference between')) {
+      return { reply: this.t('Here is a side-by-side comparison:', 'ஒப்பீடு இதோ:'), action: { tool: 'compareSchemes', args: { query: raw } } };
+    }
+    if (has('am i eligible', 'do i qualify', 'eligible for', 'can i apply', 'check my eligibility', 'am i qualified', 'qualify for')) {
+      return { reply: this.t('Let me check what you may be eligible for:', 'நீங்கள் தகுதி பெறக்கூடியவற்றைச் சரிபார்க்கிறேன்:'), action: { tool: 'checkEligibility', args: { query: raw } } };
+    }
+    if (has('checklist', 'documents for', 'documents do i need', 'documents needed', 'papers for', 'which documents', 'what documents')) {
+      return { reply: this.t('Here is the document checklist:', 'ஆவணப் பட்டியல் இதோ:'), action: { tool: 'documentChecklist', args: { query: raw } } };
+    }
+    if (has('summarize', 'summarise', 'summary of', 'tl;dr', 'brief me', 'in short', 'explain the policy')) {
+      return { reply: this.t('Summary:', 'சுருக்கம்:'), action: { tool: 'summarize', args: { query: raw } } };
+    }
+    if (has('search everything', 'across the portal', 'search the portal', 'cross module', 'find anything', 'search for')) {
+      return { reply: this.t('Searching across the portal…', 'போர்ட்டல் முழுவதும் தேடுகிறேன்…'), action: { tool: 'crossModuleSearch', args: { query: raw } } };
+    }
 
     const sector = SECTOR_CATEGORIES.find(
       (s) => x.includes(s.labelEn.toLowerCase()) || x.includes(s.key.toLowerCase()) || raw.includes(s.labelTa),
@@ -402,6 +448,83 @@ export class AiModeService {
         return `• ${nm} — ${this.t('up to', 'அதிகபட்சம்')} ${amt}`;
       })
       .join('\n');
+  }
+
+  // ---- Layer 2/3 read-only tool bodies ----
+  private amt(s: Scheme): string { return s.maxAmount >= 100000 ? `₹${Math.round(s.maxAmount / 100000)}L` : `₹${s.maxAmount}`; }
+  private nm(s: Scheme): string { return this.lang() === 'ta' ? s.nameTa : s.name; }
+
+  private schemeByRef(q: string): Scheme | undefined {
+    const s = q.toLowerCase();
+    return (
+      SCHEMES_DATA.find((sc) => s.includes(sc.name.toLowerCase()) || s.includes(sc.slug) || s.includes(sc.category)) ||
+      SCHEMES_DATA.find((sc) => sc.name.toLowerCase().split(' ').some((w) => w.length > 4 && s.includes(w)))
+    );
+  }
+
+  private documentChecklist(q: string): string {
+    const sc = this.schemeByRef(q);
+    if (!sc) {
+      return this.t(
+        'Tell me which scheme and I’ll list its exact documents. Common ones: company registration, GST & PAN, project proposal, budget, audited financials, portfolio.',
+        'எந்தத் திட்டம் எனச் சொல்லுங்கள் — சரியான ஆவணங்களைப் பட்டியலிடுகிறேன்.');
+    }
+    const docs = (this.lang() === 'ta' ? sc.documentsTa : sc.documents).map((d) => `☐ ${d}`).join('\n');
+    return this.t(`Documents for ${sc.name}:\n${docs}`, `${sc.nameTa} — ஆவணங்கள்:\n${docs}`);
+  }
+
+  private summarize(q: string): string {
+    const sc = this.schemeByRef(q);
+    if (sc) {
+      return this.t(
+        `${sc.name}: ${sc.description} Up to ${this.amt(sc)}. Eligibility: ${sc.eligibility} Deadline: ${sc.deadline}.`,
+        `${sc.nameTa}: ${sc.descriptionTa} அதிகபட்சம் ${this.amt(sc)}. தகுதி: ${sc.eligibilityTa} காலக்கெடு: ${sc.deadline}.`);
+    }
+    return this.t(
+      'The AVGC-XR portal offers 6 incentive schemes across production, training, infrastructure, export, freelancer support and scholarships — all with online application and status tracking.',
+      'AVGC-XR போர்ட்டல் 6 ஊக்கத்திட்டங்களை வழங்குகிறது — உற்பத்தி, பயிற்சி, உள்கட்டமைப்பு, ஏற்றுமதி, ஃப்ரீலான்சர், உதவித்தொகை.');
+  }
+
+  private compareSchemes(q: string): string {
+    const lc = q.toLowerCase();
+    let picks = SCHEMES_DATA.filter((sc) => lc.includes(sc.category) || lc.includes(sc.name.toLowerCase().split(' ')[0]));
+    if (picks.length < 2) picks = [SCHEMES_DATA[0], SCHEMES_DATA[1]];
+    const [a, b] = picks.slice(0, 2);
+    const line = (sc: Scheme) => `${this.nm(sc)}\n• ${this.t('Up to', 'அதிகபட்சம்')} ${this.amt(sc)}\n• ${sc.category}\n• ${this.t('Deadline', 'காலக்கெடு')} ${sc.deadline}\n• ${this.lang() === 'ta' ? sc.processingTimeTa : sc.processingTime}`;
+    return `${line(a)}\n\n— ${this.t('vs', 'எதிராக')} —\n\n${line(b)}`;
+  }
+
+  private eligibilityReport(q: string): string {
+    const lc = q.toLowerCase();
+    let bucket: Scheme['category'][];
+    if (/student|scholar|college|degree|study|university/.test(lc)) bucket = ['scholarship', 'training'];
+    else if (/freelanc|individual|artist|solo|self.?employ/.test(lc)) bucket = ['freelancer', 'training', 'scholarship'];
+    else if (/studio|company|startup|firm|business|enterprise|sme|production house/.test(lc)) bucket = ['production', 'infrastructure', 'export'];
+    else bucket = ['production', 'training', 'infrastructure', 'export', 'freelancer', 'scholarship'];
+    const matches = SCHEMES_DATA.filter((sc) => bucket.includes(sc.category));
+    const lines = matches.map((sc) => `• ${this.nm(sc)} — ${this.t('up to', 'அதிகபட்சம்')} ${this.amt(sc)}`).join('\n');
+    const note = this.t(
+      'This is a quick guide from what you told me — the Scheme Finder confirms exact eligibility. Say "open the scheme finder" and I’ll take you there.',
+      'இது நீங்கள் சொன்னதன் அடிப்படையிலான விரைவு வழிகாட்டி — Scheme Finder சரியான தகுதியை உறுதி செய்யும்.');
+    return this.t(`Based on your profile, you may be eligible for:\n${lines}\n\n${note}`, `உங்கள் விவரத்தின்படி தகுதியானவை:\n${lines}\n\n${note}`);
+  }
+
+  private crossModuleSearch(q: string): string {
+    const term = q.toLowerCase().replace(/search( for)?|find|across|everywhere|the portal|anything|cross module/g, '').trim();
+    const hits = SCHEMES_DATA.filter((sc) => !term || sc.name.toLowerCase().includes(term) || sc.category.includes(term) || sc.description.toLowerCase().includes(term)).slice(0, 3);
+    const modules = [
+      { en: 'Business Connect — companies & studios', ta: 'பிசினஸ் கனெக்ட் — நிறுவனங்கள்' },
+      { en: 'Talent Connect — professionals', ta: 'டேலன்ட் கனெக்ட் — நிபுணர்கள்' },
+      { en: 'Freelancer Registry', ta: 'ஃப்ரீலான்சர் பதிவு' },
+      { en: 'News & Events', ta: 'செய்திகள் & நிகழ்வுகள்' },
+      { en: 'Resources & Policies', ta: 'வளங்கள் & கொள்கைகள்' },
+    ];
+    const schemeLines = hits.length ? hits.map((sc) => `• ${this.nm(sc)}`).join('\n') : this.t('• (no direct scheme match)', '• (பொருந்தும் திட்டம் இல்லை)');
+    const modLines = modules.map((m) => `• ${this.lang() === 'ta' ? m.ta : m.en}`).join('\n');
+    const label = term || this.t('everything', 'அனைத்தும்');
+    return this.t(
+      `Results across the portal for “${label}”:\n\nSchemes:\n${schemeLines}\n\nAlso in:\n${modLines}\n\nAsk me to open any of these.`,
+      `“${label}” — போர்ட்டல் முழுவதும்:\n\nதிட்டங்கள்:\n${schemeLines}\n\nமேலும்:\n${modLines}`);
   }
 
   private greeting(): string {

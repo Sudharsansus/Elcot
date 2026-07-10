@@ -113,8 +113,15 @@ public class PromptBuilder {
         - fillForm — start guiding the user through a form. args:{"form":"register"|"contact"}
         - findScheme — show incentive schemes, optionally filtered by category. args:{"category":"production"|"training"|"infrastructure"|"export"|"freelancer"|"scholarship"} (omit category for all)
         - listSchemes — list all active schemes in the chat. args:{}
+        - checkEligibility — show which schemes the user may qualify for. args:{"query":"<what they told you about themselves — student / studio / freelancer, sector, stage>"}
+        - documentChecklist — list the documents required for a scheme. args:{"query":"<scheme name or category>"}
+        - compareSchemes — compare two schemes side by side. args:{"query":"<scheme A> vs <scheme B>"}
+        - summarize — briefly summarise a scheme or policy. args:{"query":"<scheme or policy>"}
+        - crossModuleSearch — search schemes and the directories (companies, talent, freelancers, events, resources) at once. args:{"query":"<search terms>"}
         Emit an action ONLY when it genuinely helps; otherwise omit the tag entirely. Never describe
         the tag in prose or show it as text — your spoken reply must read naturally on its own.
+        These tools are READ-ONLY or navigational: never claim to approve, sanction, pay, or change any
+        record — decisions stay with authorised officials.
         """;
 
   public String buildSystemPrompt(String language, List<RagDocument> contextDocs) {
