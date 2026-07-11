@@ -1,0 +1,19 @@
+# `apps/cms/src/api/news-item`
+
+<!-- gen-folder-docs -->
+> Folder guide for knowledge transfer — auto-generated from each file's own header documentation.
+> Regenerate with `node scripts/gen-folder-docs.mjs`. Do not edit by hand (changes are overwritten); to keep a hand-written note, remove the `<!-- gen-folder-docs -->` marker line.
+
+**Purpose:** Folder holding the files listed below (part of `apps/cms/src/api`).
+
+_No files directly in this folder (see subfolders below)._
+
+## Subfolders (4)
+
+- [`content-types/`](content-types/README.md) — Folder holding the files listed below (part of `apps/cms/src/api/news-item`).
+- [`controllers/`](controllers/README.md) — Folder holding the files listed below (part of `apps/cms/src/api/news-item`).
+- [`routes/`](routes/README.md) — Folder holding the files listed below (part of `apps/cms/src/api/news-item`).
+- [`services/`](services/README.md) — Injectable singleton services — business logic, API access and shared state.
+
+---
+_Part of the Tamil Nadu AVGC-XR portal. This guide describes files as documented in their source headers; for authoritative behaviour, read the code._
