@@ -24,7 +24,7 @@
     "@nx/eslint": "^20.3.0",
     "@nx/eslint-plugin": "^20.3.0",
     "@nx/jest": "^20.3.0",
-    "@nx/js": "^20.3.0",
+    "@nx/js": "^23.0.1",
     "@nx/workspace": "^20.3.0",
     "@angular/animations": "^19.2.0",
     "@angular/cdk": "^19.2.0",
