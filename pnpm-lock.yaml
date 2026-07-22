@@ -99,8 +99,8 @@ importers:
         specifier: ^8.2.2
         version: 8.2.2
       echarts:
-        specifier: ^5.5.1
-        version: 5.6.0
+        specifier: ^6.1.0
+        version: 6.1.0
       eslint:
         specifier: ^8.57.0
         version: 8.57.1
@@ -112,7 +112,7 @@ importers:
         version: 19.2.2(@angular/compiler-cli@19.2.25(@angular/compiler@19.2.25)(typescript@5.6.3))(tslib@2.8.1)(typescript@5.6.3)
       ngx-echarts:
         specifier: ^19.0.0
-        version: 19.0.0(echarts@5.6.0)
+        version: 19.0.0(echarts@6.1.0)
       nx:
         specifier: ^20.3.0
         version: 20.8.4(@swc/core@1.15.43(@swc/helpers@0.5.23))
@@ -189,11 +189,11 @@ importers:
         specifier: ^15.0.0
         version: 15.0.0(@angular/common@19.2.25(@angular/core@19.2.25(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@19.2.25(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2)
       echarts:
-        specifier: ^5.5.0
-        version: 5.6.0
+        specifier: ^6.1.0
+        version: 6.1.0
       ngx-echarts:
         specifier: ^17.2.0
-        version: 17.2.0(echarts@5.6.0)
+        version: 17.2.0(echarts@6.1.0)
       rxjs:
         specifier: ^7.8.1
         version: 7.8.2
@@ -277,11 +277,11 @@ importers:
         specifier: ^15.0.0
         version: 15.0.0(@angular/common@19.2.25(@angular/core@19.2.25(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@19.2.25(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2)
       echarts:
-        specifier: ^5.5.0
-        version: 5.6.0
+        specifier: ^6.1.0
+        version: 6.1.0
       ngx-echarts:
         specifier: ^17.2.0
-        version: 17.2.0(echarts@5.6.0)
+        version: 17.2.0(echarts@6.1.0)
       rxjs:
         specifier: ^7.8.1
         version: 7.8.2
@@ -389,8 +389,8 @@ importers:
         specifier: ^15.0.0
         version: 15.0.0(@angular/common@19.2.25(@angular/core@19.2.25(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@19.2.25(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2)
       echarts:
-        specifier: ^5.5.0
-        version: 5.6.0
+        specifier: ^6.1.0
+        version: 6.1.0
       gsap:
         specifier: ^3.13.0
         version: 3.15.0
@@ -399,7 +399,7 @@ importers:
         version: 1.3.24(react@19.2.7)
       ngx-echarts:
         specifier: ^17.2.0
-        version: 17.2.0(echarts@5.6.0)
+        version: 17.2.0(echarts@6.1.0)
       rxjs:
         specifier: ^7.8.1
         version: 7.8.2
@@ -6621,6 +6621,9 @@ packages:
   crelt@1.0.6:
     resolution: {integrity: sha512-VQ2MBenTq1fWZUH9DJNGti7kKv6EeAuYr3cLwxUWhIu1baTaXh4Ib5W2CqHVqib4/MqbYGJqiL3Zb8GJZr3l4g==}
 
+  crelt@1.0.7:
+    resolution: {integrity: sha512-aK6BbWfhf4U/wCcLHKPJl/xa6VkVstRaPywWtMKGwuOLc/wZTyQYuoxgvZnNsBvv7Kg3YTBQYYBCggcviQczuA==}
+
   cron-parser@4.9.0:
     resolution: {integrity: sha512-p0SaNjrHOnQeR8/VnfGbmg9te2kfyYSQ7Sc/j/6DtPL3JQvKxmjO9TSjNFpujqV3vEYYBvNNvXSxzyksBWAx1Q==}
     engines: {node: '>=12.0.0'}
@@ -7047,8 +7050,8 @@ packages:
   ecdsa-sig-formatter@1.0.11:
     resolution: {integrity: sha512-nagl3RYrbNv6kQkeJIpt6NJZy8twLB/2vtz6yN9Z4vRKHN4/QZJIEbqohALSgwKdnksuY3k5Addp5lg8sVoVcQ==}
 
-  echarts@5.6.0:
-    resolution: {integrity: sha512-oTbVTsXfKuEhxftHqL5xprgLoc0k7uScAwtryCgWF6hPYFLRwOUHiFmHGCBKP5NPFNkDVopOieyUqYGH8Fa3kA==}
+  echarts@6.1.0:
+    resolution: {integrity: sha512-q0yaFPggC9FUdsWH4blavRWFmxdrIodbkoKNAjJudAI6CA9gNPxHtV2RcZNEepZVlk4yvBYkOkbk6HIVpIyHZA==}
 
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
@@ -12738,8 +12741,8 @@ packages:
   zone.js@0.15.1:
     resolution: {integrity: sha512-XE96n56IQpJM7NAoXswY3XRLcWFW83xe0BiAOeMD7K5k5xecOeul3Qcpx6GqEeeHNkW5DWL5zOyTbEfB4eti8w==}
 
-  zrender@5.6.1:
-    resolution: {integrity: sha512-OFXkDJKcrlx5su2XbzJvj/34Q3m6PvyCZkVPHGYpcCJ52ek4U/ymZyfuV1nKE23AyBJ51E/6Yr0mhZ7xGTO4ag==}
+  zrender@6.1.0:
+    resolution: {integrity: sha512-oEGMDB6pOP2S6OwRR4PdVv610zrjnA3Bh+JnSG12fYJlBKjtNAoEb5fSUoCOOINlH96I2fU38/A2UpRKs67xYQ==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -14715,13 +14718,13 @@ snapshots:
     dependencies:
       '@codemirror/state': 6.7.0
       '@codemirror/view': 6.43.2
-      crelt: 1.0.6
+      crelt: 1.0.7
 
   '@codemirror/search@6.7.1':
     dependencies:
       '@codemirror/state': 6.7.0
       '@codemirror/view': 6.43.2
-      crelt: 1.0.6
+      crelt: 1.0.7
 
   '@codemirror/state@6.7.0':
     dependencies:
@@ -21256,6 +21259,8 @@ snapshots:
 
   crelt@1.0.6: {}
 
+  crelt@1.0.7: {}
+
   cron-parser@4.9.0:
     dependencies:
       luxon: 3.7.2
@@ -21691,10 +21696,10 @@ snapshots:
     dependencies:
       safe-buffer: 5.2.1
 
-  echarts@5.6.0:
+  echarts@6.1.0:
     dependencies:
       tslib: 2.3.0
-      zrender: 5.6.1
+      zrender: 6.1.0
 
   ee-first@1.1.1: {}
 
@@ -24855,14 +24860,14 @@ snapshots:
     optionalDependencies:
       rollup: 4.62.2
 
-  ngx-echarts@17.2.0(echarts@5.6.0):
+  ngx-echarts@17.2.0(echarts@6.1.0):
     dependencies:
-      echarts: 5.6.0
+      echarts: 6.1.0
       tslib: 2.8.1
 
-  ngx-echarts@19.0.0(echarts@5.6.0):
+  ngx-echarts@19.0.0(echarts@6.1.0):
     dependencies:
-      echarts: 5.6.0
+      echarts: 6.1.0
       tslib: 2.8.1
 
   no-case@3.0.4:
@@ -28600,7 +28605,7 @@ snapshots:
 
   zone.js@0.15.1: {}
 
-  zrender@5.6.1:
+  zrender@6.1.0:
     dependencies:
       tslib: 2.3.0
 
