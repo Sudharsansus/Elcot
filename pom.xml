@@ -66,7 +66,7 @@
 
         <!-- Elasticsearch -->
         <elasticsearch-java.version>8.13.4</elasticsearch-java.version>
-        <co-elastic-clients.version>8.13.4</co-elastic-clients.version>
+        <co-elastic-clients.version>9.4.2</co-elastic-clients.version>
 
         <!-- MinIO -->
         <minio.version>8.6.0</minio.version> <!-- 8.5.9 -> 8.6.0: clears CVE-2025-59952 (high) -->
